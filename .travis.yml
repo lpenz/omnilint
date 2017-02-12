@@ -4,4 +4,5 @@ sudo: required
 services:
   - docker
 script:
-  - docker build .
+  - docker build -t ${PWD##*/} .
+  - docker run -it --rm -v $PWD:/home/user/work -e MY_UID=$UID ${PWD##*/}

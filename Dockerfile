@@ -26,6 +26,8 @@ RUN set -x -e; \
     pip install \
         py3kwarn==0.4.4
 
+COPY container/omnilint /usr/local/bin/
+
 # setup entrypoint with user UID/GID from host
 RUN set -x -e; \
     (\
@@ -40,9 +42,9 @@ RUN set -x -e; \
     chmod a+x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["./test"]
+CMD ["/usr/local/bin/omnilint","/home/user/work"]
 
 # If your UID is 1000, you can simply run the container as
-# docker run -it --rm -v $PWD:/home/user/work ansible-playbooks
+# docker run -it --rm -v $PWD:/home/user/work ${PWD##*/}
 # otherwise, run it as:
-# docker run -it --rm -v $PWD:/home/user/work -e MY_UID=$UID ansible-playbooks
+# docker run -it --rm -v $PWD:/home/user/work -e MY_UID=$UID ${PWD##*/}

@@ -3,7 +3,7 @@
 # omnilint
 
 **omnilint** is a container-based tool that provides a unified interface for the
-static analysis of any file.
+static analysis of any file, using the appropriate tool.
 
     File                    Linter
     .c  \                  / cppcheck
