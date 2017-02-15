@@ -9,7 +9,7 @@ RUN set -x -e; \
         # shell:
         shellcheck \
         # python:
-        flake8 python-setuptools python-pip \
+        flake8 python-setuptools python-pip python-wheel \
         # base packages:
         locales gosu sudo
 
