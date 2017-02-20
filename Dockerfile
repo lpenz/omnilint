@@ -27,7 +27,8 @@ RUN set -x -e; \
     pip install \
         py3kwarn==0.4.4
 
-COPY container/omnilint /usr/local/bin/
+COPY container/omnilint-analyse /usr/local/bin/omnilint-analyse
+COPY container/omnilint /usr/local/lib/python3.5/dist-packages/omnilint
 
 # setup entrypoint with user UID/GID from host
 RUN set -x -e; \
@@ -36,14 +37,13 @@ RUN set -x -e; \
     echo 'MY_UID=${MY_UID:-1000}'; \
     echo 'set -x -e'; \
     echo 'useradd -M -u "$MY_UID" -o user'; \
-    echo 'chown user:user /target'; \
-    echo 'cd /target'; \
+    echo 'cd $RWD'; \
     echo 'exec gosu user "${@:-/bin/bash}"'; \
     ) > /usr/local/bin/entrypoint.sh; \
     chmod a+x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["/usr/local/bin/omnilint","/target"]
+CMD ["/usr/local/bin/omnilint-analyse","."]
 
 # If your UID is 1000, you can simply run the container as
 # docker run -it --rm -v $PWD:/target ${PWD##*/}

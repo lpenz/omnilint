@@ -5,4 +5,4 @@ services:
   - docker
 script:
   - docker build -t ${PWD##*/} .
-  - docker run -it --rm -v $PWD:/home/user/work -e MY_UID=$UID ${PWD##*/}
+  - ./bin/omnilint-docker-run

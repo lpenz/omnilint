@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+docker run -it --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint

@@ -10,6 +10,7 @@ static analysis of any file, using the appropriate tool.
     .c  \                  / cppcheck
     .sh  -    omnilint    -  shelcheck
     .py /        |         \ pyflakes
+          gcc-like output
             json output
 
 
@@ -29,9 +30,9 @@ The easier way to install omnilint is by pulling the container from
     docker pull lpenz/omnilint
 
 Using omnilint is a matter of starting the container with the directory with the
-files to be analyzed mapped as */target*:
+files to be analyzed mapped:
 
-    docker run --rm -v <directory>:/target -e MY_UID=$UID omnilint
+    docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint
 
 
 ## Travis
@@ -46,5 +47,5 @@ repository:
     before_install:
       - docker pull lpenz/omnilint
     script:
-      - docker run --rm -v $PWD:/target -e MY_UID=$UID omnilint
+      - docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint
 
