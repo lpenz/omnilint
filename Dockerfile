@@ -1,5 +1,5 @@
 FROM debian:stretch
-MAINTAINER Leandro Penz <lpenz@lpenz.org>
+MAINTAINER Leandro Lisboa Penz <lpenz@lpenz.org>
 
 # install debian packages:
 ENV DEBIAN_FRONTEND=noninteractive
@@ -35,7 +35,7 @@ RUN set -x -e; \
     (\
     echo '#!/bin/bash'; \
     echo 'MY_UID=${MY_UID:-1000}'; \
-    echo 'set -x -e'; \
+    echo 'set -e'; \
     echo 'useradd -M -u "$MY_UID" -o user'; \
     echo 'cd $RWD'; \
     echo 'exec gosu user "${@:-/bin/bash}"'; \
