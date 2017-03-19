@@ -10,16 +10,7 @@ class ReporterStderr(object):
     def __init__(self):
         self.num_errors = 0
 
-    def report(self, msg, file=None, line=None, column=None):
-        output = []
-        if file is not None:
-            output.append(file + ':')
-            if line is not None:
-                output.append(str(line) + ':')
-                if column is not None:
-                    output.append(str(column) + ':')
-            output.append(' ')
-        output.append(msg)
-        output.append('\n')
-        sys.stderr.write(''.join(output))
+    def report(self, error):
+        sys.stderr.write(error.gcc_style())
+        sys.stderr.write('\n')
         self.num_errors += 1

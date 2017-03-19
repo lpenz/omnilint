@@ -3,6 +3,7 @@
 import subprocess
 import json
 
+from omnilint.error import Error
 from omnilint.checker import Checker
 
 
@@ -15,17 +16,17 @@ class Shell(Checker):
 
     def check(self, reporter, origname, tmpname, fd):
         p = subprocess.Popen(
-            ['shellcheck', '-fjson', tmpname],
-            stdout=subprocess.PIPE)
+            ['shellcheck', '-fjson', tmpname], stdout=subprocess.PIPE)
         output = p.stdout.read().decode('utf-8')
         errors = json.loads(output)
         p.wait()
         for e in errors:
             reporter.report(
-                file=origname,
-                msg=e['message'],
-                line=e['line'],
-                column=e['column'], )
+                Error(
+                    msg=e['message'],
+                    file=origname,
+                    line=e['line'],
+                    column=e['column'], ))
 
 
 def register(omnilint):
