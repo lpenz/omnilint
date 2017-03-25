@@ -21,8 +21,7 @@ class Omnilint(object):
         self.checkers.append(checker)
 
     def checkers_load(self):
-        checkers_directory = os.path.join(os.path.dirname(__file__),
-                                          'checker')
+        checkers_directory = os.path.join(os.path.dirname(__file__), 'checker')
         for filename in os.listdir(checkers_directory):
             if filename.startswith('__'):
                 continue
@@ -43,7 +42,18 @@ class Omnilint(object):
                 if m:
                     executable = os.path.basename(m.group(1))
                     break
-            for p in self.checkers:
-                if executable and executable in p.executables:
-                    c = p()
-                    c.check(reporter, filename, filename, firstline)
+            extension = os.path.splitext(filename)[1]
+            if extension and extension[0] == '.':
+                extension = extension[1:]
+            with open(filename) as fd:
+                for p in self.checkers:
+                    if (executable and executable in p.executables) \
+                       or (extension and extension in p.extensions):
+                        c = p()
+                        fd.seek(0)
+                        c.check(
+                            reporter,
+                            origname=filename,
+                            tmpname=filename,
+                            firstline=firstline,
+                            fd=fd)

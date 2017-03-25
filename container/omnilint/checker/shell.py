@@ -14,7 +14,7 @@ class Shell(Checker):
     def __init__(self):
         super(Shell, self).__init__()
 
-    def check(self, reporter, origname, tmpname, fd):
+    def check(self, reporter, origname, tmpname, firstline, fd):
         p = subprocess.Popen(
             ['shellcheck', '-fjson', tmpname], stdout=subprocess.PIPE)
         output = p.stdout.read().decode('utf-8')
