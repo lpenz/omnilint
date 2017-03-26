@@ -8,6 +8,8 @@ RUN set -x -e; \
     apt-get install -y --no-install-recommends \
         # shell:
         shellcheck \
+        # yaml:
+        python3-yaml \
         # python:
         flake8 python-setuptools python-pip python-wheel \
         # base packages:
