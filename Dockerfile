@@ -11,7 +11,9 @@ RUN set -x -e; \
         # yaml:
         python3-yaml \
         # python:
-        flake8 python-setuptools python-pip python-wheel \
+        flake8 \
+        # omnilint:
+        python-setuptools python-pip python-wheel python3-lxml \
         # base packages:
         locales gosu sudo
 

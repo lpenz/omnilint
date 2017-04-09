@@ -34,6 +34,9 @@ files to be analyzed mapped:
 
     docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint
 
+You can also simply call the script `bin/omnilint-docker-run` that is present in
+the repository.
+
 
 ## Travis
 
