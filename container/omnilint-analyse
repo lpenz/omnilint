@@ -6,17 +6,22 @@ import sys
 import argparse
 
 import omnilint
-from omnilint.reporters import ReporterStderr
+from omnilint.reporters import ReporterLine
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        '--output',
+        '-o',
+        type=argparse.FileType('w'),
+        default=sys.stderr)
     parser.add_argument('paths', nargs='+')
     args = parser.parse_args()
     ol = omnilint.Omnilint()
     ol.checkers_load()
     exclude = set(['.git', 'CVS', '.svn'])
-    reporter = ReporterStderr()
+    reporter = ReporterLine(args.output)
     for path in args.paths:
         for root, dirs, files in os.walk(path, topdown=True):
             dirs[:] = [d for d in dirs if d not in exclude]

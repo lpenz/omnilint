@@ -1,16 +1,15 @@
 '''Collection of reporter classes'''
 
-import sys
 
+class ReporterLine(object):
+    '''Default reporter object with human-readable line-oriented
+    format (gcc)'''
 
-class ReporterStderr(object):
-    '''Default reporter object that simply writes errors to stderr
-    in gcc format'''
-
-    def __init__(self):
+    def __init__(self, fd):
+        self.fd = fd
         self.num_errors = 0
 
     def report(self, error):
-        sys.stderr.write(error.gcc_style())
-        sys.stderr.write('\n')
+        self.fd.write(error.gcc_style())
+        self.fd.write('\n')
         self.num_errors += 1
