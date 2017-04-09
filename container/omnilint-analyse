@@ -6,7 +6,7 @@ import sys
 import argparse
 
 import omnilint
-from omnilint.reporters import ReporterLine
+from omnilint.reporters import REPORTERS
 
 
 def main():
@@ -16,18 +16,24 @@ def main():
         '-o',
         type=argparse.FileType('w'),
         default=sys.stderr)
+    parser.add_argument(
+        '--format',
+        '-f',
+        choices=REPORTERS.keys(),
+        default='gcc')
     parser.add_argument('paths', nargs='+')
     args = parser.parse_args()
     ol = omnilint.Omnilint()
     ol.checkers_load()
     exclude = set(['.git', 'CVS', '.svn'])
-    reporter = ReporterLine(args.output)
+    reporter = REPORTERS[args.format](args.output)
     for path in args.paths:
         for root, dirs, files in os.walk(path, topdown=True):
             dirs[:] = [d for d in dirs if d not in exclude]
             for basename in files:
                 filename = os.path.join(root, basename)
                 ol.analyse_file(reporter, filename)
+    reporter.close()
     if reporter.num_errors > 0:
         sys.exit(1)
 

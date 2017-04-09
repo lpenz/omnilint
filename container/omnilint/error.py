@@ -8,6 +8,13 @@ class Error(object):
         self.line = line
         self.column = column
 
+    def __iter__(self):
+        '''Use this for OrderedDict(error)'''
+        yield 'file', self.file
+        yield 'line', self.line
+        yield 'column', self.column
+        yield 'message', self.msg
+
     def gcc_style(self):
         output = []
         if self.file is not None:
