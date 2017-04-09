@@ -5,4 +5,4 @@ services:
   - docker
 script:
   - docker build -t ${PWD##*/} .
-  - ./bin/omnilint-docker-run
+  - ./bin/omnilint-docker-run .
