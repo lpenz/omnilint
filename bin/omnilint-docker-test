@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e -x
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$DIR/../tests"
+docker run -it --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint python3 -m unittest discover
