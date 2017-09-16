@@ -5,15 +5,17 @@ import json
 
 
 class Reporter(object):
-    def __init__(self, fd):
-        self.fd = fd
+    def __init__(self):
         self.num_errors = 0
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
 
     def report(self, error):
         self.num_errors += 1
-
-    def close(self):
-        pass
 
 
 class ReporterGcc(Reporter):
@@ -21,21 +23,27 @@ class ReporterGcc(Reporter):
     format (gcc)'''
 
     def __init__(self, fd):
-        super(ReporterGcc, self).__init__(fd)
+        super(ReporterGcc, self).__init__()
+        self.fd = fd
 
-    def report(self, error):
+    def report(self, fd, error):
         super(ReporterGcc, self).report(error)
         self.fd.write(error.gcc_style())
         self.fd.write('\n')
-        self.num_errors += 1
 
 
 class ReporterJsonList(Reporter):
     '''Reporter that writes a json list of error dictionaries'''
 
     def __init__(self, fd):
-        super(ReporterJsonList, self).__init__(fd)
+        super(ReporterJsonList, self).__init__()
+        self.fd = fd
+
+    def __enter__(self):
         self.fd.write('[\n')
+
+    def __exit__(self, type, value, traceback):
+        self.fd.write(']\n')
 
     def report(self, error):
         super(ReporterJsonList, self).report(error)
@@ -43,8 +51,6 @@ class ReporterJsonList(Reporter):
         json.dump(OrderedDict(error), self.fd)
         self.fd.write('\n')
 
-    def close(self):
-        self.fd.write(']\n')
 
 
 REPORTERS = {
