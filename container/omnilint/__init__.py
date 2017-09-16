@@ -49,15 +49,14 @@ class Omnilint(object):
             extension = os.path.splitext(filename)[1]
             if extension and extension[0] == '.':
                 extension = extension[1:]
-            with open(filename) as fd:
-                for p in self.checkers:
-                    if (executable and executable in p.executables) \
-                       or (extension and extension in p.extensions):
-                        c = p()
-                        fd.seek(0)
-                        c.check(
-                            reporter,
-                            origname=filename,
-                            tmpname=filename,
-                            firstline=firstline,
-                            fd=fd)
+            for p in self.checkers:
+                if (executable and executable in p.executables) or (
+                        extension and extension in p.extensions):
+                    c = p()
+                    fd.seek(0)
+                    c.check(
+                        reporter,
+                        origname=filename,
+                        tmpname=filename,
+                        firstline=firstline,
+                        fd=fd)
