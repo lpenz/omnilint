@@ -52,6 +52,18 @@ class ReporterJsonList(Reporter):
         self.fd.write('\n')
 
 
+class ReporterList(Reporter):
+    '''Reporter that stores the errors in an in-memory list'''
+
+    def __init__(self):
+        super(ReporterList, self).__init__()
+        self.list = []
+
+    def report(self, error):
+        super(ReporterList, self).report(error)
+        self.list.append(OrderedDict(error))
+        return self.list
+
 
 REPORTERS = {
     'gcc': ReporterGcc,
