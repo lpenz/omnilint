@@ -34,14 +34,18 @@ class Omnilint(object):
 
     def analyse_file(self, reporter, filename):
         with open(filename) as fd:
-            firstline = fd.readline().rstrip()
+            try:
+                firstline = fd.readline().rstrip()
+            except:
+                firstline = None
             fd.seek(0)
             executable = None
-            for e in self.exec_regexes:
-                m = e.match(firstline)
-                if m:
-                    executable = os.path.basename(m.group(1))
-                    break
+            if firstline:
+                for e in self.exec_regexes:
+                    m = e.match(firstline)
+                    if m:
+                        executable = os.path.basename(m.group(1))
+                        break
             extension = os.path.splitext(filename)[1]
             if extension and extension[0] == '.':
                 extension = extension[1:]

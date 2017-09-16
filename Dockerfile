@@ -49,7 +49,5 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["/usr/local/bin/omnilint-analyse","."]
 
-# If your UID is 1000, you can simply run the container as
-# docker run -it --rm -v $PWD:/target ${PWD##*/}
-# otherwise, run it as:
-# docker run -it --rm -v $PWD:/target -e MY_UID=$UID ${PWD##*/}
+# Run the container as:
+# docker run -it --rm -v $PWD:$PWD -e RWD=$PWD -e MY_UID=$UID omnilint

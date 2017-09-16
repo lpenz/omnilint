@@ -26,7 +26,7 @@ class ReporterGcc(Reporter):
         super(ReporterGcc, self).__init__()
         self.fd = fd
 
-    def report(self, fd, error):
+    def report(self, error):
         super(ReporterGcc, self).report(error)
         self.fd.write(error.gcc_style())
         self.fd.write('\n')
