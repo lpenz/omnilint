@@ -10,28 +10,29 @@ from omnilint.checker import Checker
 class PythonFlake8(Checker):
 
     executables = ['python', 'python3']
+    extensions = ['py']
 
     def __init__(self):
         super(PythonFlake8, self).__init__()
 
     def check(self, reporter, origname, tmpname, firstline, fd):
-        p = subprocess.Popen(['flake8', tmpname], stdout=subprocess.PIPE)
-        regex = re.compile(''.join([
-            '^(?P<path>[^:]+)', ':(?P<line>[0-9]+)', ':(?P<column>[0-9]+)',
-            ': (?P<message>.*)$'
-        ]))
+        with subprocess.Popen(
+                ['flake8', tmpname], stdout=subprocess.PIPE) as p:
+            regex = re.compile(''.join([
+                '^(?P<path>[^:]+)', ':(?P<line>[0-9]+)', ':(?P<column>[0-9]+)',
+                ': (?P<message>.*)$'
+            ]))
 
-        for l in p.stdout:
-            m = regex.match(l.rstrip())
-            assert m
-            reporter.report(
-                Error(
-                    msg=m['message'],
-                    file=origname,
-                    line=m['line'],
-                    column=m['column'], ))
-
-        p.wait()
+            for l in p.stdout:
+                l = l.decode('utf-8').rstrip()
+                m = regex.match(l)
+                assert m
+                reporter.report(
+                    Error(
+                        msg=m.group('message'),
+                        file=origname,
+                        line=int(m.group('line')),
+                        column=int(m.group('column'))))
 
 
 def register(omnilint):
