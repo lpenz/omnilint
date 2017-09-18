@@ -27,7 +27,7 @@ class TestCheckers(unittest.TestCase):
             'message': 'Expecting property name enclosed in double quotes'}])
 
     def test_python_flake8(self):
-        errs = common.checkthis('flake8', '.py', 'import re\n')
+        errs = common.checkthis('python.flake8', '.py', 'import re\n')
         self.assertEqual([dict(e) for e in errs], [{
             'line': 1, 'column': 1,
             'message': "F401 're' imported but unused"}])

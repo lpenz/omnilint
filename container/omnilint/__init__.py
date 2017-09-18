@@ -21,14 +21,22 @@ class Omnilint(object):
         self.checkers.append(checker)
 
     def checkers_load(self):
-        checkers_directory = os.path.join(os.path.dirname(__file__), 'checker')
-        for filename in os.listdir(checkers_directory):
-            if filename.startswith('__'):
-                continue
-            self.checker_load(os.path.splitext(filename)[0])
+        omnilint_dir = os.path.dirname(__file__)
+        checkers_dir = os.path.join(omnilint_dir, 'checkers')
+        for root, dirs, files in os.walk(checkers_dir):
+            for filename in files:
+                if filename.startswith('__'):
+                    continue
+                modbasename = os.path.splitext(filename)[0]
+                modprefix = os.path.relpath(root, checkers_dir)
+                if modprefix == '.':
+                    modprefix = ''
+                else:
+                    modprefix = modprefix.replace('/', '.') + '.'
+                self.checker_load(modprefix + modbasename)
 
-    def checker_load(self, checker_name):
-        module_name = 'omnilint.checker.' + checker_name
+    def checker_load(self, checker_id):
+        module_name = 'omnilint.checkers.' + checker_id
         checker = importlib.import_module(module_name)
         checker.register(self)
 

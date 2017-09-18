@@ -1,35 +1,35 @@
-'''yaml checker'''
+'''json checker'''
 
-import yaml
+import json
 
 from omnilint.error import Error
-from omnilint.checker import Checker
+from omnilint.checkers import Checker
 
 
-class Yaml(Checker):
+class Json(Checker):
 
-    extensions = ['yaml', 'yml']
+    extensions = ['json']
 
     def __init__(self):
-        super(Yaml, self).__init__()
+        super(Json, self).__init__()
 
     def check(self, reporter, origname, tmpname, firstline, fd):
         exc = None
         try:
-            yaml.load(fd)
-        except yaml.YAMLError as e:
+            json.load(fd)
+        except json.JSONDecodeError as e:
             exc = e
         if exc is None:
             return
         reporter.report(
             Error(
-                msg=exc.context + ' ' + exc.problem,
+                msg=exc.msg,
                 file=origname,
-                line=exc.problem_mark.line,
-                column=exc.problem_mark.column))
+                line=exc.lineno,
+                column=exc.colno))
 
 
 def register(omnilint):
     '''Registration function, called by omnilint while loading the checker with
     itself as argument'''
-    omnilint.register(Yaml)
+    omnilint.register(Json)

@@ -4,7 +4,7 @@ import subprocess
 import json
 
 from omnilint.error import Error
-from omnilint.checker import Checker
+from omnilint.checkers import Checker
 
 
 class Shell(Checker):
