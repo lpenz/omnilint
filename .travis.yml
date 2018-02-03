@@ -1,8 +1,5 @@
 ---
-language: bash
-sudo: required
-services:
-  - docker
+language: generic
 script:
   - docker build -t ${PWD##*/} .
   - ./bin/omnilint-docker-run .

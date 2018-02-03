@@ -3,6 +3,24 @@
 
 # omnilint
 
+
+## TL;DR
+
+Add the following to your *.travis.yml* to get a job that performs static
+analysis on the files of your repository:
+
+```yaml
+jobs:
+  include:
+    - env: [ omnilint ]
+      language: generic
+      install: docker pull lpenz/omnilint
+      script: docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
+```
+
+
+## What is omnilint
+
 **omnilint** is a container-based tool that provides a unified interface for the
 static analysis of any file, using the appropriate tool.
 
@@ -36,19 +54,4 @@ files to be analyzed mapped:
 
 You can also simply call the script `bin/omnilint-docker-run` that is present in
 the repository.
-
-
-## Travis
-
-The following basic `.travis.yml` installs and runs omnilint in all files in the
-repository:
-
-    ---
-    sudo: required
-    services:
-      - docker
-    before_install:
-      - docker pull lpenz/omnilint
-    script:
-      - docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint
 
