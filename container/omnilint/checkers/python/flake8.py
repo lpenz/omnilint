@@ -5,15 +5,13 @@ import re
 
 from omnilint.error import Error
 from omnilint.checkers import Checker
+from omnilint.checkers.python import PythonFiletype
 
 
-class PythonFlake8(Checker):
-
-    executables = ['python', 'python3']
-    extensions = ['py']
+class PythonFlake8(PythonFiletype, Checker):
 
     def __init__(self):
-        super(PythonFlake8, self).__init__()
+        Checker.__init__(self)
 
     def check(self, reporter, origname, tmpname, firstline, fd):
         with subprocess.Popen(
@@ -23,9 +21,9 @@ class PythonFlake8(Checker):
                 ': (?P<message>.*)$'
             ]))
 
-            for l in p.stdout:
-                l = l.decode('utf-8').rstrip()
-                m = regex.match(l)
+            for line in p.stdout:
+                line = line.decode('utf-8').rstrip()
+                m = regex.match(line)
                 assert m
                 reporter.report(
                     Error(
