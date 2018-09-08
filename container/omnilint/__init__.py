@@ -9,8 +9,8 @@ class Omnilint(object):
     '''Main omnilint backend class'''
 
     exec_regexes = [
-        re.compile('^#!/usr/bin/env ([^ ]+)'),
-        re.compile('^#!/bin/env ([^ ]+)'),
+        re.compile('^#! */usr/bin/env ([^ ]+)'),
+        re.compile('^#! */bin/env ([^ ]+)'),
         re.compile('^#! *([^ ]+)'),
     ]
 
@@ -44,7 +44,7 @@ class Omnilint(object):
         with open(filename) as fd:
             try:
                 firstline = fd.readline().rstrip()
-            except:
+            except Exception:
                 firstline = None
             fd.seek(0)
             executable = None
