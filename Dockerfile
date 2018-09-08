@@ -12,6 +12,8 @@ RUN set -x -e; \
         python3-yaml \
         # python:
         flake8 \
+        # perl
+        libperl-critic-perl \
         # omnilint:
         python-setuptools python-pip python-wheel python3-lxml \
         # base packages:
