@@ -12,7 +12,7 @@ analysis on the files of your repository:
 ```yaml
 jobs:
   include:
-    - env: [ omnilint ]
+    - name: omnilint
       language: generic
       install: docker pull lpenz/omnilint
       script: docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
