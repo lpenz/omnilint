@@ -12,24 +12,22 @@ from omnilint.reporters import REPORTERS
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        '--output',
-        '-o',
-        type=argparse.FileType('w'),
-        default=sys.stderr)
+        '--output', '-o', type=argparse.FileType('w'), default=sys.stderr)
     parser.add_argument(
-        '--format',
-        '-f',
-        choices=REPORTERS.keys(),
-        default='gcc')
+        '--exclude-dir',
+        dest='excludedir',
+        action='append',
+        default=['.git', 'CVS', '.svn'])
+    parser.add_argument(
+        '--format', '-f', choices=REPORTERS.keys(), default='gcc')
     parser.add_argument('paths', nargs='+')
     args = parser.parse_args()
     ol = omnilint.Omnilint()
     ol.checkers_load()
-    exclude = set(['.git', 'CVS', '.svn'])
     with REPORTERS[args.format](args.output) as reporter:
         for path in args.paths:
             for root, dirs, files in os.walk(path, topdown=True):
-                dirs[:] = [d for d in dirs if d not in exclude]
+                dirs[:] = [d for d in dirs if d not in args.excludedir]
                 for basename in files:
                     filename = os.path.join(root, basename)
                     ol.analyse_file(reporter, filename)
