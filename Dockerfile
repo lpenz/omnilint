@@ -49,7 +49,7 @@ RUN set -x -e; \
     chmod a+x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["/usr/local/bin/omnilint-analyse","."]
+CMD ["omnilint-analyse"]
 
 # Run the container as:
 # docker run -it --rm -v $PWD:$PWD -e RWD=$PWD -e MY_UID=$UID omnilint

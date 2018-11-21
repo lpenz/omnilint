@@ -20,7 +20,7 @@ def main():
         default=['.git', 'CVS', '.svn'])
     parser.add_argument(
         '--format', '-f', choices=REPORTERS.keys(), default='gcc')
-    parser.add_argument('paths', nargs='+')
+    parser.add_argument('paths', nargs='*', default=['.'])
     args = parser.parse_args()
     ol = omnilint.Omnilint()
     ol.checkers_load()
