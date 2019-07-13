@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:buster
 MAINTAINER Leandro Lisboa Penz <lpenz@lpenz.org>
 
 # install debian packages:
@@ -34,7 +34,7 @@ RUN set -x -e; \
         py3kwarn==0.4.4
 
 COPY container/omnilint-analyse /usr/local/bin/omnilint-analyse
-COPY container/omnilint /usr/local/lib/python3.5/dist-packages/omnilint
+COPY container/omnilint /usr/local/lib/python3.7/dist-packages/omnilint
 
 # setup entrypoint with user UID/GID from host
 RUN set -x -e; \
