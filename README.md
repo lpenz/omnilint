@@ -15,7 +15,7 @@ jobs:
     - name: omnilint
       language: generic
       install: docker pull lpenz/omnilint
-      script: docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" lpenz/omnilint
+      script: docker run --rm -v "$PWD:$PWD" -w "$PWD" -e "MY_UID=$UID" lpenz/omnilint
 ```
 
 
@@ -50,7 +50,7 @@ The easier way to install omnilint is by pulling the container from
 Using omnilint is a matter of starting the container with the directory with the
 files to be analyzed mapped:
 
-    docker run --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint
+    docker run --rm -v "$PWD:$PWD" -w "$PWD" -e "MY_UID=$UID" omnilint
 
 You can also simply call the script `bin/omnilint-docker-run` that is present in
 the repository.

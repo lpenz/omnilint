@@ -2,4 +2,4 @@
 
 set -e
 
-docker run -it --rm -v "$PWD:$PWD" -e "RWD=$PWD" -e "MY_UID=$UID" omnilint /usr/local/bin/omnilint-analyse "$@"
+docker run -it --rm -v "$PWD:$PWD" -w "$PWD" -e "MY_UID=$UID" omnilint /usr/local/bin/omnilint-analyse "$@"

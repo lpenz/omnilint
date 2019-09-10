@@ -43,7 +43,7 @@ RUN set -x -e; \
     echo 'MY_UID=${MY_UID:-1000}'; \
     echo 'set -e'; \
     echo 'useradd -M -u "$MY_UID" -o user'; \
-    echo 'cd $RWD'; \
+    echo 'if [ -n "$RWD" ]; then cd "$RWD"; fi'; \
     echo 'exec gosu user "${@:-/bin/bash}"'; \
     ) > /usr/local/bin/entrypoint.sh; \
     chmod a+x /usr/local/bin/entrypoint.sh
@@ -52,4 +52,4 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["omnilint-analyse"]
 
 # Run the container as:
-# docker run -it --rm -v $PWD:$PWD -e RWD=$PWD -e MY_UID=$UID omnilint
+# docker run -it --rm -v $PWD:$PWD -w $PWD -e MY_UID=$UID omnilint
