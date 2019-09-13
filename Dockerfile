@@ -40,8 +40,9 @@ COPY container/omnilint /usr/local/lib/python3.7/dist-packages/omnilint
 RUN set -x -e; \
     (\
     echo '#!/bin/bash'; \
-    echo 'MY_UID=${MY_UID:-1000}'; \
     echo 'set -e'; \
+    echo 'if [ -z "$MY_UID" ]; then exec "${@:-/bin/bash}"; fi'; \
+    echo 'MY_UID=${MY_UID:-1000}'; \
     echo 'useradd -M -u "$MY_UID" -o user'; \
     echo 'if [ -n "$RWD" ]; then cd "$RWD"; fi'; \
     echo 'exec gosu user "${@:-/bin/bash}"'; \
