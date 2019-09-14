@@ -4,4 +4,4 @@ set -e -x
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR/../tests"
-docker run -it --rm -v "$PWD:$PWD" -w "$PWD" -e "MY_UID=$UID" omnilint python3 -m unittest discover
+docker run -it --rm -u "$UID" -v "$PWD:$PWD" -w "$PWD" omnilint python3 -m unittest discover

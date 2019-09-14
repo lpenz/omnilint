@@ -53,4 +53,4 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["omnilint-analyse"]
 
 # Run the container as:
-# docker run -it --rm -v $PWD:$PWD -w $PWD -e MY_UID=$UID omnilint
+# docker run -it --rm -u $UID -v $PWD:$PWD -w $PWD omnilint
