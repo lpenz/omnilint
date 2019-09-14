@@ -17,13 +17,11 @@ RUN set -x -e; \
         # omnilint:
         python-setuptools python-pip python-wheel python3-lxml \
         # base packages:
-        locales gosu sudo
+        locales gosu
 
-# setup sudo and locale
+# setup su and locale
 RUN set -x -e; \
-    echo 'ALL ALL=NOPASSWD:ALL' > /etc/sudoers.d/all; \
-    chmod 0400 /etc/sudoers.d/all; \
-    mkdir /target; \
+    sed -i '/pam_rootok.so$/aauth sufficient pam_permit.so' /etc/pam.d/su; \
     echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; \
     locale-gen
 ENV LC_ALL=en_US.UTF-8
@@ -46,9 +44,9 @@ RUN set -x -e; \
     echo 'useradd -M -u "$MY_UID" -o user'; \
     echo 'if [ -n "$RWD" ]; then cd "$RWD"; fi'; \
     echo 'exec gosu user "${@:-/bin/bash}"'; \
-    ) > /usr/local/bin/entrypoint.sh; \
-    chmod a+x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+    ) > /usr/local/bin/entrypoint; \
+    chmod a+x /usr/local/bin/entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint"]
 
 CMD ["omnilint-analyse"]
 
