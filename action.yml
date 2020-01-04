@@ -1,0 +1,9 @@
+---
+name: ghaction-omnilint
+description: 'Statically analyse any file with the appropriate tools'
+branding:
+  icon: 'crosshair'
+  color: 'blue'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
