@@ -18,6 +18,21 @@ jobs:
       script: docker run --rm -u "$UID" -v "$PWD:$PWD" -w "$PWD" lpenz/omnilint
 ```
 
+Or use it as a github action with a
+[workflow](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/configuring-a-workflow)
+file like the following:
+
+```yaml
+name: CI
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: docker://lpenz/omnilint:latest
+```
+
 
 ## What is omnilint
 
@@ -36,7 +51,7 @@ omnilint is specially useful when combined with CI tools
 like [travis](https://travis-ci.org), [jenkins](https://jenkins.io), etc.
 
 
-## Installation and Usage
+## Installation and local usage
 
 Requirements:
 - docker
