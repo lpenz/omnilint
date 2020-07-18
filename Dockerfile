@@ -32,7 +32,8 @@ ENV LC_ALL=en_US.UTF-8
 # install pip packages:
 RUN set -x -e; \
     pip install \
-        py3kwarn==0.4.4
+        py3kwarn==0.4.4 \
+        ansible-lint==4.2.0
 
 COPY container/omnilint-analyse /usr/local/bin/omnilint-analyse
 COPY container/omnilint /usr/local/lib/python3.7/dist-packages/omnilint
