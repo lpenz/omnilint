@@ -24,11 +24,10 @@ class Yaml(Checker):
         if exc is None:
             return
         reporter.report(
-            Error(
-                msg=exc.context + ' ' + exc.problem,
-                file=origname,
-                line=exc.problem_mark.line,
-                column=exc.problem_mark.column))
+            Error(msg=exc.context + ' ' + exc.problem,
+                  file=origname,
+                  line=exc.problem_mark.line,
+                  column=exc.problem_mark.column))
 
 
 def register(omnilint):

@@ -23,7 +23,6 @@ class Reporter(object):
 class ReporterGcc(Reporter):
     '''Default reporter object with human-readable line-oriented
     format (gcc)'''
-
     def __init__(self, fd):
         super(ReporterGcc, self).__init__()
         self.fd = fd
@@ -36,7 +35,6 @@ class ReporterGcc(Reporter):
 
 class ReporterJsonList(Reporter):
     '''Reporter that writes a json list of error dictionaries'''
-
     def __init__(self, fd):
         super(ReporterJsonList, self).__init__()
         self.fd = fd
@@ -56,7 +54,6 @@ class ReporterJsonList(Reporter):
 
 class ReporterList(Reporter):
     '''Reporter that stores the errors in an in-memory list'''
-
     def __init__(self):
         super(ReporterList, self).__init__()
         self.list = []

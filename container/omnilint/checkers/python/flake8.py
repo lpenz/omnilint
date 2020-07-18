@@ -11,13 +11,12 @@ from omnilint.checkers.python import PythonFiletype
 
 
 class PythonFlake8(PythonFiletype, Checker):
-
     def __init__(self):
         Checker.__init__(self)
 
     def check(self, reporter, origname, tmpname, firstline, fd):
-        with subprocess.Popen(
-                ['flake8', tmpname], stdout=subprocess.PIPE) as p:
+        with subprocess.Popen(['flake8', tmpname],
+                              stdout=subprocess.PIPE) as p:
             regex = re.compile(''.join([
                 '^(?P<path>[^:]+)', ':(?P<line>[0-9]+)', ':(?P<column>[0-9]+)',
                 ': (?P<message>.*)$'
@@ -28,11 +27,10 @@ class PythonFlake8(PythonFiletype, Checker):
                 m = regex.match(line)
                 assert m
                 reporter.report(
-                    Error(
-                        msg=m.group('message'),
-                        file=origname,
-                        line=int(m.group('line')),
-                        column=int(m.group('column'))))
+                    Error(msg=m.group('message'),
+                          file=origname,
+                          line=int(m.group('line')),
+                          column=int(m.group('column'))))
 
 
 def register(omnilint):

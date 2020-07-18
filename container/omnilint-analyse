@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # This file is subject to the terms and conditions defined in
 # file 'LICENSE', which is part of this source code package.
-
 '''Call linters for all files and format output.'''
 
 import os
@@ -14,15 +13,18 @@ from omnilint.reporters import REPORTERS
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        '--output', '-o', type=argparse.FileType('w'), default=sys.stderr)
-    parser.add_argument(
-        '--exclude-dir',
-        dest='excludedir',
-        action='append',
-        default=['.git', 'CVS', '.svn'])
-    parser.add_argument(
-        '--format', '-f', choices=REPORTERS.keys(), default='gcc')
+    parser.add_argument('--output',
+                        '-o',
+                        type=argparse.FileType('w'),
+                        default=sys.stderr)
+    parser.add_argument('--exclude-dir',
+                        dest='excludedir',
+                        action='append',
+                        default=['.git', 'CVS', '.svn'])
+    parser.add_argument('--format',
+                        '-f',
+                        choices=REPORTERS.keys(),
+                        default='gcc')
     parser.add_argument('paths', nargs='*', default=['.'])
     args = parser.parse_args()
     ol = omnilint.Omnilint()

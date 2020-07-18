@@ -17,8 +17,8 @@ class Shell(Checker):
         super(Shell, self).__init__()
 
     def check(self, reporter, origname, tmpname, firstline, fd):
-        p = subprocess.Popen(
-            ['shellcheck', '-fjson', tmpname], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['shellcheck', '-fjson', tmpname],
+                             stdout=subprocess.PIPE)
         output = p.stdout.read().decode('utf-8')
         errors = json.loads(output)
         p.wait()
@@ -28,7 +28,8 @@ class Shell(Checker):
                     msg=e['message'],
                     file=origname,
                     line=e['line'],
-                    column=e['column'], ))
+                    column=e['column'],
+                ))
 
 
 def register(omnilint):

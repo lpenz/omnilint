@@ -38,11 +38,10 @@ class Perl(Checker):
                 m = regex.match(line)
                 assert m, line
                 reporter.report(
-                    Error(
-                        msg=m.group('message'),
-                        file=origname,
-                        line=int(m.group('line')),
-                        column=int(m.group('column'))))
+                    Error(msg=m.group('message'),
+                          file=origname,
+                          line=int(m.group('line')),
+                          column=int(m.group('column'))))
                 linenum += 1
 
 

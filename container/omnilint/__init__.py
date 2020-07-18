@@ -64,9 +64,8 @@ class Omnilint(object):
                         extension and extension in p.extensions):
                     c = p()
                     fd.seek(0)
-                    c.check(
-                        reporter,
-                        origname=filename,
-                        tmpname=filename,
-                        firstline=firstline,
-                        fd=fd)
+                    c.check(reporter,
+                            origname=filename,
+                            tmpname=filename,
+                            firstline=firstline,
+                            fd=fd)

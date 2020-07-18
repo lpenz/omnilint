@@ -24,11 +24,10 @@ class Json(Checker):
         if exc is None:
             return
         reporter.report(
-            Error(
-                msg=exc.msg,
-                file=origname,
-                line=exc.lineno,
-                column=exc.colno))
+            Error(msg=exc.msg,
+                  file=origname,
+                  line=exc.lineno,
+                  column=exc.colno))
 
 
 def register(omnilint):

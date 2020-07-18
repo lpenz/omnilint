@@ -8,7 +8,6 @@ import omnilint
 
 
 class TestBasic(unittest.TestCase):
-
     def test_basic(self):
         ol = omnilint.Omnilint()
         ol.checkers_load()
