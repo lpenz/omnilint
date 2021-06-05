@@ -1,24 +1,14 @@
-[![Build Status](https://travis-ci.org/lpenz/omnilint.svg?branch=master)](https://travis-ci.org/lpenz/omnilint)
-[![Docker Automated build](https://img.shields.io/docker/automated/lpenz/omnilint.svg)](https://hub.docker.com/r/lpenz/omnilint/builds/)
+[![marketplace](https://img.shields.io/badge/marketplace-omnilint-blue?logo=crosshair)](https://github.com/marketplace/actions/ghaction-omnilint)
+[![CI](https://github.com/lpenz/omnilint/actions/workflows/ci.yml/badge.svg)](https://github.com/lpenz/omnilint/actions/workflows/ci.yml)
+[![github](https://img.shields.io/github/v/release/lpenz/omnilint?include_prereleases&label=release&logo=github)](https://github.com/lpenz/omnilint/releases)
+[![docker](https://img.shields.io/docker/v/lpenz/omnilint?label=release&logo=docker&sort=semver)](https://hub.docker.com/repository/docker/lpenz/omnilint)
 
 # omnilint
 
 
 ## TL;DR
 
-Add the following to your *.travis.yml* to get a job that performs static
-analysis on the files of your repository:
-
-```yaml
-jobs:
-  include:
-    - name: omnilint
-      language: generic
-      install: docker pull lpenz/omnilint
-      script: docker run --rm -u "$UID" -v "$PWD:$PWD" -w "$PWD" lpenz/omnilint
-```
-
-Or use it as a github action with a
+Use *omnilint* as a github action with a
 [workflow](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/configuring-a-workflow)
 file like the following:
 
@@ -30,7 +20,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: docker://lpenz/omnilint:latest
+      - uses: docker://lpenz/omnilint:v0.3
+```
+
+Or add the following to your *.travis.yml* to get a job that performs
+static analysis on the files of your repository:
+
+```yaml
+jobs:
+  include:
+    - name: omnilint
+      language: generic
+      install: docker pull lpenz/omnilint
+      script: docker run --rm -u "$UID" -v "$PWD:$PWD" -w "$PWD" lpenz/omnilint
 ```
 
 

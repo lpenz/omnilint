@@ -5,4 +5,4 @@
 
 set -e
 
-docker run -it --rm -u "$UID" -v "$PWD:$PWD" -w "$PWD" omnilint /usr/local/bin/omnilint-analyse "$@"
+docker run --rm -u "$UID" -v "$PWD:$PWD" -w "$PWD" omnilint /usr/local/bin/omnilint-analyse "$@"
