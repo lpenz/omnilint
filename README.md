@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - uses: docker://lpenz/omnilint:v0.3
 ```
 
