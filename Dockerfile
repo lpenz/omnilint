@@ -2,7 +2,7 @@
 # This file is subject to the terms and conditions defined in
 # file 'LICENSE', which is part of this source code package.
 
-FROM debian:buster
+FROM debian:bullseye
 MAINTAINER Leandro Lisboa Penz <lpenz@lpenz.org>
 
 # install debian packages:
@@ -19,7 +19,7 @@ RUN set -x -e; \
         # perl
         libperl-critic-perl \
         # omnilint:
-        python-setuptools python-pip python-wheel python3-lxml \
+        python3-setuptools python3-pip python3-wheel python3-lxml \
         # base packages:
         locales gosu
 
@@ -33,11 +33,10 @@ ENV LC_ALL=en_US.UTF-8
 # install pip packages:
 RUN set -x -e; \
     pip install \
-        py3kwarn==0.4.4 \
         ansible-lint==4.2.0
 
 COPY container/omnilint-analyse /usr/local/bin/omnilint-analyse
-COPY container/omnilint /usr/local/lib/python3.7/dist-packages/omnilint
+COPY container/omnilint /usr/local/lib/python3.9/dist-packages/omnilint
 
 # setup entrypoint with user UID/GID from host
 RUN set -x -e; \
