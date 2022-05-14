@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://lpenz/omnilint:v0.3
+      - uses: docker://lpenz/omnilint:0.4
 ```
 
 Or add the following to your *.travis.yml* to get a job that performs
