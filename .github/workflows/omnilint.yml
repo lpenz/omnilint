@@ -1,0 +1,12 @@
+---
+# Copyright (C) 2022 Leandro Lisboa Penz <lpenz@lpenz.org>
+# This file is subject to the terms and conditions defined in
+# file 'LICENSE', which is part of this source code package.
+name: omnilint
+on: [ workflow_call ]
+jobs:
+  omnilint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker://lpenz/omnilint:0.5
