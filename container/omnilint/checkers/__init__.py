@@ -1,11 +1,11 @@
 # Copyright (C) 2017 Leandro Lisboa Penz <lpenz@lpenz.org>
 # This file is subject to the terms and conditions defined in
 # file 'LICENSE', which is part of this source code package.
-'''Useful functions for checkers, and base class'''
+"""Useful functions for checkers, and base class"""
 
 
 class Checker(object):
-    '''A base class for checkers'''
+    """A base class for checkers"""
 
     executables = []
     extensions = []

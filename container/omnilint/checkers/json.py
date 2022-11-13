@@ -1,17 +1,17 @@
 # Copyright (C) 2017 Leandro Lisboa Penz <lpenz@lpenz.org>
 # This file is subject to the terms and conditions defined in
 # file 'LICENSE', which is part of this source code package.
-'''json checker'''
+"""json checker"""
 
 import json
 
-from omnilint.error import Error
 from omnilint.checkers import Checker
+from omnilint.error import Error
 
 
 class Json(Checker):
 
-    extensions = ['json']
+    extensions = ["json"]
 
     def __init__(self):
         super(Json, self).__init__()
@@ -25,13 +25,11 @@ class Json(Checker):
         if exc is None:
             return
         reporter.report(
-            Error(msg=exc.msg,
-                  file=origname,
-                  line=exc.lineno,
-                  column=exc.colno))
+            Error(msg=exc.msg, file=origname, line=exc.lineno, column=exc.colno)
+        )
 
 
 def register(omnilint):
-    '''Registration function, called by omnilint while loading the checker with
-    itself as argument'''
+    """Registration function, called by omnilint while loading the checker with
+    itself as argument"""
     omnilint.register(Json)

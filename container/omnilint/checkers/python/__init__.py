@@ -5,5 +5,5 @@
 
 class PythonFiletype(object):
 
-    executables = ['python', 'python3']
-    extensions = ['py']
+    executables = ["python", "python3"]
+    extensions = ["py"]

@@ -1,10 +1,10 @@
 # Copyright (C) 2017 Leandro Lisboa Penz <lpenz@lpenz.org>
 # This file is subject to the terms and conditions defined in
 # file 'LICENSE', which is part of this source code package.
-'''Collection of reporter classes'''
+"""Collection of reporter classes"""
 
-from collections import OrderedDict
 import json
+from collections import OrderedDict
 
 
 class Reporter(object):
@@ -14,7 +14,7 @@ class Reporter(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, typ, value, traceback):
         pass
 
     def report(self, error):
@@ -22,8 +22,9 @@ class Reporter(object):
 
 
 class ReporterGcc(Reporter):
-    '''Default reporter object with human-readable line-oriented
-    format (gcc)'''
+    """Default reporter object with human-readable line-oriented
+    format (gcc)"""
+
     def __init__(self, fd):
         super(ReporterGcc, self).__init__()
         self.fd = fd
@@ -31,30 +32,32 @@ class ReporterGcc(Reporter):
     def report(self, error):
         super(ReporterGcc, self).report(error)
         self.fd.write(error.gcc_style())
-        self.fd.write('\n')
+        self.fd.write("\n")
 
 
 class ReporterJsonList(Reporter):
-    '''Reporter that writes a json list of error dictionaries'''
+    """Reporter that writes a json list of error dictionaries"""
+
     def __init__(self, fd):
         super(ReporterJsonList, self).__init__()
         self.fd = fd
 
     def __enter__(self):
-        self.fd.write('[\n')
+        self.fd.write("[\n")
 
-    def __exit__(self, type, value, traceback):
-        self.fd.write(']\n')
+    def __exit__(self, typ, value, traceback):
+        self.fd.write("]\n")
 
     def report(self, error):
         super(ReporterJsonList, self).report(error)
-        self.fd.write(' ' * 2)
+        self.fd.write(" " * 2)
         json.dump(OrderedDict(error), self.fd)
-        self.fd.write('\n')
+        self.fd.write("\n")
 
 
 class ReporterList(Reporter):
-    '''Reporter that stores the errors in an in-memory list'''
+    """Reporter that stores the errors in an in-memory list"""
+
     def __init__(self):
         super(ReporterList, self).__init__()
         self.list = []
@@ -66,6 +69,6 @@ class ReporterList(Reporter):
 
 
 REPORTERS = {
-    'gcc': ReporterGcc,
-    'json-list': ReporterJsonList,
+    "gcc": ReporterGcc,
+    "json-list": ReporterJsonList,
 }

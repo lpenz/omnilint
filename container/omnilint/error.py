@@ -1,7 +1,7 @@
 # Copyright (C) 2017 Leandro Lisboa Penz <lpenz@lpenz.org>
 # This file is subject to the terms and conditions defined in
 # file 'LICENSE', which is part of this source code package.
-'''Error class'''
+"""Error class"""
 
 
 class Error(object):
@@ -12,20 +12,20 @@ class Error(object):
         self.column = column
 
     def __iter__(self):
-        '''Use this for OrderedDict(error)'''
-        yield 'file', self.file
-        yield 'line', self.line
-        yield 'column', self.column
-        yield 'message', self.msg
+        """Use this for OrderedDict(error)"""
+        yield "file", self.file
+        yield "line", self.line
+        yield "column", self.column
+        yield "message", self.msg
 
     def gcc_style(self):
         output = []
         if self.file is not None:
-            output.append(self.file + ':')
+            output.append(self.file + ":")
             if self.line is not None:
-                output.append(str(self.line) + ':')
+                output.append(str(self.line) + ":")
                 if self.column is not None:
-                    output.append(str(self.column) + ':')
-            output.append(' ')
+                    output.append(str(self.column) + ":")
+            output.append(" ")
         output.append(self.msg)
-        return ''.join(output)
+        return "".join(output)
