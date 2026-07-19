@@ -1,6 +1,6 @@
 ---
 name: CI
-on: [ workflow_dispatch, push, pull_request ]
+on: [workflow_dispatch, push, pull_request]  # yamllint disable-line rule:truthy
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,7 +10,7 @@ jobs:
       - run: ./bin/omnilint-docker-run .
       - run: ./bin/omnilint-docker-test
   publish-dockerhub:
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
@@ -27,14 +27,14 @@ jobs:
           push: ${{ steps.version.outputs.version_docker_ci != 'null' }}
           tags: ${{ github.repository }}:${{ steps.version.outputs.version_docker_ci }}
   publish-github-release:
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
       - id: version
         uses: docker://lpenz/ghaction-version-gen:0.14.0
       - name: publish github release
-        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         if: steps.version.outputs.version_tagged != ''
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
