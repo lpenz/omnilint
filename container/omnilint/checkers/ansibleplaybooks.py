@@ -6,10 +6,9 @@
 import re
 import subprocess
 
+import yaml
 from omnilint.checkers import Checker
 from omnilint.error import Error
-
-import yaml
 
 
 class AnsiblePlaybook(Checker):
@@ -40,7 +39,7 @@ class AnsiblePlaybook(Checker):
         if not self.isplaybook(data):
             return
         with subprocess.Popen(
-            ["/usr/local/bin/ansible-lint", "-p", "--nocolor", tmpname],
+            ["ansible-lint", "-p", "--nocolor", tmpname],
             stdout=subprocess.PIPE,
             env={"HOME": "/tmp"},
         ) as p:
