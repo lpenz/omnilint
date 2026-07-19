@@ -2,8 +2,8 @@
 # This file is subject to the terms and conditions defined in
 # file 'LICENSE', which is part of this source code package.
 
-FROM debian:bullseye-20221024
-MAINTAINER Leandro Lisboa Penz <lpenz@lpenz.org>
+FROM debian:trixie
+LABEL maintainer="Leandro Lisboa Penz <lpenz@lpenz.org>"
 
 # install debian packages:
 ENV DEBIAN_FRONTEND=noninteractive
@@ -18,6 +18,8 @@ RUN set -x -e; \
         flake8 \
         # perl
         libperl-critic-perl \
+        # ansible
+        ansible-lint \
         # omnilint:
         python3-setuptools python3-pip python3-wheel python3-lxml \
         # base packages:
@@ -30,13 +32,8 @@ RUN set -x -e; \
     locale-gen
 ENV LC_ALL=en_US.UTF-8
 
-# install pip packages:
-RUN set -x -e; \
-    pip install \
-        ansible-lint==4.2.0
-
 COPY container/omnilint-analyse /usr/local/bin/omnilint-analyse
-COPY container/omnilint /usr/local/lib/python3.9/dist-packages/omnilint
+COPY container/omnilint /usr/local/lib/python3.13/dist-packages/omnilint
 
 # setup entrypoint with user UID/GID from host
 RUN set -x -e; \

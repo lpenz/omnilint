@@ -36,9 +36,9 @@ class TestCheckers(unittest.TestCase):
             [dict(e) for e in errs],
             [
                 {
-                    "line": 5,
-                    "column": 1,
-                    "message": "Expecting property name enclosed in double quotes",
+                    "line": 4,
+                    "column": 11,
+                    "message": "Illegal trailing comma before end of object",
                 }
             ],
         )
