@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://lpenz/omnilint:0.5.2
+      - uses: docker://lpenz/omnilint:0.6.0
 ```
 
 Another option is using this repository's callable workflow:
@@ -30,7 +30,7 @@ name: CI
 on: push
 jobs:
   omnilint:
-    uses: lpenz/ghworkflow-rust/.github/workflows/rust.yml@v0.5.2
+    uses: lpenz/ghworkflow-rust/.github/workflows/rust.yml@v0.6.0
 ```
 
 Or add the following to your *.travis.yml* to get a job that performs
