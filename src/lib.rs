@@ -32,9 +32,21 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         cli::Commands::Files { files } => {
             for file in &files {
                 eprintln!("Analyzing: {}", file.display());
-                let mut flake8 = linters::flake8::PythonFlake8::new(file)?;
-                while let Some(entry) = flake8.next().await {
-                    eprintln!("{}", entry);
+                let ext = file.extension().and_then(|e| e.to_str());
+                match ext {
+                    Some("yaml" | "yml") => {
+                        let mut yamllint = linters::yamllint::YamlYamllint::new(file)?;
+                        while let Some(entry) = yamllint.next().await {
+                            eprintln!("{}", entry);
+                        }
+                    }
+                    Some("py") => {
+                        let mut flake8 = linters::flake8::PythonFlake8::new(file)?;
+                        while let Some(entry) = flake8.next().await {
+                            eprintln!("{}", entry);
+                        }
+                    }
+                    _ => {}
                 }
             }
         }
