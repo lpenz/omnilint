@@ -1,0 +1,54 @@
+[package]
+name = "omnilint"
+description = "Statically analyse any file with the appropriate tools"
+version = "0.7.0"
+edition = "2024"
+authors = ["Leandro Lisboa Penz <lpenz@lpenz.org>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/lpenz/omnilint"
+repository = "https://github.com/lpenz/omnilint"
+build = "build.rs"
+categories = ["command-line-utilities"]
+keywords = ["command-line"]
+
+[dependencies]
+clap = { version = "4.6.4", features = ["derive"] }
+color-eyre = "0.6.5"
+tokio = { version = "1.53.1", features = ["macros", "rt"] }
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[build-dependencies]
+clap = { version = "4.6.4", features = ["derive"] }
+clap2man = "0.1.1"
+clap_complete = "4.6.7"
+color-eyre = "0.6.5"
+man = "0.3.0"
+
+[package.metadata.deb]
+section = "utils"
+extended-description = """\
+Statically analyse any file with the appropriate tools
+"""
+assets = [
+    ["target/release/omnilint.1", "usr/share/man/man1/", "644"],
+    ["target/release/omnilint", "usr/bin/", "755"],
+    ["LICENSE", "usr/share/doc/omnilint/", "644"],
+    ["AUTHORS", "usr/share/doc/omnilint/", "644"],
+    ["README.md", "usr/share/doc/omnilint/", "644"],
+    ["target/release/omnilint.bash", "/usr/share/bash-completion/completions/", "644"],
+    ["target/release/_omnilint", "/usr/share/zsh/site-functions/", "644"],
+    ["target/release/omnilint.fish", "/usr/share/fish/vendor_completions.d/", "644"],
+]
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/omnilint.1", dest = "/usr/share/man/man1/", mode = "644" },
+    { source = "target/release/omnilint", dest = "/usr/bin/", mode = "755" },
+    { source = "LICENSE", dest = "/usr/share/doc/omnilint/", mode = "644" },
+    { source = "AUTHORS", dest = "/usr/share/doc/omnilint/", mode = "644" },
+    { source = "README.md", dest = "/usr/share/doc/omnilint/", mode = "644" },
+    { source = "target/release/omnilint.bash", dest = "/usr/share/bash-completion/completions/", mode = "644" },
+    { source = "target/release/_omnilint", dest = "/usr/share/zsh/site-functions/", mode = "644" },
+    { source = "target/release/omnilint.fish", dest = "/usr/share/fish/vendor_completions.d/", mode = "644" },
+]

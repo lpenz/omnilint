@@ -1,0 +1,35 @@
+---
+name: CI
+on: [workflow_dispatch, push, pull_request]  # yamllint disable-line rule:truthy
+jobs:
+  omnilint:
+    uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.6.0
+  rust:
+    uses: lpenz/ghworkflow-rust/.github/workflows/rust.yml@v0.29.0
+    with:
+      enable_cargo-semver-checks: false
+      coveralls: true
+      deb: true
+      rpm: true
+      release_files: |
+        omnilint omnilint.1
+      publish_cratesio: true
+      publish_github_release: true
+      publish_packagecloud_repository_deb: |
+        ["debian/debian/trixie",
+         "debian/debian/forky",
+         "ubuntu/ubuntu/noble"]
+      publish_packagecloud_repository_rpm: |
+        ["rpm/rpm_any/rpm_any"]
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+  commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: commit-check/commit-check-action@v2.11.1
+        with:
+          branch: false
