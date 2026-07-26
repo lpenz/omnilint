@@ -12,8 +12,12 @@
 
 mod cli;
 
+mod entry;
+mod linters;
+
 use clap::Parser;
 use std::error::Error;
+use tokio_stream::StreamExt;
 
 /// main function, the single pub function in this lib.
 #[tokio::main(flavor = "current_thread")]
@@ -24,6 +28,16 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
     let args = cli::Cli::parse();
-    eprintln!("{:?}", args);
+    match args.command {
+        cli::Commands::Files { files } => {
+            for file in &files {
+                eprintln!("Analyzing: {}", file.display());
+                let mut flake8 = linters::flake8::PythonFlake8::new(file)?;
+                while let Some(entry) = flake8.next().await {
+                    eprintln!("{}", entry);
+                }
+            }
+        }
+    }
     Ok(())
 }
