@@ -2,7 +2,43 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of this source code package.
 
-//! flake8 python linter
+//! [flake8](https://flake8.pycqa.org/) Python linter wrapper.
+//!
+//! flake8 checks Python source files for style errors (PEP 8), programming
+//! errors, and complexity issues. It is run once per file and its output is
+//! parsed into [`Entry`] values.
+//!
+//! ## Output format
+//!
+//! Each line emitted by flake8 on stdout has the form:
+//!
+//! ```text
+//! <filename>:<line>:<col>: <code> <message>
+//! ```
+//!
+//! For example:
+//!
+//! ```text
+//! mymodule.py:12:1: F401 'os' imported but unused
+//! mymodule.py:45:80: E501 line too long (95 > 79 characters)
+//! ```
+//!
+//! When the line number is `0`, the issue is file-level (e.g. a syntax
+//! error) and no column is reported:
+//!
+//! ```text
+//! mymodule.py:0:0: E999 SyntaxError: invalid syntax
+//! ```
+//!
+//! ## Missing files
+//!
+//! If the file does not exist, flake8 reports an `E902` error on stdout
+//! with line `0`. This is parsed into an [`Entry`] just like any other
+//! output:
+//!
+//! ```text
+//! nonexistent.py:0:1: E902 FileNotFoundError: [Errno 2] No such file or directory: 'nonexistent.py'
+//! ```
 
 use crate::entry::Entry;
 

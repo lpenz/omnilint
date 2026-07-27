@@ -2,7 +2,35 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of this source code package.
 
-//! yamllint yaml linter
+//! [yamllint](https://yamllint.readthedocs.io/) YAML linter wrapper.
+//!
+//! yamllint checks YAML files for syntax errors, formatting issues, and
+//! custom rule violations. It is run once per file with `-f parsable` to
+//! produce machine-readable output that is parsed into [`Entry`] values.
+//!
+//! ## Output format
+//!
+//! Each line emitted by yamllint on stdout has the form:
+//!
+//! ```text
+//! <filename>:<line>:<col>: [<severity>] <message> (<rule-id>)
+//! ```
+//!
+//! For example:
+//!
+//! ```text
+//! config.yaml:1:1: [warning] missing document start "---" (document-start)
+//! config.yaml:5:1: [error] wrong indentation: expected 2 but found 4 (indentation)
+//! ```
+//!
+//! The `[<severity>]` prefix and `(<rule-id>)` suffix are stripped by
+//! the parser before the message is stored in the [`Entry`].
+//!
+//! ## Missing files
+//!
+//! If the file does not exist, yamllint writes an error to stderr and exits
+//! with a non-zero code. No [`Entry`] values are produced; the exit code is
+//! intentionally ignored.
 
 use crate::entry::Entry;
 
