@@ -46,6 +46,12 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
                             eprintln!("{}", entry);
                         }
                     }
+                    Some("sh" | "bash" | "dash" | "ksh") => {
+                        let mut shellcheck = linters::shellcheck::ShShellcheck::new(file)?;
+                        while let Some(entry) = shellcheck.next().await {
+                            eprintln!("{}", entry);
+                        }
+                    }
                     _ => {}
                 }
             }
