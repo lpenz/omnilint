@@ -25,12 +25,6 @@
 //!
 //! The `[<severity>]` prefix and `(<rule-id>)` suffix are stripped by
 //! the parser before the message is stored in the [`Entry`].
-//!
-//! ## Missing files
-//!
-//! If the file does not exist, yamllint writes an error to stderr and exits
-//! with a non-zero code. No [`Entry`] values are produced; the exit code is
-//! intentionally ignored.
 
 use crate::entry::Entry;
 

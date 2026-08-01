@@ -29,16 +29,6 @@
 //! ```text
 //! mymodule.py:0:0: E999 SyntaxError: invalid syntax
 //! ```
-//!
-//! ## Missing files
-//!
-//! If the file does not exist, flake8 reports an `E902` error on stdout
-//! with line `0`. This is parsed into an [`Entry`] just like any other
-//! output:
-//!
-//! ```text
-//! nonexistent.py:0:1: E902 FileNotFoundError: [Errno 2] No such file or directory: 'nonexistent.py'
-//! ```
 
 use crate::entry::Entry;
 

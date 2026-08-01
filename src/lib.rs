@@ -31,7 +31,6 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     match args.command {
         cli::Commands::Files { files } => {
             for file in &files {
-                eprintln!("Analyzing: {}", file.display());
                 let ext = file.extension().and_then(|e| e.to_str());
                 match ext {
                     Some("yaml" | "yml") => {
