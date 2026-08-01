@@ -13,7 +13,10 @@
 mod cli;
 
 mod entry;
+mod filetype;
 mod linters;
+
+use crate::filetype::Filetype;
 
 use clap::Parser;
 use std::error::Error;
@@ -31,21 +34,21 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     match args.command {
         cli::Commands::Files { files } => {
             for file in &files {
-                let ext = file.extension().and_then(|e| e.to_str());
-                match ext {
-                    Some("yaml" | "yml") => {
+                let filetype = Filetype::detect(file);
+                match filetype {
+                    Filetype::Yaml => {
                         let mut yamllint = linters::yamllint::YamlYamllint::new(file)?;
                         while let Some(entry) = yamllint.next().await {
                             eprintln!("{}", entry);
                         }
                     }
-                    Some("py") => {
+                    Filetype::Python => {
                         let mut flake8 = linters::flake8::PythonFlake8::new(file)?;
                         while let Some(entry) = flake8.next().await {
                             eprintln!("{}", entry);
                         }
                     }
-                    Some("sh" | "bash" | "dash" | "ksh") => {
+                    Filetype::Shell => {
                         let mut shellcheck = linters::shellcheck::ShShellcheck::new(file)?;
                         while let Some(entry) = shellcheck.next().await {
                             eprintln!("{}", entry);
