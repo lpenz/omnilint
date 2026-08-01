@@ -2,10 +2,12 @@
 name: CI
 on: [workflow_dispatch, push, pull_request]  # yamllint disable-line rule:truthy
 jobs:
-  omnilint:
-    uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.6.0
+  # We can't run omnilint in omnilint because the dirty test files
+  # have lint errors by design
+  # omnilint:
+  #   uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.6.0
   rust:
-    uses: lpenz/ghworkflow-rust/.github/workflows/rust.yml@v0.29.0
+    uses: lpenz/ghworkflow-rust/.github/workflows/rust.yml@v0.29.4
     with:
       enable_cargo-semver-checks: false
       coveralls: true
