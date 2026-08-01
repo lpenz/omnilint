@@ -11,6 +11,8 @@ jobs:
     with:
       enable_cargo-semver-checks: false
       coveralls: true
+      dependencies_debian: |
+        flake8 shellcheck yamllint
       deb: true
       rpm: true
       release_files: |
