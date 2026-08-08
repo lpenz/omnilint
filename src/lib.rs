@@ -43,12 +43,10 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
                         }
                     }
                     Filetype::Python => {
-                        let mut flake8 = linters::flake8::PythonFlake8::new(file)?;
-                        while let Some(entry) = flake8.next().await {
-                            eprintln!("{}", entry);
-                        }
-                        let mut ruff = linters::ruff::PythonRuff::new(file)?;
-                        while let Some(entry) = ruff.next().await {
+                        let flake8 = linters::flake8::PythonFlake8::new(file)?;
+                        let ruff = linters::ruff::PythonRuff::new(file)?;
+                        let mut merged = flake8.merge(ruff);
+                        while let Some(entry) = merged.next().await {
                             eprintln!("{}", entry);
                         }
                     }

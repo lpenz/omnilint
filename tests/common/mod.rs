@@ -13,7 +13,8 @@ fn fixtures_dir() -> PathBuf {
 }
 
 /// Runs `omnilint files` on the given files from the fixtures directory and
-/// returns its stderr.
+/// returns its stderr, with the output lines sorted so that the result is
+/// deterministic even when linters run in parallel.
 pub fn run(files: &[&str]) -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let output = cmd
@@ -23,5 +24,13 @@ pub fn run(files: &[&str]) -> String {
         .assert()
         .success()
         .stdout("");
-    String::from_utf8_lossy(&output.get_output().stderr).into_owned()
+    let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
+        .lines()
+        .map(Into::into)
+        .collect();
+    if lines.is_empty() {
+        return String::new();
+    }
+    lines.sort();
+    lines.join("\n") + "\n"
 }
