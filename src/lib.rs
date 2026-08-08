@@ -47,6 +47,10 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
                         while let Some(entry) = flake8.next().await {
                             eprintln!("{}", entry);
                         }
+                        let mut ruff = linters::ruff::PythonRuff::new(file)?;
+                        while let Some(entry) = ruff.next().await {
+                            eprintln!("{}", entry);
+                        }
                     }
                     Filetype::Shell => {
                         let mut shellcheck = linters::shellcheck::ShShellcheck::new(file)?;

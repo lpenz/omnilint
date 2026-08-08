@@ -3,5 +3,6 @@
 // file 'LICENSE', which is part of this source code package.
 
 pub mod flake8;
+pub mod ruff;
 pub mod shellcheck;
 pub mod yamllint;
