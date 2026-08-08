@@ -31,14 +31,15 @@
 //! ```
 
 use crate::entry::Entry;
+use crate::linters::parse_line_standard;
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
-use std::task::{Context, Poll, ready};
+use std::task::{Context, Poll};
 
 use color_eyre::Result;
 use tokio::process::Command;
-use tokio_process_stream::{Item as ProcessItem, ProcessLineStream};
+use tokio_process_stream::ProcessLineStream;
 use tokio_stream::Stream;
 
 pub struct PythonFlake8 {
@@ -58,19 +59,7 @@ impl PythonFlake8 {
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        let line = line.trim();
-        if line.is_empty() {
-            return None;
-        }
-        let parts: Vec<&str> = line.splitn(4, ':').collect();
-        assert!(parts.len() >= 4, "unexpected flake8 output: {line}");
-        let line_num: u32 = parts[1].parse().ok()?;
-        let col_num: u32 = parts[2].parse().ok()?;
-        let msg = parts[3].trim();
-        if line_num == 0 {
-            return Some(Entry::new(filename, "flake8", msg).unwrap());
-        }
-        Some(Entry::new_line_col(filename, "flake8", msg, line_num, col_num).unwrap())
+        parse_line_standard(filename, "flake8", line)
     }
 }
 
@@ -79,24 +68,13 @@ impl Stream for PythonFlake8 {
 
     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         let this = self.get_mut();
-
-        loop {
-            match ready!(Pin::new(&mut this.inner).poll_next(cx)) {
-                Some(ProcessItem::Stdout(line)) => {
-                    if let Some(entry) = Self::parse_line(&this.filename, &line) {
-                        return Poll::Ready(Some(entry));
-                    }
-                }
-                Some(ProcessItem::Stderr(line)) => {
-                    eprintln!("[flake8 {}] stderr {}", this.filename.display(), line);
-                }
-                Some(ProcessItem::Done(_)) => {
-                    // flake8 ends in error if it finds a warning, we can just ignore it.
-                    continue;
-                }
-                None => return Poll::Ready(None),
-            }
-        }
+        crate::linters::poll_next(
+            "flake8",
+            &this.filename,
+            &mut this.inner,
+            Self::parse_line,
+            cx,
+        )
     }
 }
 
@@ -130,9 +108,8 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "unexpected flake8 output")]
     fn parse_line_too_few_parts() {
-        PythonFlake8::parse_line(Path::new("test.py"), "no colons here");
+        assert!(PythonFlake8::parse_line(Path::new("test.py"), "no colons here").is_none());
     }
 
     #[test]

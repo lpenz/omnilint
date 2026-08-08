@@ -30,11 +30,11 @@ use crate::entry::Entry;
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
-use std::task::{Context, Poll, ready};
+use std::task::{Context, Poll};
 
 use color_eyre::Result;
 use tokio::process::Command;
-use tokio_process_stream::{Item as ProcessItem, ProcessLineStream};
+use tokio_process_stream::ProcessLineStream;
 use tokio_stream::Stream;
 
 pub struct YamlYamllint {
@@ -80,26 +80,13 @@ impl Stream for YamlYamllint {
 
     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         let this = self.get_mut();
-
-        loop {
-            match ready!(Pin::new(&mut this.inner).poll_next(cx)) {
-                Some(ProcessItem::Stdout(line)) => {
-                    if let Some(entry) = Self::parse_line(&this.filename, &line) {
-                        return Poll::Ready(Some(entry));
-                    }
-                }
-                Some(ProcessItem::Stderr(line)) => {
-                    eprintln!("[yamllint {}] stderr {}", this.filename.display(), line);
-                }
-                Some(ProcessItem::Done(_)) => {
-                    // Exit codes: 0 = clean (or warnings without -s),
-                    // 1 = errors, 2 = warnings with --strict.
-                    // All output is already on stdout, so we can just ignore it.
-                    continue;
-                }
-                None => return Poll::Ready(None),
-            }
-        }
+        crate::linters::poll_next(
+            "yamllint",
+            &this.filename,
+            &mut this.inner,
+            Self::parse_line,
+            cx,
+        )
     }
 }
 

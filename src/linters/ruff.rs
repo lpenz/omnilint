@@ -27,14 +27,15 @@
 //! stdout; these lines are not in the finding format and are skipped.
 
 use crate::entry::Entry;
+use crate::linters::parse_line_standard;
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
-use std::task::{Context, Poll, ready};
+use std::task::{Context, Poll};
 
 use color_eyre::Result;
 use tokio::process::Command;
-use tokio_process_stream::{Item as ProcessItem, ProcessLineStream};
+use tokio_process_stream::ProcessLineStream;
 use tokio_stream::Stream;
 
 pub struct PythonRuff {
@@ -57,19 +58,7 @@ impl PythonRuff {
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        let line = line.trim();
-        let parts: Vec<&str> = line.splitn(4, ':').collect();
-        if parts.len() < 4 {
-            // Not a finding line (e.g. the "Found N errors." summary).
-            return None;
-        }
-        let line_num: u32 = parts[1].parse().ok()?;
-        let col_num: u32 = parts[2].parse().ok()?;
-        let msg = parts[3].trim();
-        if line_num == 0 {
-            return Some(Entry::new(filename, "ruff", msg).unwrap());
-        }
-        Some(Entry::new_line_col(filename, "ruff", msg, line_num, col_num).unwrap())
+        parse_line_standard(filename, "ruff", line)
     }
 }
 
@@ -78,24 +67,13 @@ impl Stream for PythonRuff {
 
     fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         let this = self.get_mut();
-
-        loop {
-            match ready!(Pin::new(&mut this.inner).poll_next(cx)) {
-                Some(ProcessItem::Stdout(line)) => {
-                    if let Some(entry) = Self::parse_line(&this.filename, &line) {
-                        return Poll::Ready(Some(entry));
-                    }
-                }
-                Some(ProcessItem::Stderr(line)) => {
-                    eprintln!("[ruff {}] stderr {}", this.filename.display(), line);
-                }
-                Some(ProcessItem::Done(_)) => {
-                    // ruff ends in error if it finds a violation, we can just ignore it.
-                    continue;
-                }
-                None => return Poll::Ready(None),
-            }
-        }
+        crate::linters::poll_next(
+            "ruff",
+            &this.filename,
+            &mut this.inner,
+            Self::parse_line,
+            cx,
+        )
     }
 }
 
