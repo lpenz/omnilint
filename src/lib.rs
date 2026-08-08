@@ -16,11 +16,13 @@ mod entry;
 mod filetype;
 mod linters;
 
+use crate::entry::Entry;
 use crate::filetype::Filetype;
 
 use clap::Parser;
 use std::error::Error;
-use tokio_stream::StreamExt;
+use std::pin::Pin;
+use tokio_stream::{Stream, StreamExt};
 
 /// main function, the single pub function in this lib.
 #[tokio::main(flavor = "current_thread")]
@@ -33,30 +35,25 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     let args = cli::Cli::parse();
     match args.command {
         cli::Commands::Files { files } => {
+            let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();
             for file in &files {
                 let filetype = Filetype::detect(file);
-                match filetype {
-                    Filetype::Yaml => {
-                        let mut yamllint = linters::yamllint::YamlYamllint::new(file)?;
-                        while let Some(entry) = yamllint.next().await {
-                            eprintln!("{}", entry);
-                        }
-                    }
+                let stream: Pin<Box<dyn Stream<Item = Entry>>> = match filetype {
+                    Filetype::Yaml => Box::pin(linters::yamllint::YamlYamllint::new(file)?),
                     Filetype::Python => {
                         let flake8 = linters::flake8::PythonFlake8::new(file)?;
                         let ruff = linters::ruff::PythonRuff::new(file)?;
-                        let mut merged = flake8.merge(ruff);
-                        while let Some(entry) = merged.next().await {
-                            eprintln!("{}", entry);
-                        }
+                        Box::pin(flake8.merge(ruff))
                     }
-                    Filetype::Shell => {
-                        let mut shellcheck = linters::shellcheck::ShShellcheck::new(file)?;
-                        while let Some(entry) = shellcheck.next().await {
-                            eprintln!("{}", entry);
-                        }
-                    }
-                    _ => {}
+                    Filetype::Shell => Box::pin(linters::shellcheck::ShShellcheck::new(file)?),
+                    _ => continue,
+                };
+                streams.push(stream);
+            }
+            let merged = streams.into_iter().reduce(|a, b| Box::pin(a.merge(b)));
+            if let Some(mut merged) = merged {
+                while let Some(entry) = merged.next().await {
+                    eprintln!("{}", entry);
                 }
             }
         }
