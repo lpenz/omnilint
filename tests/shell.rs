@@ -18,9 +18,9 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["shell-dirty.sh"]),
-        "shell-dirty.sh:3:1: unused_var appears unused. Verify use (or export if used externally).\n\
-         shell-dirty.sh:4:6: Double quote to prevent globbing and word splitting.\n\
-         shell-dirty.sh:5:6: missing_var is referenced but not assigned.\n\
-         shell-dirty.sh:5:6: Double quote to prevent globbing and word splitting.\n"
+        "shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\
+         shell-dirty.sh:4: [shellcheck] Double quote to prevent globbing and word splitting.\n\
+         shell-dirty.sh:5: [shellcheck] missing_var is referenced but not assigned.\n\
+         shell-dirty.sh:5: [shellcheck] Double quote to prevent globbing and word splitting.\n"
     );
 }

@@ -71,7 +71,7 @@ impl ShShellcheck {
             .and_then(|s| s.find(']').map(|i| s[i + 1..].trim()))
             .unwrap_or(raw_msg);
         let msg = msg.split_once(" [").map_or(msg, |(before, _)| before);
-        Some(Entry::new_line_col(filename, msg, line_num, col_num).unwrap())
+        Some(Entry::new_line_col(filename, "shellcheck", msg, line_num, col_num).unwrap())
     }
 }
 
@@ -112,7 +112,10 @@ mod tests {
             "script.sh:1:1: warning: shebang not present [SC2148]",
         )
         .unwrap();
-        assert_eq!(entry.to_string(), "script.sh:1:1: shebang not present");
+        assert_eq!(
+            entry.to_string(),
+            "script.sh:1: [shellcheck] shebang not present"
+        );
     }
 
     #[test]

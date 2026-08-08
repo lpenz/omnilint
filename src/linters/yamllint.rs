@@ -71,7 +71,7 @@ impl YamlYamllint {
             .and_then(|s| s.find(']').map(|i| s[i + 1..].trim()))
             .unwrap_or(raw_msg);
         let msg = msg.rsplit_once(" (").map_or(msg, |(before, _)| before);
-        Some(Entry::new_line_col(filename, msg, line_num, col_num).unwrap())
+        Some(Entry::new_line_col(filename, "yamllint", msg, line_num, col_num).unwrap())
     }
 }
 
@@ -116,7 +116,7 @@ mod tests {
         .unwrap();
         assert_eq!(
             entry.to_string(),
-            "test.yaml:1:1: missing document start \"---\""
+            "test.yaml:1: [yamllint] missing document start \"---\""
         );
     }
 

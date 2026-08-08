@@ -13,24 +13,33 @@ use std::path::{Path, PathBuf};
 pub struct Entry {
     filename: PathBuf,
     msg: String,
+    linter: String,
     line: Option<NonZero<u32>>,
     col: Option<NonZero<u32>>,
 }
 
 impl Entry {
-    pub fn new(filename: &Path, msg: &str) -> Result<Entry> {
+    pub fn new(filename: &Path, linter: &str, msg: &str) -> Result<Entry> {
         Ok(Entry {
             filename: filename.to_path_buf(),
             msg: msg.to_string(),
+            linter: linter.to_string(),
             line: None,
             col: None,
         })
     }
 
-    pub fn new_line_col(filename: &Path, msg: &str, line: u32, col: u32) -> Result<Entry> {
+    pub fn new_line_col(
+        filename: &Path,
+        linter: &str,
+        msg: &str,
+        line: u32,
+        col: u32,
+    ) -> Result<Entry> {
         Ok(Entry {
             filename: filename.to_path_buf(),
             msg: msg.to_string(),
+            linter: linter.to_string(),
             line: Some(NonZero::new(line).ok_or_eyre("line can't be zero")?),
             col: Some(NonZero::new(col).ok_or_eyre("col can't be zero")?),
         })
@@ -42,11 +51,8 @@ impl fmt::Display for Entry {
         write!(f, "{}:", self.filename.display())?;
         if let Some(line) = self.line {
             write!(f, "{}:", line)?;
-            if let Some(col) = self.col {
-                write!(f, "{}:", col)?;
-            }
         }
-        write!(f, " {}", self.msg)
+        write!(f, " [{}] {}", self.linter, self.msg)
     }
 }
 
@@ -57,25 +63,25 @@ mod tests {
 
     #[test]
     fn new_basic() -> Result<()> {
-        let e = Entry::new(Path::new("foo.rs"), "warning")?;
-        assert_eq!(e.to_string(), "foo.rs: warning");
+        let e = Entry::new(Path::new("foo.rs"), "test", "warning")?;
+        assert_eq!(e.to_string(), "foo.rs: [test] warning");
         Ok(())
     }
 
     #[test]
     fn new_line_col_basic() -> Result<()> {
-        let e = Entry::new_line_col(Path::new("foo.rs"), "error", 10, 5)?;
-        assert_eq!(e.to_string(), "foo.rs:10:5: error");
+        let e = Entry::new_line_col(Path::new("foo.rs"), "test", "error", 10, 5)?;
+        assert_eq!(e.to_string(), "foo.rs:10: [test] error");
         Ok(())
     }
 
     #[test]
     fn new_line_col_zero_line_fails() {
-        assert!(Entry::new_line_col(Path::new("foo.rs"), "error", 0, 5).is_err());
+        assert!(Entry::new_line_col(Path::new("foo.rs"), "test", "error", 0, 5).is_err());
     }
 
     #[test]
     fn new_line_col_zero_col_fails() {
-        assert!(Entry::new_line_col(Path::new("foo.rs"), "error", 10, 0).is_err());
+        assert!(Entry::new_line_col(Path::new("foo.rs"), "test", "error", 10, 0).is_err());
     }
 }

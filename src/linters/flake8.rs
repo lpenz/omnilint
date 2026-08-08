@@ -68,9 +68,9 @@ impl PythonFlake8 {
         let col_num: u32 = parts[2].parse().ok()?;
         let msg = parts[3].trim();
         if line_num == 0 {
-            return Some(Entry::new(filename, msg).unwrap());
+            return Some(Entry::new(filename, "flake8", msg).unwrap());
         }
-        Some(Entry::new_line_col(filename, msg, line_num, col_num).unwrap())
+        Some(Entry::new_line_col(filename, "flake8", msg, line_num, col_num).unwrap())
     }
 }
 
@@ -113,7 +113,7 @@ mod tests {
         .unwrap();
         assert_eq!(
             entry.to_string(),
-            "test.py:1:1: F401 'os' imported but unused"
+            "test.py:1: [flake8] F401 'os' imported but unused"
         );
     }
 
@@ -126,7 +126,7 @@ mod tests {
     fn parse_line_zero_line() {
         let entry =
             PythonFlake8::parse_line(Path::new("test.py"), "test.py:0:1: some message").unwrap();
-        assert_eq!(entry.to_string(), "test.py: some message");
+        assert_eq!(entry.to_string(), "test.py: [flake8] some message");
     }
 
     #[test]
