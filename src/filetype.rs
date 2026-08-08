@@ -2,6 +2,8 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of this source code package.
 
+use std::fs;
+use std::io;
 use std::path::Path;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, Default)]
@@ -20,8 +22,34 @@ impl Filetype {
             Some("yaml" | "yml") => Filetype::Yaml,
             Some("py") => Filetype::Python,
             Some("sh" | "bash" | "dash" | "ksh") => Filetype::Shell,
-            _ => Filetype::Unknown,
+            _ => detect_shebang(path),
         }
+    }
+}
+
+fn detect_shebang(path: &Path) -> Filetype {
+    let mut first_line = String::new();
+    let result = fs::File::open(path).and_then(|f| {
+        let mut bufreader = io::BufReader::new(f);
+        io::BufRead::read_line(&mut bufreader, &mut first_line)
+    });
+    if result.is_err() {
+        return Filetype::Unknown;
+    }
+    let shebang = first_line.strip_prefix("#!").unwrap_or_default();
+    let mut parts = shebang.split_whitespace();
+    let mut interp_name = Path::new(parts.next().unwrap_or_default())
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or_default()
+        .to_string();
+    if interp_name == "env" {
+        interp_name = parts.next().unwrap_or_default().to_string();
+    }
+    match interp_name.as_str() {
+        "python" | "python2" | "python3" => Filetype::Python,
+        "sh" | "bash" | "dash" | "ksh" => Filetype::Shell,
+        _ => Filetype::Unknown,
     }
 }
 
@@ -51,7 +79,38 @@ mod tests {
     #[test]
     fn detect_unknown() {
         assert_eq!(Filetype::detect(Path::new("foo.txt")), Filetype::Unknown);
-        assert_eq!(Filetype::detect(Path::new("foo")), Filetype::Unknown);
         assert_eq!(Filetype::detect(Path::new(".py")), Filetype::Unknown);
+        assert_eq!(
+            Filetype::detect(Path::new("no-such-file")),
+            Filetype::Unknown
+        );
+    }
+
+    #[test]
+    fn detect_shebang() {
+        let dir = std::env::temp_dir().join("omnilint-filetype-test");
+        std::fs::create_dir_all(&dir).unwrap();
+
+        let python = dir.join("tool");
+        std::fs::write(&python, "#!/usr/bin/env python3\nprint('hi')\n").unwrap();
+        assert_eq!(Filetype::detect(&python), Filetype::Python);
+
+        let python_direct = dir.join("tool-direct");
+        std::fs::write(&python_direct, "#!/usr/bin/python3\n").unwrap();
+        assert_eq!(Filetype::detect(&python_direct), Filetype::Python);
+
+        let shell = dir.join("script");
+        std::fs::write(&shell, "#!/bin/bash\necho hi\n").unwrap();
+        assert_eq!(Filetype::detect(&shell), Filetype::Shell);
+
+        let plain = dir.join("data");
+        std::fs::write(&plain, "just some text\n").unwrap();
+        assert_eq!(Filetype::detect(&plain), Filetype::Unknown);
+
+        let empty = dir.join("empty");
+        std::fs::write(&empty, "").unwrap();
+        assert_eq!(Filetype::detect(&empty), Filetype::Unknown);
+
+        std::fs::remove_dir_all(&dir).unwrap();
     }
 }
