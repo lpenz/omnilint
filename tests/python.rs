@@ -6,6 +6,10 @@
 //! ruff.
 //!
 //! Requires `flake8` and `ruff` to be available on the `PATH`.
+//!
+//! Only runs when the `test-linter-tools` feature is enabled.
+
+#![cfg(feature = "test-linter-tools")]
 
 mod common;
 

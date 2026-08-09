@@ -5,6 +5,10 @@
 //! Integration tests for the analysis of YAML files, backed by yamllint.
 //!
 //! Requires `yamllint` to be available on the `PATH`.
+//!
+//! Only runs when the `test-linter-tools` feature is enabled.
+
+#![cfg(feature = "test-linter-tools")]
 
 mod common;
 

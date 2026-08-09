@@ -12,6 +12,9 @@ build = "build.rs"
 categories = ["command-line-utilities"]
 keywords = ["command-line"]
 
+[features]
+test-linter-tools = []
+
 [dependencies]
 clap = { version = "4.6.4", features = ["derive"] }
 color-eyre = "0.6.5"
