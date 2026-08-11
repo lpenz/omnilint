@@ -24,6 +24,7 @@ fn dirty() {
         common::run(&["python-dirty.py"]),
         "python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
          python-dirty.py:1: [ruff] F401 [*] `os` imported but unused\n\
+         python-dirty.py:1: [ruff] I001 [*] Import block is un-sorted or un-formatted\n\
          python-dirty.py:3: [flake8] E302 expected 2 blank lines, found 1\n\
          python-dirty.py:4: [flake8] F841 local variable 'unused' is assigned to but never used\n\
          python-dirty.py:4: [ruff] F841 Local variable `unused` is assigned to but never used\n\

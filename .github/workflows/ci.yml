@@ -7,6 +7,7 @@ jobs:
   # omnilint:
   #   uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.6.0
   rust:
+    needs: [test-linter-tools]
     uses: lpenz/ghworkflow-rust/.github/workflows/rust.yml@v0.29.5
     with:
       enable_cargo-semver-checks: false
@@ -27,6 +28,15 @@ jobs:
     secrets:
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
       PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+  test-linter-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Test with linter tools
+        run: nix develop -c cargo test --features test-linter-tools
   commit-check:
     runs-on: ubuntu-latest
     steps:
