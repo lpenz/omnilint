@@ -31,6 +31,8 @@ pub enum Commands {
         #[arg(required = true)]
         files: Vec<PathBuf>,
     },
+    /// Analyse all the files tracked by git in the current repository
+    Repository,
 }
 
 #[cfg(test)]
@@ -46,19 +48,24 @@ mod tests {
     #[test]
     fn files_basic() {
         let cli = Cli::try_parse_from(["", "files", "foo.rs", "bar.rs"]).unwrap();
-        match cli.command {
-            Commands::Files { files } => {
-                assert_eq!(
-                    files,
-                    vec![PathBuf::from("foo.rs"), PathBuf::from("bar.rs")]
-                );
-            }
-        }
+        let Commands::Files { files } = cli.command else {
+            unreachable!("expected files command");
+        };
+        assert_eq!(
+            files,
+            vec![PathBuf::from("foo.rs"), PathBuf::from("bar.rs")]
+        );
     }
 
     #[test]
     fn files_requires_args() {
         let cli = Cli::try_parse_from(["", "files"]);
         assert!(cli.is_err());
+    }
+
+    #[test]
+    fn repository_basic() {
+        let cli = Cli::try_parse_from(["", "repository"]).unwrap();
+        assert!(matches!(cli.command, Commands::Repository));
     }
 }

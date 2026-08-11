@@ -4,6 +4,10 @@
 
 //! Shared helpers for the integration tests.
 
+// Each integration test compiles this module into its own binary and only
+// uses a subset of the helpers, so the others would be reported as dead code.
+#![allow(dead_code)]
+
 use assert_cmd::Command;
 use std::path::{Path, PathBuf};
 
@@ -16,14 +20,23 @@ fn fixtures_dir() -> PathBuf {
 /// returns its stderr, with the output lines sorted so that the result is
 /// deterministic even when linters run in parallel.
 pub fn run(files: &[&str]) -> String {
+    run_command("files", files)
+}
+
+/// Runs `omnilint repository` in the fixtures directory (a git repository)
+/// and returns its stderr, with the output lines sorted so that the result
+/// is deterministic even when linters run in parallel.
+pub fn run_repository() -> String {
+    run_command("repository", &[])
+}
+
+fn run_command(subcommand: &str, files: &[&str]) -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
-    let output = cmd
-        .current_dir(fixtures_dir())
-        .arg("files")
-        .args(files)
-        .assert()
-        .success()
-        .stdout("");
+    let mut command = cmd.current_dir(fixtures_dir()).arg(subcommand);
+    for file in files {
+        command = command.arg(file);
+    }
+    let output = command.assert().success().stdout("");
     let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
         .lines()
         .map(Into::into)
