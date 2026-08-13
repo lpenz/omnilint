@@ -7,3 +7,111 @@
 # omnilint
 
 Statically analyse any file with the appropriate tools
+
+## Features
+
+- Detects the file type by extension or shebang and runs the appropriate
+  linter(s) for it
+- Runs all the linters in parallel
+- Supports both individual files and whole repositories
+- Unified output format, regardless of the linter that produced the finding
+
+## Supported file types and linters
+
+| File type  | Extensions / shebang          | Linters                              |
+|------------|-------------------------------|--------------------------------------|
+| Python     | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ... | [flake8](https://flake8.pycqa.org/) and [ruff](https://docs.astral.sh/ruff/) |
+| YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) |
+| Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/) |
+
+## Usage
+
+### `omnilint files <files...>`
+
+Analyses the given files with the appropriate tools:
+
+```console
+$ omnilint files test.py
+test.py:1: [ruff] F401 'os' imported but unused
+test.py:12: [flake8] E501 line too long (95 > 79 characters)
+```
+
+### `omnilint repository`
+
+Analyses all the files tracked by git in the current repository:
+
+```console
+$ omnilint repository
+src/main.rs:5: [shellcheck] SC2148: Tips depend on target shell and yours is unknown.
+```
+
+### Output format
+
+Findings are printed to stderr in the format:
+
+```text
+<filename>:<line>: [<linter>] <message>
+```
+
+When a linter reports a file-level issue with no line number, the `line` part
+is omitted:
+
+```text
+<filename>: [<linter>] <message>
+```
+
+## Requirements
+
+The underlying linters must be installed for omnilint to analyse the
+corresponding file types. Files whose linter is missing are skipped (their
+stderr output is logged). The linters used are:
+
+- `flake8` and `ruff` for Python
+- `yamllint` for YAML
+- `shellcheck` for Shell
+
+## Installation
+
+### From crates.io
+
+```console
+$ cargo install omnilint
+```
+
+### From source
+
+```console
+$ git clone https://github.com/lpenz/omnilint
+$ cd omnilint
+$ cargo install --path .
+```
+
+### Prebuilt packages
+
+- Debian/Ubuntu `.deb` packages are available on
+  [packagecloud](https://packagecloud.io/app/lpenz/debian/search?q=omnilint).
+- RPM packages are available on
+  [packagecloud](https://packagecloud.io/app/lpenz/rpm/search?q=omnilint).
+- Releases are also published on
+  [GitHub](https://github.com/lpenz/omnilint/releases) with prebuilt binaries.
+
+## Development
+
+Use the provided [nix](https://nixos.org/) flake to get a development shell
+with all the linter tools installed:
+
+```console
+$ nix develop
+```
+
+Run the test suite:
+
+```console
+$ cargo test
+$ cargo test --features test-linter-tools   # also requires the linter tools
+```
+
+## License
+
+omnilint is licensed under the MIT license. See the
+[LICENSE](LICENSE) file for details.
