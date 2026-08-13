@@ -6,13 +6,36 @@ jobs:
   # have lint errors by design
   # omnilint:
   #   uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.6.0
-  rust:
-    needs: [test-linter-tools]
-    uses: lpenz/ghworkflow-rust/.github/workflows/rust.yml@v0.29.5
+  rust-test:
+    uses: lpenz/ghworkflow-rust/.github/workflows/rust-test.yml@v0.30.0
     with:
       enable_cargo-semver-checks: false
       test_features: '[""]'
       coveralls: true
+      deb: true
+      rpm: true
+  test-linter-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: cachix/install-nix-action@v31.11.1
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Test with linter tools
+        run: nix develop -c cargo test --features test-linter-tools
+  commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: commit-check/commit-check-action@v2.15.0
+        with:
+          branch: false
+  rust-deploy:
+    needs: [rust-test, test-linter-tools, commit-check]
+    uses: lpenz/ghworkflow-rust/.github/workflows/rust-deploy.yml@v0.30.0
+    with:
       deb: true
       rpm: true
       release_files: |
@@ -28,21 +51,3 @@ jobs:
     secrets:
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
       PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
-  test-linter-tools:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-      - name: Test with linter tools
-        run: nix develop -c cargo test --features test-linter-tools
-  commit-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 0
-      - uses: commit-check/commit-check-action@v2.11.1
-        with:
-          branch: false
