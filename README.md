@@ -23,6 +23,7 @@ Statically analyse any file with the appropriate tools
 | Python     | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ... | [flake8](https://flake8.pycqa.org/) and [ruff](https://docs.astral.sh/ruff/) |
 | YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) |
 | Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/) |
+| Lua        | `.lua`                        | [luacheck](https://luacheck.readthedocs.io/) |
 
 ## Usage
 
@@ -79,6 +80,7 @@ The linters used are:
 - `flake8` and `ruff` for Python
 - `yamllint` for YAML
 - `shellcheck` for Shell
+- `luacheck` for Lua
 
 ## Installation
 

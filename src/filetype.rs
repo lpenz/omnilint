@@ -13,6 +13,7 @@ pub enum Filetype {
     Python,
     Yaml,
     Shell,
+    Lua,
 }
 
 impl Filetype {
@@ -22,6 +23,7 @@ impl Filetype {
             Some("yaml" | "yml") => Filetype::Yaml,
             Some("py") => Filetype::Python,
             Some("sh" | "bash" | "dash" | "ksh") => Filetype::Shell,
+            Some("lua") => Filetype::Lua,
             _ => detect_shebang(path),
         }
     }
@@ -74,6 +76,11 @@ mod tests {
         assert_eq!(Filetype::detect(Path::new("foo.bash")), Filetype::Shell);
         assert_eq!(Filetype::detect(Path::new("foo.dash")), Filetype::Shell);
         assert_eq!(Filetype::detect(Path::new("foo.ksh")), Filetype::Shell);
+    }
+
+    #[test]
+    fn detect_lua() {
+        assert_eq!(Filetype::detect(Path::new("foo.lua")), Filetype::Lua);
     }
 
     #[test]

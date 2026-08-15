@@ -18,6 +18,7 @@
               ruff
               shellcheck
               yamllint
+              luaPackages.luacheck
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };
