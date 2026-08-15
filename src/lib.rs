@@ -18,7 +18,7 @@ mod linters;
 mod repo;
 
 use crate::entry::Entry;
-use crate::filetype::Filetype;
+use crate::linters::Linters;
 
 use clap::Parser;
 use std::error::Error;
@@ -35,46 +35,31 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
     let args = cli::Cli::parse();
+    let mut linters = Linters::new();
     match args.command {
         cli::Commands::Files { files } => {
             let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();
             for file in &files {
-                push_stream(&mut streams, file)?;
+                push_stream(&mut linters, &mut streams, file)?;
             }
             run_streams(streams).await;
         }
         cli::Commands::Repository => {
             let files = repo::git_ls_files()?;
-            run_repository(files).await?;
+            run_repository(&mut linters, files).await?;
         }
     }
     Ok(())
 }
 
-/// Creates a stream that lints the given file, or `None` if there is no
-/// linter for its [`Filetype`].
-fn stream_for_file(file: &Path) -> color_eyre::Result<Option<Pin<Box<dyn Stream<Item = Entry>>>>> {
-    let filetype = Filetype::detect(file);
-    let stream: Pin<Box<dyn Stream<Item = Entry>>> = match filetype {
-        Filetype::Yaml => Box::pin(linters::yamllint::YamlYamllint::new(file)?),
-        Filetype::Python => {
-            let flake8 = linters::flake8::PythonFlake8::new(file)?;
-            let ruff = linters::ruff::PythonRuff::new(file)?;
-            Box::pin(flake8.merge(ruff))
-        }
-        Filetype::Shell => Box::pin(linters::shellcheck::ShShellcheck::new(file)?),
-        _ => return Ok(None),
-    };
-    Ok(Some(stream))
-}
-
 /// Creates a stream that lints the given file and pushes it into `streams`,
-/// if there is a linter for its [`Filetype`].
+/// if there is a linter for its file type.
 fn push_stream(
+    linters: &mut Linters,
     streams: &mut Vec<Pin<Box<dyn Stream<Item = Entry>>>>,
     file: &Path,
 ) -> color_eyre::Result<()> {
-    if let Some(stream) = stream_for_file(file)? {
+    if let Some(stream) = linters.stream_for_file(file)? {
         streams.push(stream);
     }
     Ok(())
@@ -83,44 +68,48 @@ fn push_stream(
 /// Lints each file of the given stream as soon as it is produced, running
 /// all the linters in parallel, and prints the resulting [`Entry`] values to
 /// stderr.
-async fn run_repository(files: impl Stream<Item = PathBuf> + Unpin) -> color_eyre::Result<()> {
+async fn run_repository(
+    linters: &mut Linters,
+    files: impl Stream<Item = PathBuf> + Unpin,
+) -> color_eyre::Result<()> {
     let mut files = files;
-    let mut linters: StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>> = StreamMap::new();
+    let mut streams: StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>> = StreamMap::new();
     let mut next_id = 0;
     loop {
-        if linters.is_empty() {
+        if streams.is_empty() {
             match files.next().await {
-                Some(file) => add_file(&mut linters, &mut next_id, &file)?,
+                Some(file) => add_file(linters, &mut streams, &mut next_id, &file)?,
                 None => break,
             }
         } else {
             tokio::select! {
                 maybe_file = files.next() => {
                     match maybe_file {
-                        Some(file) => add_file(&mut linters, &mut next_id, &file)?,
+                        Some(file) => add_file(linters, &mut streams, &mut next_id, &file)?,
                         None => break,
                     }
                 }
-                Some((_, entry)) = linters.next() => {
+                Some((_, entry)) = streams.next() => {
                     eprintln!("{}", entry);
                 }
             }
         }
     }
-    while let Some((_, entry)) = linters.next().await {
+    while let Some((_, entry)) = streams.next().await {
         eprintln!("{}", entry);
     }
     Ok(())
 }
 
-/// Creates a linter stream for `file`, if any, and adds it to `linters`.
+/// Creates a linter stream for `file`, if any, and adds it to `streams`.
 fn add_file(
-    linters: &mut StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>>,
+    linters: &mut Linters,
+    streams: &mut StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>>,
     next_id: &mut usize,
     file: &Path,
 ) -> color_eyre::Result<()> {
-    if let Some(stream) = stream_for_file(file)? {
-        linters.insert(*next_id, stream);
+    if let Some(stream) = linters.stream_for_file(file)? {
+        streams.insert(*next_id, stream);
         *next_id += 1;
     }
     Ok(())

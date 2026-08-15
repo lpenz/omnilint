@@ -27,7 +27,7 @@
 //! the parser before the message is stored in the [`Entry`].
 
 use crate::entry::Entry;
-use crate::linters::Linter;
+use crate::linters::{Linter, Linters};
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -43,12 +43,12 @@ pub struct YamlYamllint {
 }
 
 impl YamlYamllint {
-    pub fn new(filename: &Path) -> Result<Self> {
+    pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
         let mut cmd = Command::new("yamllint");
         cmd.arg("-f");
         cmd.arg("parsable");
         cmd.arg(filename);
-        let inner = Linter::spawn(cmd)?;
+        let inner = linters.spawn("yamllint", cmd)?;
         Ok(Self {
             filename: filename.to_path_buf(),
             inner,

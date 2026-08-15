@@ -27,7 +27,7 @@
 //! stdout; these lines are not in the finding format and are skipped.
 
 use crate::entry::Entry;
-use crate::linters::{Linter, parse_line_standard};
+use crate::linters::{Linter, Linters, parse_line_standard};
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -43,13 +43,13 @@ pub struct PythonRuff {
 }
 
 impl PythonRuff {
-    pub fn new(filename: &Path) -> Result<Self> {
+    pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
         let mut cmd = Command::new("ruff");
         cmd.arg("check");
         cmd.arg("--output-format");
         cmd.arg("concise");
         cmd.arg(filename);
-        let inner = Linter::spawn(cmd)?;
+        let inner = linters.spawn("ruff", cmd)?;
         Ok(Self {
             filename: filename.to_path_buf(),
             inner,
