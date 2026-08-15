@@ -24,6 +24,7 @@ Statically analyse any file with the appropriate tools
 | YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) |
 | Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/) |
 | Lua        | `.lua`                        | [luacheck](https://luacheck.readthedocs.io/) |
+| Perl       | `.pl`, `.pm`                 | [perlcritic](https://metacpan.org/pod/Perl::Critic) |
 
 ## Usage
 
@@ -81,6 +82,7 @@ The linters used are:
 - `yamllint` for YAML
 - `shellcheck` for Shell
 - `luacheck` for Lua
+- `perlcritic` for Perl
 
 ## Installation
 

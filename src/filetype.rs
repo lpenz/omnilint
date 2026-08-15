@@ -14,6 +14,7 @@ pub enum Filetype {
     Yaml,
     Shell,
     Lua,
+    Perl,
 }
 
 impl Filetype {
@@ -24,6 +25,7 @@ impl Filetype {
             Some("py") => Filetype::Python,
             Some("sh" | "bash" | "dash" | "ksh") => Filetype::Shell,
             Some("lua") => Filetype::Lua,
+            Some("pl" | "pm") => Filetype::Perl,
             _ => detect_shebang(path),
         }
     }

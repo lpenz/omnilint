@@ -18,6 +18,7 @@ fn all_tracked_files() {
     assert_eq!(
         common::run_repository(),
         "lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\
+         perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
          python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
          python-dirty.py:1: [ruff] F401 [*] `os` imported but unused\n\
          python-dirty.py:1: [ruff] I001 [*] Import block is un-sorted or un-formatted\n\

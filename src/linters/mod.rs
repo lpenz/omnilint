@@ -81,6 +81,7 @@ impl Linters {
             }
             Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
             Filetype::Lua => Box::pin(luacheck::LuaLuacheck::new(self, file)?),
+            Filetype::Perl => Box::pin(perlcritic::PerlPerlcritic::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -143,6 +144,7 @@ pub(crate) fn poll_next(
 
 pub mod flake8;
 pub mod luacheck;
+pub mod perlcritic;
 pub mod ruff;
 pub mod shellcheck;
 pub mod yamllint;
