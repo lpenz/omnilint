@@ -20,21 +20,30 @@ fn fixtures_dir() -> PathBuf {
 /// returns its stderr, with the output lines sorted so that the result is
 /// deterministic even when linters run in parallel.
 pub fn run(files: &[&str]) -> String {
-    run_command("files", files)
+    run_command("files", files, &[])
 }
 
 /// Runs `omnilint repository` in the fixtures directory (a git repository)
 /// and returns its stderr, with the output lines sorted so that the result
 /// is deterministic even when linters run in parallel.
 pub fn run_repository() -> String {
-    run_command("repository", &[])
+    run_command("repository", &[], &[])
 }
 
-fn run_command(subcommand: &str, files: &[&str]) -> String {
+/// Runs `omnilint files` on the given files with a `PATH` that contains no
+/// linter tools, so that every linter reports it was not found.
+pub fn run_without_linters(files: &[&str]) -> String {
+    run_command("files", files, &[("PATH", "/nonexistent")])
+}
+
+fn run_command(subcommand: &str, files: &[&str], envs: &[(&str, &str)]) -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let mut command = cmd.current_dir(fixtures_dir()).arg(subcommand);
     for file in files {
         command = command.arg(file);
+    }
+    for (key, value) in envs {
+        command = command.env(key, value);
     }
     let output = command.assert().success().stdout("");
     let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)

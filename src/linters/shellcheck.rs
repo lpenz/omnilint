@@ -27,6 +27,7 @@
 //! parser before the message is stored in the [`Entry`].
 
 use crate::entry::Entry;
+use crate::linters::Linter;
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -34,12 +35,11 @@ use std::task::{Context, Poll};
 
 use color_eyre::Result;
 use tokio::process::Command;
-use tokio_process_stream::ProcessLineStream;
 use tokio_stream::Stream;
 
 pub struct ShShellcheck {
     filename: PathBuf,
-    inner: ProcessLineStream,
+    inner: Linter,
 }
 
 impl ShShellcheck {
@@ -48,7 +48,7 @@ impl ShShellcheck {
         cmd.arg("-f");
         cmd.arg("gcc");
         cmd.arg(filename);
-        let inner = ProcessLineStream::try_from(cmd)?;
+        let inner = Linter::spawn(cmd)?;
         Ok(Self {
             filename: filename.to_path_buf(),
             inner,

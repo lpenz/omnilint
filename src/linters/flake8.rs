@@ -31,7 +31,7 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::parse_line_standard;
+use crate::linters::{Linter, parse_line_standard};
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -39,19 +39,18 @@ use std::task::{Context, Poll};
 
 use color_eyre::Result;
 use tokio::process::Command;
-use tokio_process_stream::ProcessLineStream;
 use tokio_stream::Stream;
 
 pub struct PythonFlake8 {
     filename: PathBuf,
-    inner: ProcessLineStream,
+    inner: Linter,
 }
 
 impl PythonFlake8 {
     pub fn new(filename: &Path) -> Result<Self> {
         let mut cmd = Command::new("flake8");
         cmd.arg(filename);
-        let inner = ProcessLineStream::try_from(cmd)?;
+        let inner = Linter::spawn(cmd)?;
         Ok(Self {
             filename: filename.to_path_buf(),
             inner,

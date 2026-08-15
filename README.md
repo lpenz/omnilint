@@ -60,11 +60,21 @@ is omitted:
 <filename>: [<linter>] <message>
 ```
 
+This format is similar to the one used by compilers, and is parseable by most
+editors and IDEs.
+
 ## Requirements
 
 The underlying linters must be installed for omnilint to analyse the
-corresponding file types. Files whose linter is missing are skipped (their
-stderr output is logged). The linters used are:
+corresponding file types. When a linter is not found on the `PATH`, omnilint
+does not abort; instead, it emits an entry saying that the linter was not
+found:
+
+```text
+<filename>: [<linter>] linter not found
+```
+
+The linters used are:
 
 - `flake8` and `ruff` for Python
 - `yamllint` for YAML

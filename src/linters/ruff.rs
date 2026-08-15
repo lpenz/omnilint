@@ -27,7 +27,7 @@
 //! stdout; these lines are not in the finding format and are skipped.
 
 use crate::entry::Entry;
-use crate::linters::parse_line_standard;
+use crate::linters::{Linter, parse_line_standard};
 
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -35,12 +35,11 @@ use std::task::{Context, Poll};
 
 use color_eyre::Result;
 use tokio::process::Command;
-use tokio_process_stream::ProcessLineStream;
 use tokio_stream::Stream;
 
 pub struct PythonRuff {
     filename: PathBuf,
-    inner: ProcessLineStream,
+    inner: Linter,
 }
 
 impl PythonRuff {
@@ -50,7 +49,7 @@ impl PythonRuff {
         cmd.arg("--output-format");
         cmd.arg("concise");
         cmd.arg(filename);
-        let inner = ProcessLineStream::try_from(cmd)?;
+        let inner = Linter::spawn(cmd)?;
         Ok(Self {
             filename: filename.to_path_buf(),
             inner,
