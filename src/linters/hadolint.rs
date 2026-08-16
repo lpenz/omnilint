@@ -76,6 +76,7 @@ impl Stream for DockerfileHadolint {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }

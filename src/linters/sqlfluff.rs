@@ -92,6 +92,7 @@ impl Stream for SqlSqlfluff {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }

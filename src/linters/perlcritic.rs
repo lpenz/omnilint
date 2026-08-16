@@ -68,6 +68,7 @@ impl Stream for PerlPerlcritic {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }

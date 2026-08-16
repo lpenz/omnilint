@@ -66,6 +66,7 @@ impl Stream for LuaLuacheck {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }

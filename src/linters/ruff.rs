@@ -71,6 +71,7 @@ impl Stream for PythonRuff {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }

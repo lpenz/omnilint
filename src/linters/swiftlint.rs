@@ -82,6 +82,7 @@ impl Stream for SwiftSwiftlint {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }

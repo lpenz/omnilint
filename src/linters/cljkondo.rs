@@ -87,6 +87,7 @@ impl Stream for ClojureCljkondo {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }

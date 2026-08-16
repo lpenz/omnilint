@@ -107,27 +107,38 @@ fn parse_line_standard(filename: &Path, linter: &str, line: &str) -> Option<Entr
     Some(Entry::new_line_col(filename, linter, msg, line_num, col_num).unwrap())
 }
 
-/// Polls a linter's `inner` process stream, converting its stdout lines into
-/// [`Entry`] values via `parse` and logging any stderr output. If the linter
-/// binary was not found on the `PATH`, emits a single [`Entry`] reporting that
-/// before the stream ends.
+/// Polls a linter's `inner` process stream, converting its lines into
+/// [`Entry`] values via `parse` and logging the lines on the other stream.
+/// `findings_on_stderr` selects which of the process streams holds the
+/// findings; the remaining stream is logged. If the linter binary was not
+/// found on the `PATH`, emits a single [`Entry`] reporting that before the
+/// stream ends.
 pub(crate) fn poll_next(
     name: &'static str,
     filename: &Path,
     inner: &mut Linter,
     parse: fn(&Path, &str) -> Option<Entry>,
+    findings_on_stderr: bool,
     cx: &mut Context<'_>,
 ) -> Poll<Option<Entry>> {
     match inner {
         Linter::Running(stream) => loop {
             match ready!(Pin::new(&mut *stream).poll_next(cx)) {
                 Some(ProcessItem::Stdout(line)) => {
-                    if let Some(entry) = parse(filename, &line) {
+                    if findings_on_stderr {
+                        eprintln!("[{} {}] stdout {}", name, filename.display(), line);
+                    } else if let Some(entry) = parse(filename, &line) {
                         return Poll::Ready(Some(entry));
                     }
                 }
                 Some(ProcessItem::Stderr(line)) => {
-                    eprintln!("[{} {}] stderr {}", name, filename.display(), line);
+                    if findings_on_stderr {
+                        if let Some(entry) = parse(filename, &line) {
+                            return Poll::Ready(Some(entry));
+                        }
+                    } else {
+                        eprintln!("[{} {}] stderr {}", name, filename.display(), line);
+                    }
                 }
                 Some(ProcessItem::Done(_)) => {
                     // Linters end in error when they find violations; the output is
@@ -169,13 +180,13 @@ mod tests {
         let mut cx = Context::from_waker(std::task::Waker::noop());
         let parse = |_: &Path, _: &str| None;
         assert_eq!(
-            poll_next("test", Path::new("foo.py"), &mut inner, parse, &mut cx),
+            poll_next("test", Path::new("foo.py"), &mut inner, parse, false, &mut cx),
             Poll::Ready(Some(
                 Entry::new(Path::new("foo.py"), "test", "linter not found").unwrap()
             ))
         );
         assert_eq!(
-            poll_next("test", Path::new("foo.py"), &mut inner, parse, &mut cx),
+            poll_next("test", Path::new("foo.py"), &mut inner, parse, false, &mut cx),
             Poll::Ready(None)
         );
     }

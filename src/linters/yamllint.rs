@@ -85,6 +85,7 @@ impl Stream for YamlYamllint {
             &this.filename,
             &mut this.inner,
             Self::parse_line,
+            false,
             cx,
         )
     }
