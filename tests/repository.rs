@@ -41,6 +41,7 @@ fn all_tracked_files() {
          shell-dirty.sh:4: [shellcheck] Double quote to prevent globbing and word splitting.\n\
          shell-dirty.sh:5: [shellcheck] Double quote to prevent globbing and word splitting.\n\
          shell-dirty.sh:5: [shellcheck] missing_var is referenced but not assigned.\n\
+         swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
          yaml-dirty.yaml:1: [yamllint] trailing spaces\n\
          yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n"

@@ -28,6 +28,7 @@ Statically analyse any file with the appropriate tools
 | Clojure    | `.clj`, `.cljs`, `.cljc`, `.edn` | [clj-kondo](https://github.com/clj-kondo/clj-kondo) |
 | Dockerfile | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `*.dockerfile` | [hadolint](https://github.com/hadolint/hadolint) |
 | Kotlin     | `.kt`, `.kts`                  | [ktlint](https://pinterest.github.io/ktlint/) |
+| Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
 
 ## Usage
 
@@ -89,6 +90,7 @@ The linters used are:
 - `clj-kondo` for Clojure
 - `hadolint` for Dockerfile
 - `ktlint` for Kotlin
+- `swiftlint` for Swift
 
 ## Installation
 

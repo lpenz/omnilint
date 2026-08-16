@@ -18,6 +18,7 @@ pub enum Filetype {
     Clojure,
     Dockerfile,
     Kotlin,
+    Swift,
 }
 
 impl Filetype {
@@ -31,6 +32,7 @@ impl Filetype {
             Some("pl" | "pm") => Filetype::Perl,
             Some("clj" | "cljs" | "cljc" | "edn") => Filetype::Clojure,
             Some("kt" | "kts") => Filetype::Kotlin,
+            Some("swift") => Filetype::Swift,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -128,6 +130,11 @@ mod tests {
     fn detect_kotlin() {
         assert_eq!(Filetype::detect(Path::new("foo.kt")), Filetype::Kotlin);
         assert_eq!(Filetype::detect(Path::new("foo.kts")), Filetype::Kotlin);
+    }
+
+    #[test]
+    fn detect_swift() {
+        assert_eq!(Filetype::detect(Path::new("foo.swift")), Filetype::Swift);
     }
 
     #[test]

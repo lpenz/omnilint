@@ -23,6 +23,7 @@
               clj-kondo
               hadolint
               ktlint
+              swiftlint
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };

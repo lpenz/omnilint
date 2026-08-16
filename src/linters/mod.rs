@@ -85,6 +85,7 @@ impl Linters {
             Filetype::Clojure => Box::pin(cljkondo::ClojureCljkondo::new(self, file)?),
             Filetype::Dockerfile => Box::pin(hadolint::DockerfileHadolint::new(self, file)?),
             Filetype::Kotlin => Box::pin(ktlint::KotlinKtlint::new(self, file)?),
+            Filetype::Swift => Box::pin(swiftlint::SwiftSwiftlint::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -153,6 +154,7 @@ pub mod luacheck;
 pub mod perlcritic;
 pub mod ruff;
 pub mod shellcheck;
+pub mod swiftlint;
 pub mod yamllint;
 
 #[cfg(test)]
