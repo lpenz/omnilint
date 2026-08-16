@@ -22,6 +22,7 @@
               perlPackages.PerlCritic
               clj-kondo
               hadolint
+              ktlint
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };

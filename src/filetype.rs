@@ -17,6 +17,7 @@ pub enum Filetype {
     Perl,
     Clojure,
     Dockerfile,
+    Kotlin,
 }
 
 impl Filetype {
@@ -29,6 +30,7 @@ impl Filetype {
             Some("lua") => Filetype::Lua,
             Some("pl" | "pm") => Filetype::Perl,
             Some("clj" | "cljs" | "cljc" | "edn") => Filetype::Clojure,
+            Some("kt" | "kts") => Filetype::Kotlin,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -120,6 +122,12 @@ mod tests {
             Filetype::detect(Path::new("app.dockerfile")),
             Filetype::Dockerfile
         );
+    }
+
+    #[test]
+    fn detect_kotlin() {
+        assert_eq!(Filetype::detect(Path::new("foo.kt")), Filetype::Kotlin);
+        assert_eq!(Filetype::detect(Path::new("foo.kts")), Filetype::Kotlin);
     }
 
     #[test]

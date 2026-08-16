@@ -27,6 +27,7 @@ Statically analyse any file with the appropriate tools
 | Perl       | `.pl`, `.pm`                 | [perlcritic](https://metacpan.org/pod/Perl::Critic) |
 | Clojure    | `.clj`, `.cljs`, `.cljc`, `.edn` | [clj-kondo](https://github.com/clj-kondo/clj-kondo) |
 | Dockerfile | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `*.dockerfile` | [hadolint](https://github.com/hadolint/hadolint) |
+| Kotlin     | `.kt`, `.kts`                  | [ktlint](https://pinterest.github.io/ktlint/) |
 
 ## Usage
 
@@ -87,6 +88,7 @@ The linters used are:
 - `perlcritic` for Perl
 - `clj-kondo` for Clojure
 - `hadolint` for Dockerfile
+- `ktlint` for Kotlin
 
 ## Installation
 
