@@ -20,6 +20,7 @@
               yamllint
               luaPackages.luacheck
               perlPackages.PerlCritic
+              clj-kondo
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };

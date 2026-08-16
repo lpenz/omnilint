@@ -25,6 +25,7 @@ Statically analyse any file with the appropriate tools
 | Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/) |
 | Lua        | `.lua`                        | [luacheck](https://luacheck.readthedocs.io/) |
 | Perl       | `.pl`, `.pm`                 | [perlcritic](https://metacpan.org/pod/Perl::Critic) |
+| Clojure    | `.clj`, `.cljs`, `.cljc`, `.edn` | [clj-kondo](https://github.com/clj-kondo/clj-kondo) |
 
 ## Usage
 
@@ -83,6 +84,7 @@ The linters used are:
 - `shellcheck` for Shell
 - `luacheck` for Lua
 - `perlcritic` for Perl
+- `clj-kondo` for Clojure
 
 ## Installation
 

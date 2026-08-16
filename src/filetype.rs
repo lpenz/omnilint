@@ -15,6 +15,7 @@ pub enum Filetype {
     Shell,
     Lua,
     Perl,
+    Clojure,
 }
 
 impl Filetype {
@@ -26,6 +27,7 @@ impl Filetype {
             Some("sh" | "bash" | "dash" | "ksh") => Filetype::Shell,
             Some("lua") => Filetype::Lua,
             Some("pl" | "pm") => Filetype::Perl,
+            Some("clj" | "cljs" | "cljc" | "edn") => Filetype::Clojure,
             _ => detect_shebang(path),
         }
     }
@@ -65,6 +67,14 @@ mod tests {
     fn detect_yaml() {
         assert_eq!(Filetype::detect(Path::new("foo.yaml")), Filetype::Yaml);
         assert_eq!(Filetype::detect(Path::new("foo.yml")), Filetype::Yaml);
+    }
+
+    #[test]
+    fn detect_clojure() {
+        assert_eq!(Filetype::detect(Path::new("foo.clj")), Filetype::Clojure);
+        assert_eq!(Filetype::detect(Path::new("foo.cljs")), Filetype::Clojure);
+        assert_eq!(Filetype::detect(Path::new("foo.cljc")), Filetype::Clojure);
+        assert_eq!(Filetype::detect(Path::new("foo.edn")), Filetype::Clojure);
     }
 
     #[test]
