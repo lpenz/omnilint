@@ -29,6 +29,16 @@ impl Entry {
         })
     }
 
+    pub fn new_line(filename: &Path, linter: &str, msg: &str, line: u32) -> Result<Entry> {
+        Ok(Entry {
+            filename: filename.to_path_buf(),
+            msg: msg.to_string(),
+            linter: linter.to_string(),
+            line: Some(NonZero::new(line).ok_or_eyre("line can't be zero")?),
+            col: None,
+        })
+    }
+
     pub fn new_line_col(
         filename: &Path,
         linter: &str,
@@ -66,6 +76,18 @@ mod tests {
         let e = Entry::new(Path::new("foo.rs"), "test", "warning")?;
         assert_eq!(e.to_string(), "foo.rs: [test] warning");
         Ok(())
+    }
+
+    #[test]
+    fn new_line_basic() -> Result<()> {
+        let e = Entry::new_line(Path::new("foo.rs"), "test", "error", 10)?;
+        assert_eq!(e.to_string(), "foo.rs:10: [test] error");
+        Ok(())
+    }
+
+    #[test]
+    fn new_line_zero_line_fails() {
+        assert!(Entry::new_line(Path::new("foo.rs"), "test", "error", 0).is_err());
     }
 
     #[test]

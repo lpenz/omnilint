@@ -16,6 +16,7 @@ pub enum Filetype {
     Lua,
     Perl,
     Clojure,
+    Dockerfile,
 }
 
 impl Filetype {
@@ -28,9 +29,33 @@ impl Filetype {
             Some("lua") => Filetype::Lua,
             Some("pl" | "pm") => Filetype::Perl,
             Some("clj" | "cljs" | "cljc" | "edn") => Filetype::Clojure,
-            _ => detect_shebang(path),
+            _ => detect_filename_or_shebang(path),
         }
     }
+}
+
+/// Detects the file type from the filename for files without a distinguishing
+/// extension (currently just Dockerfiles), falling back to shebang detection.
+fn detect_filename_or_shebang(path: &Path) -> Filetype {
+    if let Some(name) = path.file_name().and_then(|n| n.to_str())
+        && is_dockerfile_name(name)
+    {
+        return Filetype::Dockerfile;
+    }
+    detect_shebang(path)
+}
+
+/// Returns true if `name` is a Dockerfile filename: `Dockerfile`,
+/// `Dockerfile.*`, `Containerfile`, `Containerfile.*` or any `*.dockerfile`
+/// / `*.containerfile`.
+fn is_dockerfile_name(name: &str) -> bool {
+    let lower = name.to_lowercase();
+    lower == "dockerfile"
+        || lower == "containerfile"
+        || lower.starts_with("dockerfile.")
+        || lower.starts_with("containerfile.")
+        || lower.ends_with(".dockerfile")
+        || lower.ends_with(".containerfile")
 }
 
 fn detect_shebang(path: &Path) -> Filetype {
@@ -75,6 +100,26 @@ mod tests {
         assert_eq!(Filetype::detect(Path::new("foo.cljs")), Filetype::Clojure);
         assert_eq!(Filetype::detect(Path::new("foo.cljc")), Filetype::Clojure);
         assert_eq!(Filetype::detect(Path::new("foo.edn")), Filetype::Clojure);
+    }
+
+    #[test]
+    fn detect_dockerfile() {
+        assert_eq!(
+            Filetype::detect(Path::new("Dockerfile")),
+            Filetype::Dockerfile
+        );
+        assert_eq!(
+            Filetype::detect(Path::new("Dockerfile.dev")),
+            Filetype::Dockerfile
+        );
+        assert_eq!(
+            Filetype::detect(Path::new("containerfile")),
+            Filetype::Dockerfile
+        );
+        assert_eq!(
+            Filetype::detect(Path::new("app.dockerfile")),
+            Filetype::Dockerfile
+        );
     }
 
     #[test]

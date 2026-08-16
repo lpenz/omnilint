@@ -26,6 +26,7 @@ Statically analyse any file with the appropriate tools
 | Lua        | `.lua`                        | [luacheck](https://luacheck.readthedocs.io/) |
 | Perl       | `.pl`, `.pm`                 | [perlcritic](https://metacpan.org/pod/Perl::Critic) |
 | Clojure    | `.clj`, `.cljs`, `.cljc`, `.edn` | [clj-kondo](https://github.com/clj-kondo/clj-kondo) |
+| Dockerfile | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `*.dockerfile` | [hadolint](https://github.com/hadolint/hadolint) |
 
 ## Usage
 
@@ -85,6 +86,7 @@ The linters used are:
 - `luacheck` for Lua
 - `perlcritic` for Perl
 - `clj-kondo` for Clojure
+- `hadolint` for Dockerfile
 
 ## Installation
 

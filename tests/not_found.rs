@@ -13,11 +13,13 @@ fn linters_not_found() {
     assert_eq!(
         common::run_without_linters(&[
             "clj-clean.clj",
+            "docker-clean.dockerfile",
             "python-clean.py",
             "shell-clean.sh",
             "yaml-clean.yaml",
         ]),
         "clj-clean.clj: [clj-kondo] linter not found\n\
+         docker-clean.dockerfile: [hadolint] linter not found\n\
          python-clean.py: [flake8] linter not found\n\
          python-clean.py: [ruff] linter not found\n\
          shell-clean.sh: [shellcheck] linter not found\n\

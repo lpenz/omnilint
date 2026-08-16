@@ -83,6 +83,7 @@ impl Linters {
             Filetype::Lua => Box::pin(luacheck::LuaLuacheck::new(self, file)?),
             Filetype::Perl => Box::pin(perlcritic::PerlPerlcritic::new(self, file)?),
             Filetype::Clojure => Box::pin(cljkondo::ClojureCljkondo::new(self, file)?),
+            Filetype::Dockerfile => Box::pin(hadolint::DockerfileHadolint::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -145,6 +146,7 @@ pub(crate) fn poll_next(
 
 pub mod cljkondo;
 pub mod flake8;
+pub mod hadolint;
 pub mod luacheck;
 pub mod perlcritic;
 pub mod ruff;
