@@ -25,6 +25,7 @@ pub enum Filetype {
     Html,
     Json,
     C,
+    Proto,
 }
 
 impl Filetype {
@@ -45,6 +46,7 @@ impl Filetype {
             Some("html" | "htm") => Filetype::Html,
             Some("json") => Filetype::Json,
             Some("c" | "cc" | "cpp" | "cxx" | "h" | "hh" | "hpp" | "hxx") => Filetype::C,
+            Some("proto") => Filetype::Proto,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -187,6 +189,11 @@ mod tests {
         assert_eq!(Filetype::detect(Path::new("foo.cxx")), Filetype::C);
         assert_eq!(Filetype::detect(Path::new("foo.h")), Filetype::C);
         assert_eq!(Filetype::detect(Path::new("foo.hpp")), Filetype::C);
+    }
+
+    #[test]
+    fn detect_proto() {
+        assert_eq!(Filetype::detect(Path::new("foo.proto")), Filetype::Proto);
     }
 
     #[test]

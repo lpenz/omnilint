@@ -30,6 +30,7 @@
               html-tidy
               jq
               cppcheck
+              protolint
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };

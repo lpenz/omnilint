@@ -92,6 +92,7 @@ impl Linters {
             Filetype::Html => Box::pin(tidy::HtmlTidy::new(self, file)?),
             Filetype::Json => Box::pin(jq::JsonJq::new(self, file)?),
             Filetype::C => Box::pin(cppcheck::CCppcheck::new(self, file)?),
+            Filetype::Proto => Box::pin(protolint::ProtoProtolint::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -165,6 +166,7 @@ pub mod ktlint;
 pub mod luacheck;
 pub mod markdownlint;
 pub mod perlcritic;
+pub mod protolint;
 pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;

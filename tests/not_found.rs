@@ -19,6 +19,7 @@ fn linters_not_found() {
             "html-clean.html",
             "json-clean.json",
             "markdown-clean.md",
+            "proto_clean.proto",
             "python-clean.py",
             "shell-clean.sh",
             "sql-clean.sql",
@@ -33,6 +34,7 @@ fn linters_not_found() {
          html-clean.html: [tidy] linter not found\n\
          json-clean.json: [jq] linter not found\n\
          markdown-clean.md: [markdownlint-cli2] linter not found\n\
+         proto_clean.proto: [protolint] linter not found\n\
          python-clean.py: [flake8] linter not found\n\
          python-clean.py: [ruff] linter not found\n\
          shell-clean.sh: [shellcheck] linter not found\n\

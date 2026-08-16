@@ -35,6 +35,7 @@ Statically analyse any file with the appropriate tools
 | HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
 | JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) |
 | C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
+| Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
 
 ## Usage
 
@@ -103,6 +104,7 @@ The linters used are:
 - `tidy` for HTML
 - `jq` for JSON
 - `cppcheck` for C/C++
+- `protolint` for Protobuf
 
 ## Installation
 

@@ -33,6 +33,7 @@ fn all_tracked_files() {
          markdown-dirty.md:4: [markdownlint-cli2] Lists should be surrounded by blank lines [Context: \"- item one\"]\n\
          markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\
          perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
+         proto_dirty.proto:4: [protolint] Found an incorrect indentation style \"\t\". \"  \" is correct.\n\
          python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
          python-dirty.py:1: [ruff] F401 [*] `os` imported but unused\n\
          python-dirty.py:1: [ruff] I001 [*] Import block is un-sorted or un-formatted\n\
