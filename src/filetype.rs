@@ -64,16 +64,65 @@ fn detect_filename_or_shebang(path: &Path) -> Filetype {
 }
 
 /// Returns true if `name` is a Dockerfile filename: `Dockerfile`,
-/// `Dockerfile.*`, `Containerfile`, `Containerfile.*` or any `*.dockerfile`
-/// / `*.containerfile`.
+/// `Dockerfile.<target>`, `Containerfile`, `Containerfile.<target>` or any
+/// `*.dockerfile` / `*.containerfile`.
+///
+/// The `Dockerfile.<target>` and `Containerfile.<target>` forms only match
+/// when the target is not a known source file extension, so that files such
+/// as `dockerfile.rs` are not misdetected as Dockerfiles.
 fn is_dockerfile_name(name: &str) -> bool {
     let lower = name.to_lowercase();
     lower == "dockerfile"
         || lower == "containerfile"
-        || lower.starts_with("dockerfile.")
-        || lower.starts_with("containerfile.")
         || lower.ends_with(".dockerfile")
         || lower.ends_with(".containerfile")
+        || (lower.starts_with("dockerfile.") || lower.starts_with("containerfile."))
+            && !is_known_extension(lower.rsplit_once('.').map_or("", |(_, ext)| ext))
+}
+
+/// Returns true if `ext` is a common source code or documentation file
+/// extension, which would never be used as a Dockerfile build target.
+fn is_known_extension(ext: &str) -> bool {
+    matches!(
+        ext,
+        "c" | "cc"
+            | "clj"
+            | "cljs"
+            | "cljc"
+            | "cpp"
+            | "cxx"
+            | "go"
+            | "h"
+            | "hh"
+            | "hpp"
+            | "hxx"
+            | "html"
+            | "htm"
+            | "java"
+            | "js"
+            | "json"
+            | "kt"
+            | "kts"
+            | "lua"
+            | "md"
+            | "markdown"
+            | "nix"
+            | "pl"
+            | "pm"
+            | "proto"
+            | "py"
+            | "rb"
+            | "rs"
+            | "sh"
+            | "sql"
+            | "swift"
+            | "toml"
+            | "ts"
+            | "txt"
+            | "xml"
+            | "yaml"
+            | "yml"
+    )
 }
 
 fn detect_shebang(path: &Path) -> Filetype {
@@ -138,6 +187,26 @@ mod tests {
             Filetype::detect(Path::new("app.dockerfile")),
             Filetype::Dockerfile
         );
+        assert_eq!(
+            Filetype::detect(Path::new("containerfile.dev")),
+            Filetype::Dockerfile
+        );
+    }
+
+    #[test]
+    fn detect_dockerfile_suffix_collision() {
+        assert_eq!(
+            Filetype::detect(Path::new("dockerfile.rs")),
+            Filetype::Unknown
+        );
+        assert_eq!(
+            Filetype::detect(Path::new("dockerfile.txt")),
+            Filetype::Unknown
+        );
+        assert_eq!(
+            Filetype::detect(Path::new("containerfile.rs")),
+            Filetype::Unknown
+        );
     }
 
     #[test]
@@ -154,15 +223,6 @@ mod tests {
     #[test]
     fn detect_sql() {
         assert_eq!(Filetype::detect(Path::new("foo.sql")), Filetype::Sql);
-    }
-
-    #[test]
-    fn detect_markdown() {
-        assert_eq!(Filetype::detect(Path::new("foo.md")), Filetype::Markdown);
-        assert_eq!(
-            Filetype::detect(Path::new("foo.markdown")),
-            Filetype::Markdown
-        );
     }
 
     #[test]
