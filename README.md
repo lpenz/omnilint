@@ -33,6 +33,7 @@ Statically analyse any file with the appropriate tools
 | Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
 | XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
 | HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
+| JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) |
 
 ## Usage
 
@@ -99,6 +100,7 @@ The linters used are:
 - `markdownlint-cli2` for Markdown
 - `xmllint` for XML
 - `tidy` for HTML
+- `jq` for JSON
 
 ## Installation
 

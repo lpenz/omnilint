@@ -28,6 +28,7 @@
               markdownlint-cli2
               libxml2
               html-tidy
+              jq
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };

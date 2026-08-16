@@ -90,6 +90,7 @@ impl Linters {
             Filetype::Markdown => Box::pin(markdownlint::MarkdownMarkdownlint::new(self, file)?),
             Filetype::Xml => Box::pin(xmllint::XmlXmllint::new(self, file)?),
             Filetype::Html => Box::pin(tidy::HtmlTidy::new(self, file)?),
+            Filetype::Json => Box::pin(jq::JsonJq::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -157,6 +158,7 @@ pub(crate) fn poll_next(
 pub mod cljkondo;
 pub mod flake8;
 pub mod hadolint;
+pub mod jq;
 pub mod ktlint;
 pub mod luacheck;
 pub mod markdownlint;

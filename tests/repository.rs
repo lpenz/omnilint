@@ -27,6 +27,7 @@ fn all_tracked_files() {
          docker-dirty.dockerfile:3: [hadolint] Multiple consecutive `RUN` instructions. Consider consolidation.\n\
          docker-dirty.dockerfile:3: [hadolint] Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`\n\
          html-dirty.html:1: [tidy] missing <!DOCTYPE> declaration\n\
+         json-dirty.json:1: [jq] Unmatched '}'\n\
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\
          markdown-dirty.md:4: [markdownlint-cli2] Lists should be surrounded by blank lines [Context: \"- item one\"]\n\
          markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\

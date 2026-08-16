@@ -23,6 +23,7 @@ pub enum Filetype {
     Markdown,
     Xml,
     Html,
+    Json,
 }
 
 impl Filetype {
@@ -41,6 +42,7 @@ impl Filetype {
             Some("md" | "markdown") => Filetype::Markdown,
             Some("xml") => Filetype::Xml,
             Some("html" | "htm") => Filetype::Html,
+            Some("json") => Filetype::Json,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -168,6 +170,11 @@ mod tests {
     fn detect_html() {
         assert_eq!(Filetype::detect(Path::new("foo.html")), Filetype::Html);
         assert_eq!(Filetype::detect(Path::new("foo.htm")), Filetype::Html);
+    }
+
+    #[test]
+    fn detect_json() {
+        assert_eq!(Filetype::detect(Path::new("foo.json")), Filetype::Json);
     }
 
     #[test]
