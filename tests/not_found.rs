@@ -47,3 +47,11 @@ fn linters_not_found() {
          yaml-clean.yaml: [yamllint] linter not found\n"
     );
 }
+
+#[test]
+fn ignore_missing_linters() {
+    assert_eq!(
+        common::run_ignore_missing_linters(&["python-clean.py", "yaml-clean.yaml"]),
+        ""
+    );
+}

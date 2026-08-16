@@ -39,6 +39,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .init();
     let args = cli::Cli::parse();
     let mut linters = Linters::new();
+    linters.set_ignore_missing(args.ignore_missing_linters);
     let issues = match args.command {
         cli::Commands::Files { files } => {
             let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();

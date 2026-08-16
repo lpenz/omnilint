@@ -41,12 +41,32 @@ impl Linter {
 /// them for every file of a matching [`Filetype`].
 pub(crate) struct Linters {
     not_found: HashSet<&'static str>,
+    ignore_missing: bool,
 }
 
 impl Linters {
     pub(crate) fn new() -> Self {
         Self {
             not_found: HashSet::new(),
+            ignore_missing: false,
+        }
+    }
+
+    /// Sets whether linter binaries that are not found on the `PATH` should be
+    /// silently ignored instead of being reported as missing.
+    pub(crate) fn set_ignore_missing(&mut self, ignore_missing: bool) {
+        self.ignore_missing = ignore_missing;
+    }
+
+    /// Returns the [`Linter`] placeholder for a missing linter, or
+    /// [`Linter::Done`] to silently skip it when missing linters are being
+    /// ignored.
+    fn missing(&mut self, name: &'static str) -> Linter {
+        self.not_found.insert(name);
+        if self.ignore_missing {
+            Linter::Done
+        } else {
+            Linter::NotFound
         }
     }
 
@@ -54,13 +74,10 @@ impl Linters {
     /// without attempting to run it again if it was already found missing.
     fn spawn(&mut self, name: &'static str, cmd: Command) -> color_eyre::Result<Linter> {
         if self.not_found.contains(name) {
-            return Ok(Linter::NotFound);
+            return Ok(self.missing(name));
         }
         match Linter::spawn(cmd) {
-            Ok(Linter::NotFound) => {
-                self.not_found.insert(name);
-                Ok(Linter::NotFound)
-            }
+            Ok(Linter::NotFound) => Ok(self.missing(name)),
             result => result,
         }
     }

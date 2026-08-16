@@ -19,6 +19,11 @@ use std::path::PathBuf;
     long_about = "Statically analyse any file with the appropriate tools"
 )]
 pub struct Cli {
+    /// Ignore linters that are not found on the `PATH`: don't report them and
+    /// don't consider them an issue for the exit status
+    #[arg(long, global = true)]
+    pub ignore_missing_linters: bool,
+
     #[command(subcommand)]
     pub command: Commands,
 }
@@ -55,6 +60,18 @@ mod tests {
             files,
             vec![PathBuf::from("foo.rs"), PathBuf::from("bar.rs")]
         );
+    }
+
+    #[test]
+    fn ignore_missing_linters_flag() {
+        let cli = Cli::try_parse_from(["", "files", "--ignore-missing-linters", "foo.py"]).unwrap();
+        assert!(cli.ignore_missing_linters);
+        let cli = Cli::try_parse_from(["", "files", "foo.py", "--ignore-missing-linters"]).unwrap();
+        assert!(cli.ignore_missing_linters);
+        let cli = Cli::try_parse_from(["", "repository", "--ignore-missing-linters"]).unwrap();
+        assert!(cli.ignore_missing_linters);
+        let cli = Cli::try_parse_from(["", "files", "foo.py"]).unwrap();
+        assert!(!cli.ignore_missing_linters);
     }
 
     #[test]
