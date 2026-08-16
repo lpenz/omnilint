@@ -18,6 +18,7 @@
               ruff
               shellcheck
               yamllint
+              actionlint
               luaPackages.luacheck
               perlPackages.PerlCritic
               clj-kondo

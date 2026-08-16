@@ -17,7 +17,11 @@ mod common;
 fn all_tracked_files() {
     assert_eq!(
         common::run_repository(),
-        "Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
+        ".github/workflows/clean.yml:3: [yamllint] truthy value should be one of [false, true]\n\
+         .github/workflows/dirty.yml:3: [yamllint] truthy value should be one of [false, true]\n\
+         .github/workflows/dirty.yml:8: [actionlint] element of \"steps\" section is scalar node but mapping node is expected\n\
+         .github/workflows/dirty.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section\n\
+         Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
          c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\

@@ -21,7 +21,7 @@ Statically analyse any file with the appropriate tools
 | File type  | Extensions / shebang          | Linters                              |
 |------------|-------------------------------|--------------------------------------|
 | Python     | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ... | [flake8](https://flake8.pycqa.org/) and [ruff](https://docs.astral.sh/ruff/) |
-| YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) |
+| YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) and [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows (`.github/workflows/`) |
 | Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/) |
 | Lua        | `.lua`                        | [luacheck](https://luacheck.readthedocs.io/) |
 | Perl       | `.pl`, `.pm`                 | [perlcritic](https://metacpan.org/pod/Perl::Critic) |
@@ -90,7 +90,8 @@ found:
 The linters used are:
 
 - `flake8` and `ruff` for Python
-- `yamllint` for YAML
+- `yamllint` for YAML, and `actionlint` for GitHub Actions workflow files
+  (under `.github/workflows/`)
 - `shellcheck` for Shell
 - `luacheck` for Lua
 - `perlcritic` for Perl

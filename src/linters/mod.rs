@@ -73,7 +73,15 @@ impl Linters {
     ) -> color_eyre::Result<Option<Pin<Box<dyn Stream<Item = Entry>>>>> {
         let filetype = Filetype::detect(file);
         let stream: Pin<Box<dyn Stream<Item = Entry>>> = match filetype {
-            Filetype::Yaml => Box::pin(yamllint::YamlYamllint::new(self, file)?),
+            Filetype::Yaml => {
+                let yamllint = yamllint::YamlYamllint::new(self, file)?;
+                if is_github_workflow(file) {
+                    let actionlint = actionlint::GithubWorkflowActionlint::new(self, file)?;
+                    Box::pin(yamllint.merge(actionlint))
+                } else {
+                    Box::pin(yamllint)
+                }
+            }
             Filetype::Python => {
                 let flake8 = flake8::PythonFlake8::new(self, file)?;
                 let ruff = ruff::PythonRuff::new(self, file)?;
@@ -97,6 +105,15 @@ impl Linters {
         };
         Ok(Some(stream))
     }
+}
+
+/// Returns true if `file` is a GitHub Actions workflow, i.e. it has a
+/// `.github` directory component followed by a `workflows` directory
+/// component.
+fn is_github_workflow(file: &Path) -> bool {
+    file.components()
+        .zip(file.components().skip(1))
+        .any(|(a, b)| a.as_os_str() == ".github" && b.as_os_str() == "workflows")
 }
 
 /// Parses a `filename:line:col: message` line (as emitted by flake8 and ruff)
@@ -157,6 +174,7 @@ pub(crate) fn poll_next(
     }
 }
 
+pub mod actionlint;
 pub mod cljkondo;
 pub mod cppcheck;
 pub mod flake8;
@@ -223,5 +241,16 @@ mod tests {
             linters.spawn("probe", present),
             Ok(Linter::NotFound)
         ));
+    }
+
+    #[test]
+    fn github_workflow_detection() {
+        assert!(is_github_workflow(Path::new(".github/workflows/ci.yml")));
+        assert!(is_github_workflow(Path::new(
+            "foo/.github/workflows/ci.yml"
+        )));
+        assert!(!is_github_workflow(Path::new(".github/ci.yml")));
+        assert!(!is_github_workflow(Path::new("workflows/ci.yml")));
+        assert!(!is_github_workflow(Path::new("foo.yml")));
     }
 }

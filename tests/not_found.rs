@@ -12,6 +12,7 @@ mod common;
 fn linters_not_found() {
     assert_eq!(
         common::run_without_linters(&[
+            ".github/workflows/clean.yml",
             "Clean.kt",
             "c-clean.c",
             "clj-clean.clj",
@@ -27,7 +28,9 @@ fn linters_not_found() {
             "xml-clean.xml",
             "yaml-clean.yaml",
         ]),
-        "Clean.kt: [ktlint] linter not found\n\
+        ".github/workflows/clean.yml: [actionlint] linter not found\n\
+         .github/workflows/clean.yml: [yamllint] linter not found\n\
+         Clean.kt: [ktlint] linter not found\n\
          c-clean.c: [cppcheck] linter not found\n\
          clj-clean.clj: [clj-kondo] linter not found\n\
          docker-clean.dockerfile: [hadolint] linter not found\n\
