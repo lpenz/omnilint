@@ -21,6 +21,7 @@ pub enum Filetype {
     Swift,
     Sql,
     Markdown,
+    Xml,
 }
 
 impl Filetype {
@@ -37,6 +38,7 @@ impl Filetype {
             Some("swift") => Filetype::Swift,
             Some("sql") => Filetype::Sql,
             Some("md" | "markdown") => Filetype::Markdown,
+            Some("xml") => Filetype::Xml,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -153,6 +155,11 @@ mod tests {
             Filetype::detect(Path::new("foo.markdown")),
             Filetype::Markdown
         );
+    }
+
+    #[test]
+    fn detect_xml() {
+        assert_eq!(Filetype::detect(Path::new("foo.xml")), Filetype::Xml);
     }
 
     #[test]

@@ -20,6 +20,7 @@ fn linters_not_found() {
             "shell-clean.sh",
             "sql-clean.sql",
             "swift-clean.swift",
+            "xml-clean.xml",
             "yaml-clean.yaml",
         ]),
         "Clean.kt: [ktlint] linter not found\n\
@@ -31,6 +32,7 @@ fn linters_not_found() {
          shell-clean.sh: [shellcheck] linter not found\n\
          sql-clean.sql: [sqlfluff] linter not found\n\
          swift-clean.swift: [swiftlint] linter not found\n\
+         xml-clean.xml: [xmllint] linter not found\n\
          yaml-clean.yaml: [yamllint] linter not found\n"
     );
 }

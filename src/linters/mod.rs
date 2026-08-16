@@ -88,6 +88,7 @@ impl Linters {
             Filetype::Swift => Box::pin(swiftlint::SwiftSwiftlint::new(self, file)?),
             Filetype::Sql => Box::pin(sqlfluff::SqlSqlfluff::new(self, file)?),
             Filetype::Markdown => Box::pin(markdownlint::MarkdownMarkdownlint::new(self, file)?),
+            Filetype::Xml => Box::pin(xmllint::XmlXmllint::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -163,6 +164,7 @@ pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;
 pub mod swiftlint;
+pub mod xmllint;
 pub mod yamllint;
 
 #[cfg(test)]

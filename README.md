@@ -31,6 +31,7 @@ Statically analyse any file with the appropriate tools
 | Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
 | SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
 | Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
+| XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
 
 ## Usage
 
@@ -95,6 +96,7 @@ The linters used are:
 - `swiftlint` for Swift
 - `sqlfluff` for SQL
 - `markdownlint-cli2` for Markdown
+- `xmllint` for XML
 
 ## Installation
 

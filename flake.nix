@@ -26,6 +26,7 @@
               swiftlint
               sqlfluff
               markdownlint-cli2
+              libxml2
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };
