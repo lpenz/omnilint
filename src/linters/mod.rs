@@ -89,6 +89,7 @@ impl Linters {
             Filetype::Sql => Box::pin(sqlfluff::SqlSqlfluff::new(self, file)?),
             Filetype::Markdown => Box::pin(markdownlint::MarkdownMarkdownlint::new(self, file)?),
             Filetype::Xml => Box::pin(xmllint::XmlXmllint::new(self, file)?),
+            Filetype::Html => Box::pin(tidy::HtmlTidy::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -164,6 +165,7 @@ pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;
 pub mod swiftlint;
+pub mod tidy;
 pub mod xmllint;
 pub mod yamllint;
 

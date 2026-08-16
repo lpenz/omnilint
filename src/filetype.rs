@@ -22,6 +22,7 @@ pub enum Filetype {
     Sql,
     Markdown,
     Xml,
+    Html,
 }
 
 impl Filetype {
@@ -39,6 +40,7 @@ impl Filetype {
             Some("sql") => Filetype::Sql,
             Some("md" | "markdown") => Filetype::Markdown,
             Some("xml") => Filetype::Xml,
+            Some("html" | "htm") => Filetype::Html,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -160,6 +162,12 @@ mod tests {
     #[test]
     fn detect_xml() {
         assert_eq!(Filetype::detect(Path::new("foo.xml")), Filetype::Xml);
+    }
+
+    #[test]
+    fn detect_html() {
+        assert_eq!(Filetype::detect(Path::new("foo.html")), Filetype::Html);
+        assert_eq!(Filetype::detect(Path::new("foo.htm")), Filetype::Html);
     }
 
     #[test]

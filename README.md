@@ -32,6 +32,7 @@ Statically analyse any file with the appropriate tools
 | SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
 | Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
 | XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
+| HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
 
 ## Usage
 
@@ -97,6 +98,7 @@ The linters used are:
 - `sqlfluff` for SQL
 - `markdownlint-cli2` for Markdown
 - `xmllint` for XML
+- `tidy` for HTML
 
 ## Installation
 
