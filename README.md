@@ -29,6 +29,7 @@ Statically analyse any file with the appropriate tools
 | Dockerfile | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `*.dockerfile` | [hadolint](https://github.com/hadolint/hadolint) |
 | Kotlin     | `.kt`, `.kts`                  | [ktlint](https://pinterest.github.io/ktlint/) |
 | Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
+| SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
 
 ## Usage
 
@@ -91,6 +92,7 @@ The linters used are:
 - `hadolint` for Dockerfile
 - `ktlint` for Kotlin
 - `swiftlint` for Swift
+- `sqlfluff` for SQL
 
 ## Installation
 

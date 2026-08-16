@@ -86,6 +86,7 @@ impl Linters {
             Filetype::Dockerfile => Box::pin(hadolint::DockerfileHadolint::new(self, file)?),
             Filetype::Kotlin => Box::pin(ktlint::KotlinKtlint::new(self, file)?),
             Filetype::Swift => Box::pin(swiftlint::SwiftSwiftlint::new(self, file)?),
+            Filetype::Sql => Box::pin(sqlfluff::SqlSqlfluff::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -154,6 +155,7 @@ pub mod luacheck;
 pub mod perlcritic;
 pub mod ruff;
 pub mod shellcheck;
+pub mod sqlfluff;
 pub mod swiftlint;
 pub mod yamllint;
 

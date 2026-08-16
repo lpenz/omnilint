@@ -17,6 +17,7 @@ fn linters_not_found() {
             "docker-clean.dockerfile",
             "python-clean.py",
             "shell-clean.sh",
+            "sql-clean.sql",
             "swift-clean.swift",
             "yaml-clean.yaml",
         ]),
@@ -26,6 +27,7 @@ fn linters_not_found() {
          python-clean.py: [flake8] linter not found\n\
          python-clean.py: [ruff] linter not found\n\
          shell-clean.sh: [shellcheck] linter not found\n\
+         sql-clean.sql: [sqlfluff] linter not found\n\
          swift-clean.swift: [swiftlint] linter not found\n\
          yaml-clean.yaml: [yamllint] linter not found\n"
     );

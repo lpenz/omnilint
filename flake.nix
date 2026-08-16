@@ -24,6 +24,7 @@
               hadolint
               ktlint
               swiftlint
+              sqlfluff
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };
