@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["sql-clean.sql"]), "");
+    assert_eq!(common::run_clean(&["sql-clean.sql"]), "");
 }
 
 #[test]

@@ -15,7 +15,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["python-clean.py"]), "");
+    assert_eq!(common::run_clean(&["python-clean.py"]), "");
 }
 
 #[test]

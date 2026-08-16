@@ -76,6 +76,19 @@ is omitted:
 This format is similar to the one used by compilers, and is parseable by most
 editors and IDEs.
 
+### Exit status
+
+omnilint exits with status `0` when no issues were found, and with status `1`
+when at least one finding was emitted, including when a linter was not found
+on the `PATH`. This makes it usable as a gate in CI pipelines and git hooks:
+
+```console
+$ omnilint files test.py && echo "clean"
+test.py:1: [ruff] F401 'os' imported but unused
+$ echo $?
+1
+```
+
 ## Requirements
 
 The underlying linters must be installed for omnilint to analyse the

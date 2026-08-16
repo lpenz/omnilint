@@ -15,7 +15,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["shell-clean.sh"]), "");
+    assert_eq!(common::run_clean(&["shell-clean.sh"]), "");
 }
 
 #[test]

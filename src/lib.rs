@@ -27,6 +27,9 @@ use std::pin::Pin;
 use tokio_stream::{Stream, StreamExt, StreamMap};
 
 /// main function, the single pub function in this lib.
+///
+/// Exits with status 1 if any finding was emitted (including a linter that
+/// was not found), and with status 0 otherwise.
 #[tokio::main(flavor = "current_thread")]
 pub async fn main() -> Result<(), Box<dyn Error>> {
     color_eyre::install()?;
@@ -36,18 +39,21 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .init();
     let args = cli::Cli::parse();
     let mut linters = Linters::new();
-    match args.command {
+    let issues = match args.command {
         cli::Commands::Files { files } => {
             let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();
             for file in &files {
                 push_stream(&mut linters, &mut streams, file)?;
             }
-            run_streams(streams).await;
+            run_streams(streams).await
         }
         cli::Commands::Repository => {
             let files = repo::git_ls_files()?;
-            run_repository(&mut linters, files).await?;
+            run_repository(&mut linters, files).await?
         }
+    };
+    if issues > 0 {
+        std::process::exit(1);
     }
     Ok(())
 }
@@ -67,14 +73,15 @@ fn push_stream(
 
 /// Lints each file of the given stream as soon as it is produced, running
 /// all the linters in parallel, and prints the resulting [`Entry`] values to
-/// stderr.
+/// stderr. Returns the number of entries emitted.
 async fn run_repository(
     linters: &mut Linters,
     files: impl Stream<Item = PathBuf> + Unpin,
-) -> color_eyre::Result<()> {
+) -> color_eyre::Result<usize> {
     let mut files = files;
     let mut streams: StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>> = StreamMap::new();
     let mut next_id = 0;
+    let mut issues = 0;
     loop {
         if streams.is_empty() {
             match files.next().await {
@@ -91,14 +98,16 @@ async fn run_repository(
                 }
                 Some((_, entry)) = streams.next() => {
                     eprintln!("{}", entry);
+                    issues += 1;
                 }
             }
         }
     }
     while let Some((_, entry)) = streams.next().await {
         eprintln!("{}", entry);
+        issues += 1;
     }
-    Ok(())
+    Ok(issues)
 }
 
 /// Creates a linter stream for `file`, if any, and adds it to `streams`.
@@ -116,12 +125,15 @@ fn add_file(
 }
 
 /// Lints all the given streams in parallel, printing the resulting
-/// [`Entry`] values to stderr.
-async fn run_streams(streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>>) {
+/// [`Entry`] values to stderr. Returns the number of entries emitted.
+async fn run_streams(streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>>) -> usize {
     let merged = streams.into_iter().reduce(|a, b| Box::pin(a.merge(b)));
+    let mut issues = 0;
     if let Some(mut merged) = merged {
         while let Some(entry) = merged.next().await {
             eprintln!("{}", entry);
+            issues += 1;
         }
     }
+    issues
 }

@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["swift-clean.swift"]), "");
+    assert_eq!(common::run_clean(&["swift-clean.swift"]), "");
 }
 
 #[test]

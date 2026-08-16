@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["yaml-clean.yaml"]), "");
+    assert_eq!(common::run_clean(&["yaml-clean.yaml"]), "");
 }
 
 #[test]

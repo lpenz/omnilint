@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["perl-clean.pl"]), "");
+    assert_eq!(common::run_clean(&["perl-clean.pl"]), "");
 }
 
 #[test]

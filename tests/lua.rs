@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["lua-clean.lua"]), "");
+    assert_eq!(common::run_clean(&["lua-clean.lua"]), "");
 }
 
 #[test]

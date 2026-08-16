@@ -19,24 +19,39 @@ fn fixtures_dir() -> PathBuf {
 /// Runs `omnilint files` on the given files from the fixtures directory and
 /// returns its stderr, with the output lines sorted so that the result is
 /// deterministic even when linters run in parallel.
+///
+/// Asserts that omnilint exits with status 1, i.e. that at least one issue
+/// was found.
 pub fn run(files: &[&str]) -> String {
-    run_command("files", files, &[])
+    run_command("files", files, &[], 1)
+}
+
+/// Runs `omnilint files` on the given files, asserting that omnilint exits
+/// with status 0, i.e. that no issues were found.
+pub fn run_clean(files: &[&str]) -> String {
+    run_command("files", files, &[], 0)
 }
 
 /// Runs `omnilint repository` in the fixtures directory (a git repository)
 /// and returns its stderr, with the output lines sorted so that the result
 /// is deterministic even when linters run in parallel.
+///
+/// Asserts that omnilint exits with status 1, i.e. that at least one issue
+/// was found.
 pub fn run_repository() -> String {
-    run_command("repository", &[], &[])
+    run_command("repository", &[], &[], 1)
 }
 
 /// Runs `omnilint files` on the given files with a `PATH` that contains no
 /// linter tools, so that every linter reports it was not found.
+///
+/// Asserts that omnilint exits with status 1, since a missing linter counts
+/// as an issue.
 pub fn run_without_linters(files: &[&str]) -> String {
-    run_command("files", files, &[("PATH", "/nonexistent")])
+    run_command("files", files, &[("PATH", "/nonexistent")], 1)
 }
 
-fn run_command(subcommand: &str, files: &[&str], envs: &[(&str, &str)]) -> String {
+fn run_command(subcommand: &str, files: &[&str], envs: &[(&str, &str)], code: i32) -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let mut command = cmd.current_dir(fixtures_dir()).arg(subcommand);
     for file in files {
@@ -45,7 +60,7 @@ fn run_command(subcommand: &str, files: &[&str], envs: &[(&str, &str)]) -> Strin
     for (key, value) in envs {
         command = command.env(key, value);
     }
-    let output = command.assert().success().stdout("");
+    let output = command.assert().code(code).stdout("");
     let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
         .lines()
         .map(Into::into)

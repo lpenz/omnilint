@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["clj-clean.clj"]), "");
+    assert_eq!(common::run_clean(&["clj-clean.clj"]), "");
 }
 
 #[test]

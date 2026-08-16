@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["Clean.kt"]), "");
+    assert_eq!(common::run_clean(&["Clean.kt"]), "");
 }
 
 #[test]

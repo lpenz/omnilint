@@ -14,7 +14,7 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run(&["docker-clean.dockerfile"]), "");
+    assert_eq!(common::run_clean(&["docker-clean.dockerfile"]), "");
 }
 
 #[test]
