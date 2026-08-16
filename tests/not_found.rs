@@ -15,6 +15,7 @@ fn linters_not_found() {
             "Clean.kt",
             "clj-clean.clj",
             "docker-clean.dockerfile",
+            "markdown-clean.md",
             "python-clean.py",
             "shell-clean.sh",
             "sql-clean.sql",
@@ -24,6 +25,7 @@ fn linters_not_found() {
         "Clean.kt: [ktlint] linter not found\n\
          clj-clean.clj: [clj-kondo] linter not found\n\
          docker-clean.dockerfile: [hadolint] linter not found\n\
+         markdown-clean.md: [markdownlint-cli2] linter not found\n\
          python-clean.py: [flake8] linter not found\n\
          python-clean.py: [ruff] linter not found\n\
          shell-clean.sh: [shellcheck] linter not found\n\

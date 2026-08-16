@@ -30,6 +30,7 @@ Statically analyse any file with the appropriate tools
 | Kotlin     | `.kt`, `.kts`                  | [ktlint](https://pinterest.github.io/ktlint/) |
 | Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
 | SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
+| Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
 
 ## Usage
 
@@ -93,6 +94,7 @@ The linters used are:
 - `ktlint` for Kotlin
 - `swiftlint` for Swift
 - `sqlfluff` for SQL
+- `markdownlint-cli2` for Markdown
 
 ## Installation
 

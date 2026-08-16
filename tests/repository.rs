@@ -27,6 +27,8 @@ fn all_tracked_files() {
          docker-dirty.dockerfile:3: [hadolint] Multiple consecutive `RUN` instructions. Consider consolidation.\n\
          docker-dirty.dockerfile:3: [hadolint] Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`\n\
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\
+         markdown-dirty.md:4: [markdownlint-cli2] Lists should be surrounded by blank lines [Context: \"- item one\"]\n\
+         markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\
          perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
          python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
          python-dirty.py:1: [ruff] F401 [*] `os` imported but unused\n\

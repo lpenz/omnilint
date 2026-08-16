@@ -20,6 +20,7 @@ pub enum Filetype {
     Kotlin,
     Swift,
     Sql,
+    Markdown,
 }
 
 impl Filetype {
@@ -35,6 +36,7 @@ impl Filetype {
             Some("kt" | "kts") => Filetype::Kotlin,
             Some("swift") => Filetype::Swift,
             Some("sql") => Filetype::Sql,
+            Some("md" | "markdown") => Filetype::Markdown,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -142,6 +144,15 @@ mod tests {
     #[test]
     fn detect_sql() {
         assert_eq!(Filetype::detect(Path::new("foo.sql")), Filetype::Sql);
+    }
+
+    #[test]
+    fn detect_markdown() {
+        assert_eq!(Filetype::detect(Path::new("foo.md")), Filetype::Markdown);
+        assert_eq!(
+            Filetype::detect(Path::new("foo.markdown")),
+            Filetype::Markdown
+        );
     }
 
     #[test]

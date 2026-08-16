@@ -87,6 +87,7 @@ impl Linters {
             Filetype::Kotlin => Box::pin(ktlint::KotlinKtlint::new(self, file)?),
             Filetype::Swift => Box::pin(swiftlint::SwiftSwiftlint::new(self, file)?),
             Filetype::Sql => Box::pin(sqlfluff::SqlSqlfluff::new(self, file)?),
+            Filetype::Markdown => Box::pin(markdownlint::MarkdownMarkdownlint::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -108,11 +109,10 @@ fn parse_line_standard(filename: &Path, linter: &str, line: &str) -> Option<Entr
 }
 
 /// Polls a linter's `inner` process stream, converting its lines into
-/// [`Entry`] values via `parse` and logging the lines on the other stream.
+/// [`Entry`] values via `parse` and discarding the lines on the other stream.
 /// `findings_on_stderr` selects which of the process streams holds the
-/// findings; the remaining stream is logged. If the linter binary was not
-/// found on the `PATH`, emits a single [`Entry`] reporting that before the
-/// stream ends.
+/// findings. If the linter binary was not found on the `PATH`, emits a single
+/// [`Entry`] reporting that before the stream ends.
 pub(crate) fn poll_next(
     name: &'static str,
     filename: &Path,
@@ -125,19 +125,13 @@ pub(crate) fn poll_next(
         Linter::Running(stream) => loop {
             match ready!(Pin::new(&mut *stream).poll_next(cx)) {
                 Some(ProcessItem::Stdout(line)) => {
-                    if findings_on_stderr {
-                        eprintln!("[{} {}] stdout {}", name, filename.display(), line);
-                    } else if let Some(entry) = parse(filename, &line) {
+                    if !findings_on_stderr && let Some(entry) = parse(filename, &line) {
                         return Poll::Ready(Some(entry));
                     }
                 }
                 Some(ProcessItem::Stderr(line)) => {
-                    if findings_on_stderr {
-                        if let Some(entry) = parse(filename, &line) {
-                            return Poll::Ready(Some(entry));
-                        }
-                    } else {
-                        eprintln!("[{} {}] stderr {}", name, filename.display(), line);
+                    if findings_on_stderr && let Some(entry) = parse(filename, &line) {
+                        return Poll::Ready(Some(entry));
                     }
                 }
                 Some(ProcessItem::Done(_)) => {
@@ -163,6 +157,7 @@ pub mod flake8;
 pub mod hadolint;
 pub mod ktlint;
 pub mod luacheck;
+pub mod markdownlint;
 pub mod perlcritic;
 pub mod ruff;
 pub mod shellcheck;
@@ -180,13 +175,27 @@ mod tests {
         let mut cx = Context::from_waker(std::task::Waker::noop());
         let parse = |_: &Path, _: &str| None;
         assert_eq!(
-            poll_next("test", Path::new("foo.py"), &mut inner, parse, false, &mut cx),
+            poll_next(
+                "test",
+                Path::new("foo.py"),
+                &mut inner,
+                parse,
+                false,
+                &mut cx
+            ),
             Poll::Ready(Some(
                 Entry::new(Path::new("foo.py"), "test", "linter not found").unwrap()
             ))
         );
         assert_eq!(
-            poll_next("test", Path::new("foo.py"), &mut inner, parse, false, &mut cx),
+            poll_next(
+                "test",
+                Path::new("foo.py"),
+                &mut inner,
+                parse,
+                false,
+                &mut cx
+            ),
             Poll::Ready(None)
         );
     }
