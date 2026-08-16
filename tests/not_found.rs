@@ -13,6 +13,7 @@ fn linters_not_found() {
     assert_eq!(
         common::run_without_linters(&[
             "Clean.kt",
+            "c-clean.c",
             "clj-clean.clj",
             "docker-clean.dockerfile",
             "html-clean.html",
@@ -26,6 +27,7 @@ fn linters_not_found() {
             "yaml-clean.yaml",
         ]),
         "Clean.kt: [ktlint] linter not found\n\
+         c-clean.c: [cppcheck] linter not found\n\
          clj-clean.clj: [clj-kondo] linter not found\n\
          docker-clean.dockerfile: [hadolint] linter not found\n\
          html-clean.html: [tidy] linter not found\n\

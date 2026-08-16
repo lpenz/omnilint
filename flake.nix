@@ -29,6 +29,7 @@
               libxml2
               html-tidy
               jq
+              cppcheck
               (python3.withPackages (ps: [ ps.flake8 ]))
             ];
           };

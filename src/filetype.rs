@@ -24,6 +24,7 @@ pub enum Filetype {
     Xml,
     Html,
     Json,
+    C,
 }
 
 impl Filetype {
@@ -43,6 +44,7 @@ impl Filetype {
             Some("xml") => Filetype::Xml,
             Some("html" | "htm") => Filetype::Html,
             Some("json") => Filetype::Json,
+            Some("c" | "cc" | "cpp" | "cxx" | "h" | "hh" | "hpp" | "hxx") => Filetype::C,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -175,6 +177,16 @@ mod tests {
     #[test]
     fn detect_json() {
         assert_eq!(Filetype::detect(Path::new("foo.json")), Filetype::Json);
+    }
+
+    #[test]
+    fn detect_c() {
+        assert_eq!(Filetype::detect(Path::new("foo.c")), Filetype::C);
+        assert_eq!(Filetype::detect(Path::new("foo.cc")), Filetype::C);
+        assert_eq!(Filetype::detect(Path::new("foo.cpp")), Filetype::C);
+        assert_eq!(Filetype::detect(Path::new("foo.cxx")), Filetype::C);
+        assert_eq!(Filetype::detect(Path::new("foo.h")), Filetype::C);
+        assert_eq!(Filetype::detect(Path::new("foo.hpp")), Filetype::C);
     }
 
     #[test]

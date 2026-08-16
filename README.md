@@ -34,6 +34,7 @@ Statically analyse any file with the appropriate tools
 | XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
 | HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
 | JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) |
+| C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
 
 ## Usage
 
@@ -101,6 +102,7 @@ The linters used are:
 - `xmllint` for XML
 - `tidy` for HTML
 - `jq` for JSON
+- `cppcheck` for C/C++
 
 ## Installation
 

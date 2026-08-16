@@ -18,6 +18,7 @@ fn all_tracked_files() {
     assert_eq!(
         common::run_repository(),
         "Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
+         c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\
          clj-dirty.clj:2: [clj-kondo] unused binding unused\n\
