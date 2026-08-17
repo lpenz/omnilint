@@ -12,6 +12,7 @@
 
 mod cli;
 
+mod config;
 mod entry;
 mod filetype;
 mod linters;
@@ -41,9 +42,18 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .init();
     let args = cli::Cli::parse();
     let mut linters = Linters::new();
+    let config = config::Config::load()?;
     let ignore_missing = args.ignore_missing_linters
+        || config.global.ignore_missing_linters
         || env::var("OMNILINT_IGNORE_MISSING_LINTERS").is_ok_and(|value| env_bool(&value));
     linters.set_ignore_missing(ignore_missing);
+    let disabled: std::collections::HashSet<String> = config
+        .linters
+        .iter()
+        .filter(|(_, c)| c.disabled)
+        .map(|(name, _)| name.clone())
+        .collect();
+    linters.set_disabled(disabled);
     let format = args.format;
     let issues = match args.command {
         cli::Commands::Files { files } => {

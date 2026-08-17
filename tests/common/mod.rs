@@ -100,6 +100,38 @@ pub fn run_github_workflow(files: &[&str]) -> String {
     )
 }
 
+/// Runs `omnilint files` on the given files from a temporary directory that
+/// contains an `omnilint.toml` with the given contents and a `PATH` that has
+/// no linter tools.
+///
+/// Asserts that omnilint exits with the given status code.
+pub fn run_with_config(files: &[&str], config_contents: &str, code: i32) -> String {
+    let tmp = tempfile::tempdir().unwrap();
+    std::fs::write(tmp.path().join("omnilint.toml"), config_contents).unwrap();
+    for file in files {
+        std::fs::copy(fixtures_dir().join(file), tmp.path().join(file)).unwrap();
+    }
+    let mut cmd = Command::cargo_bin("omnilint").unwrap();
+    let mut command = cmd
+        .current_dir(tmp.path())
+        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
+        .arg("files");
+    for file in files {
+        command = command.arg(file);
+    }
+    command = command.env("PATH", "/nonexistent");
+    let output = command.assert().code(code).stdout("");
+    let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
+        .lines()
+        .map(Into::into)
+        .collect();
+    if lines.is_empty() {
+        return String::new();
+    }
+    lines.sort();
+    lines.join("\n") + "\n"
+}
+
 fn run_command(
     subcommand: &str,
     files: &[&str],

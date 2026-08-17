@@ -42,6 +42,7 @@ impl Linter {
 pub(crate) struct Linters {
     not_found: HashSet<&'static str>,
     ignore_missing: bool,
+    disabled: HashSet<String>,
 }
 
 impl Linters {
@@ -49,6 +50,7 @@ impl Linters {
         Self {
             not_found: HashSet::new(),
             ignore_missing: false,
+            disabled: HashSet::new(),
         }
     }
 
@@ -56,6 +58,11 @@ impl Linters {
     /// silently ignored instead of being reported as missing.
     pub(crate) fn set_ignore_missing(&mut self, ignore_missing: bool) {
         self.ignore_missing = ignore_missing;
+    }
+
+    /// Sets the set of disabled linter names.
+    pub(crate) fn set_disabled(&mut self, disabled: HashSet<String>) {
+        self.disabled = disabled;
     }
 
     /// Returns the [`Linter`] placeholder for a missing linter, or
@@ -73,6 +80,9 @@ impl Linters {
     /// Spawns the linter `name` with `cmd`, returning [`Linter::NotFound`]
     /// without attempting to run it again if it was already found missing.
     fn spawn(&mut self, name: &'static str, cmd: Command) -> color_eyre::Result<Linter> {
+        if self.disabled.contains(name) {
+            return Ok(Linter::Done);
+        }
         if self.not_found.contains(name) {
             return Ok(self.missing(name));
         }
