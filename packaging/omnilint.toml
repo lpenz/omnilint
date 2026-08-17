@@ -1,0 +1,30 @@
+# Default omnilint configuration shipped in the deb and rpm packages.
+#
+# The linters below are disabled because they are not available in the
+# Debian or Fedora package repositories. Users who install them manually
+# can re-enable them by overriding this file or setting disabled = false
+# in their own ~/.config/omnilint/omnilint.toml or project omnilint.toml.
+
+[global]
+ignore_missing_linters = false
+
+[linters.actionlint]
+disabled = true
+
+[linters.clj-kondo]
+disabled = true
+
+[linters.hadolint]
+disabled = true
+
+[linters.ktlint]
+disabled = true
+
+[linters.markdownlint-cli2]
+disabled = true
+
+[linters.protolint]
+disabled = true
+
+[linters.swiftlint]
+disabled = true
