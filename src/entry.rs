@@ -8,6 +8,8 @@ use std::fmt;
 use std::num::NonZero;
 use std::path::{Path, PathBuf};
 
+use crate::cli::OutputFormat;
+
 /// The `Entry` type captures an issue discovered by a lint tool.
 #[derive(Debug, Clone, PartialOrd, Ord, PartialEq, Eq, Hash)]
 pub struct Entry {
@@ -54,6 +56,24 @@ impl Entry {
             col: Some(NonZero::new(col).ok_or_eyre("col can't be zero")?),
         })
     }
+
+    /// Formats the entry according to the given output format.
+    pub fn format_output(&self, format: OutputFormat) -> String {
+        match format {
+            OutputFormat::Default => self.to_string(),
+            OutputFormat::GithubWorkflow => {
+                let filename = self.filename.display();
+                let mut params = format!("file={filename}");
+                if let Some(line) = self.line {
+                    params.push_str(&format!(",line={line}"));
+                }
+                if let Some(col) = self.col {
+                    params.push_str(&format!(",col={col}"));
+                }
+                format!("::warning {params}::[{}] {}", self.linter, self.msg)
+            }
+        }
+    }
 }
 
 impl fmt::Display for Entry {
@@ -75,6 +95,10 @@ mod tests {
     fn new_basic() -> Result<()> {
         let e = Entry::new(Path::new("foo.rs"), "test", "warning")?;
         assert_eq!(e.to_string(), "foo.rs: [test] warning");
+        assert_eq!(
+            e.format_output(OutputFormat::GithubWorkflow),
+            "::warning file=foo.rs::[test] warning"
+        );
         Ok(())
     }
 
@@ -82,6 +106,10 @@ mod tests {
     fn new_line_basic() -> Result<()> {
         let e = Entry::new_line(Path::new("foo.rs"), "test", "error", 10)?;
         assert_eq!(e.to_string(), "foo.rs:10: [test] error");
+        assert_eq!(
+            e.format_output(OutputFormat::GithubWorkflow),
+            "::warning file=foo.rs,line=10::[test] error"
+        );
         Ok(())
     }
 
@@ -94,6 +122,10 @@ mod tests {
     fn new_line_col_basic() -> Result<()> {
         let e = Entry::new_line_col(Path::new("foo.rs"), "test", "error", 10, 5)?;
         assert_eq!(e.to_string(), "foo.rs:10: [test] error");
+        assert_eq!(
+            e.format_output(OutputFormat::GithubWorkflow),
+            "::warning file=foo.rs,line=10,col=5::[test] error"
+        );
         Ok(())
     }
 

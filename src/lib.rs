@@ -21,6 +21,7 @@ use crate::entry::Entry;
 use crate::linters::Linters;
 
 use clap::Parser;
+use cli::OutputFormat;
 use std::env;
 use std::error::Error;
 use std::path::{Path, PathBuf};
@@ -43,17 +44,18 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     let ignore_missing = args.ignore_missing_linters
         || env::var("OMNILINT_IGNORE_MISSING_LINTERS").is_ok_and(|value| env_bool(&value));
     linters.set_ignore_missing(ignore_missing);
+    let format = args.format;
     let issues = match args.command {
         cli::Commands::Files { files } => {
             let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();
             for file in &files {
                 push_stream(&mut linters, &mut streams, file)?;
             }
-            run_streams(streams).await
+            run_streams(streams, format).await
         }
         cli::Commands::Repository => {
             let files = repo::git_ls_files()?;
-            run_repository(&mut linters, files).await?
+            run_repository(&mut linters, files, format).await?
         }
     };
     if issues > 0 {
@@ -81,6 +83,7 @@ fn push_stream(
 async fn run_repository(
     linters: &mut Linters,
     files: impl Stream<Item = PathBuf> + Unpin,
+    format: OutputFormat,
 ) -> color_eyre::Result<usize> {
     let mut files = files;
     let mut streams: StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>> = StreamMap::new();
@@ -101,14 +104,14 @@ async fn run_repository(
                     }
                 }
                 Some((_, entry)) = streams.next() => {
-                    eprintln!("{}", entry);
+                    eprintln!("{}", entry.format_output(format));
                     issues += 1;
                 }
             }
         }
     }
     while let Some((_, entry)) = streams.next().await {
-        eprintln!("{}", entry);
+        eprintln!("{}", entry.format_output(format));
         issues += 1;
     }
     Ok(issues)
@@ -130,12 +133,15 @@ fn add_file(
 
 /// Lints all the given streams in parallel, printing the resulting
 /// [`Entry`] values to stderr. Returns the number of entries emitted.
-async fn run_streams(streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>>) -> usize {
+async fn run_streams(
+    streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>>,
+    format: OutputFormat,
+) -> usize {
     let merged = streams.into_iter().reduce(|a, b| Box::pin(a.merge(b)));
     let mut issues = 0;
     if let Some(mut merged) = merged {
         while let Some(entry) = merged.next().await {
-            eprintln!("{}", entry);
+            eprintln!("{}", entry.format_output(format));
             issues += 1;
         }
     }

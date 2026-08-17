@@ -85,6 +85,21 @@ pub fn run_ignore_missing_linters_env(files: &[&str]) -> String {
     )
 }
 
+/// Runs `omnilint files` with `--format github-workflow` on the given files
+/// with a `PATH` that contains no linter tools.
+///
+/// Asserts that omnilint exits with status 1, since missing linters count as
+/// issues.
+pub fn run_github_workflow(files: &[&str]) -> String {
+    run_command(
+        "files",
+        files,
+        &[("PATH", "/nonexistent")],
+        1,
+        &["--format", "github-workflow"],
+    )
+}
+
 fn run_command(
     subcommand: &str,
     files: &[&str],

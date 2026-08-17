@@ -63,3 +63,13 @@ fn ignore_missing_linters_env_var() {
         ""
     );
 }
+
+#[test]
+fn github_workflow_format() {
+    assert_eq!(
+        common::run_github_workflow(&["python-clean.py", "yaml-clean.yaml"]),
+        "::warning file=python-clean.py::[flake8] linter not found\n\
+         ::warning file=python-clean.py::[ruff] linter not found\n\
+         ::warning file=yaml-clean.yaml::[yamllint] linter not found\n"
+    );
+}

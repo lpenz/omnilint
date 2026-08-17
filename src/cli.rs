@@ -8,7 +8,7 @@
 //
 // [`clap`]: https://docs.rs/clap/latest/clap/
 
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
@@ -26,8 +26,23 @@ pub struct Cli {
     #[arg(long, global = true)]
     pub ignore_missing_linters: bool,
 
+    /// Output format
+    #[arg(long, value_enum, default_value_t, global = true)]
+    pub format: OutputFormat,
+
     #[command(subcommand)]
     pub command: Commands,
+}
+
+/// Output format for lint results.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub enum OutputFormat {
+    /// Default human-readable format: `file:line: [linter] message`
+    #[default]
+    Default,
+
+    /// GitHub Actions workflow commands: `::warning file=...,line=...,...::message`
+    GithubWorkflow,
 }
 
 #[derive(Subcommand, Debug)]
@@ -86,5 +101,18 @@ mod tests {
     fn repository_basic() {
         let cli = Cli::try_parse_from(["", "repository"]).unwrap();
         assert!(matches!(cli.command, Commands::Repository));
+    }
+
+    #[test]
+    fn format_default() {
+        let cli = Cli::try_parse_from(["", "files", "foo.py"]).unwrap();
+        assert_eq!(cli.format, OutputFormat::Default);
+    }
+
+    #[test]
+    fn format_github_workflow() {
+        let cli =
+            Cli::try_parse_from(["", "files", "--format", "github-workflow", "foo.py"]).unwrap();
+        assert_eq!(cli.format, OutputFormat::GithubWorkflow);
     }
 }
