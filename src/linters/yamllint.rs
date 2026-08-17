@@ -44,7 +44,8 @@ pub struct YamlYamllint {
 
 impl YamlYamllint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("yamllint");
+        let executable = linters.executable("yamllint");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("-f");
         cmd.arg("parsable");
         cmd.arg(filename);

@@ -5,6 +5,8 @@
 use crate::entry::Entry;
 use crate::filetype::Filetype;
 
+use std::borrow::Cow;
+use std::collections::HashMap;
 use std::collections::HashSet;
 use std::io::ErrorKind;
 use std::path::Path;
@@ -43,6 +45,7 @@ pub(crate) struct Linters {
     not_found: HashSet<&'static str>,
     ignore_missing: bool,
     disabled: HashSet<String>,
+    executables: HashMap<String, String>,
 }
 
 impl Linters {
@@ -51,6 +54,7 @@ impl Linters {
             not_found: HashSet::new(),
             ignore_missing: false,
             disabled: HashSet::new(),
+            executables: HashMap::new(),
         }
     }
 
@@ -63,6 +67,20 @@ impl Linters {
     /// Sets the set of disabled linter names.
     pub(crate) fn set_disabled(&mut self, disabled: HashSet<String>) {
         self.disabled = disabled;
+    }
+
+    /// Sets custom executable paths for linters.
+    pub(crate) fn set_executables(&mut self, executables: HashMap<String, String>) {
+        self.executables = executables;
+    }
+
+    /// Returns the effective executable for `name`: the custom path if one
+    /// is configured, or `name` itself for PATH lookup.
+    pub(crate) fn executable<'a>(&'a self, name: &'a str) -> Cow<'a, str> {
+        self.executables
+            .get(name)
+            .map(|s| Cow::Borrowed(s.as_str()))
+            .unwrap_or(Cow::Borrowed(name))
     }
 
     /// Returns the [`Linter`] placeholder for a missing linter, or

@@ -41,7 +41,8 @@ pub struct PerlPerlcritic {
 
 impl PerlPerlcritic {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("perlcritic");
+        let executable = linters.executable("perlcritic");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("--quiet");
         cmd.arg("--verbose");
         cmd.arg("%f:%l:%c: %m\n");

@@ -44,7 +44,8 @@ pub struct XmlXmllint {
 
 impl XmlXmllint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("xmllint");
+        let executable = linters.executable("xmllint");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("--noout");
         cmd.arg(filename);
         let inner = linters.spawn("xmllint", cmd)?;

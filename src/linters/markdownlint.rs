@@ -42,7 +42,8 @@ pub struct MarkdownMarkdownlint {
 
 impl MarkdownMarkdownlint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("markdownlint-cli2");
+        let executable = linters.executable("markdownlint-cli2");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg(filename);
         let inner = linters.spawn("markdownlint-cli2", cmd)?;
         Ok(Self {

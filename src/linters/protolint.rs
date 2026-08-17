@@ -39,7 +39,8 @@ pub struct ProtoProtolint {
 
 impl ProtoProtolint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("protolint");
+        let executable = linters.executable("protolint");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("lint");
         cmd.arg(filename);
         let inner = linters.spawn("protolint", cmd)?;

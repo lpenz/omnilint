@@ -21,6 +21,8 @@ pub(crate) struct GlobalConfig {
 pub(crate) struct LinterConfig {
     /// Whether this linter is disabled.
     pub(crate) disabled: bool,
+    /// Custom path to the linter binary, overriding PATH lookup.
+    pub(crate) path: Option<String>,
 }
 
 /// The omnilint configuration, loaded from TOML files.
@@ -44,6 +46,9 @@ impl Config {
                 .and_modify(|existing| {
                     if linter.disabled {
                         existing.disabled = true;
+                    }
+                    if linter.path.is_some() {
+                        existing.path = linter.path.clone();
                     }
                 })
                 .or_insert_with(|| linter.clone());
@@ -109,6 +114,16 @@ mod tests {
     }
 
     #[test]
+    fn parse_linter_path() {
+        let config: Config =
+            toml::from_str("[linters.flake8]\npath = \"/usr/local/bin/flake8\"\n").unwrap();
+        assert_eq!(
+            config.linters["flake8"].path.as_deref(),
+            Some("/usr/local/bin/flake8")
+        );
+    }
+
+    #[test]
     fn merge_ignore_missing() {
         let mut base = Config::default();
         let mut overlay = Config::default();
@@ -120,12 +135,21 @@ mod tests {
     #[test]
     fn merge_disabled_linters() {
         let mut base = Config::default();
-        base.linters
-            .insert("flake8".to_string(), LinterConfig { disabled: true });
+        base.linters.insert(
+            "flake8".to_string(),
+            LinterConfig {
+                disabled: true,
+                ..Default::default()
+            },
+        );
         let mut overlay = Config::default();
-        overlay
-            .linters
-            .insert("ruff".to_string(), LinterConfig { disabled: true });
+        overlay.linters.insert(
+            "ruff".to_string(),
+            LinterConfig {
+                disabled: true,
+                ..Default::default()
+            },
+        );
         base.merge(&overlay);
         assert!(base.linters["flake8"].disabled);
         assert!(base.linters["ruff"].disabled);
@@ -135,12 +159,21 @@ mod tests {
     fn merge_overrides() {
         let mut base = Config::default();
         base.global.ignore_missing_linters = true;
-        base.linters
-            .insert("ruff".to_string(), LinterConfig { disabled: false });
+        base.linters.insert(
+            "ruff".to_string(),
+            LinterConfig {
+                disabled: false,
+                ..Default::default()
+            },
+        );
         let mut overlay = Config::default();
-        overlay
-            .linters
-            .insert("ruff".to_string(), LinterConfig { disabled: true });
+        overlay.linters.insert(
+            "ruff".to_string(),
+            LinterConfig {
+                disabled: true,
+                ..Default::default()
+            },
+        );
         base.merge(&overlay);
         assert!(base.global.ignore_missing_linters);
         assert!(base.linters["ruff"].disabled);

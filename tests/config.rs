@@ -41,3 +41,16 @@ fn disabled_linter_combined_with_ignore_missing() {
         ""
     );
 }
+
+#[test]
+fn linter_custom_path() {
+    assert_eq!(
+        common::run_with_config(
+            &["python-clean.py"],
+            "[linters.flake8]\npath = \"/nonexistent/flake8\"\n",
+            1,
+        ),
+        "python-clean.py: [flake8] linter not found\n\
+         python-clean.py: [ruff] linter not found\n"
+    );
+}

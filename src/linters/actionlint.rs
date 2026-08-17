@@ -43,7 +43,8 @@ pub struct GithubWorkflowActionlint {
 
 impl GithubWorkflowActionlint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("actionlint");
+        let executable = linters.executable("actionlint");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("-no-color");
         cmd.arg("-format");
         cmd.arg("{{range .}}{{.Filepath}}:{{.Line}}:{{.Column}}: {{.Message}}\\n{{end}}");

@@ -44,7 +44,8 @@ pub struct ShShellcheck {
 
 impl ShShellcheck {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("shellcheck");
+        let executable = linters.executable("shellcheck");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("-f");
         cmd.arg("gcc");
         cmd.arg(filename);

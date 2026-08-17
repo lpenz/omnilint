@@ -48,7 +48,8 @@ pub struct ClojureCljkondo {
 
 impl ClojureCljkondo {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("clj-kondo");
+        let executable = linters.executable("clj-kondo");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("--repro");
         cmd.arg("--cache");
         cmd.arg("false");

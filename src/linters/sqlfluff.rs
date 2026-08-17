@@ -44,7 +44,8 @@ pub struct SqlSqlfluff {
 
 impl SqlSqlfluff {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("sqlfluff");
+        let executable = linters.executable("sqlfluff");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("lint");
         cmd.arg("--dialect");
         cmd.arg("ansi");

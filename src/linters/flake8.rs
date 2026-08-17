@@ -48,7 +48,8 @@ pub struct PythonFlake8 {
 
 impl PythonFlake8 {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("flake8");
+        let executable = linters.executable("flake8");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg(filename);
         let inner = linters.spawn("flake8", cmd)?;
         Ok(Self {

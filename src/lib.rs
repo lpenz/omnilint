@@ -54,6 +54,12 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .map(|(name, _)| name.clone())
         .collect();
     linters.set_disabled(disabled);
+    let paths: std::collections::HashMap<String, String> = config
+        .linters
+        .iter()
+        .filter_map(|(name, c)| c.path.as_ref().map(|p| (name.clone(), p.clone())))
+        .collect();
+    linters.set_executables(paths);
     let format = args.format;
     let issues = match args.command {
         cli::Commands::Files { files } => {

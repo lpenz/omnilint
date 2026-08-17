@@ -44,7 +44,8 @@ pub struct DockerfileHadolint {
 
 impl DockerfileHadolint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("hadolint");
+        let executable = linters.executable("hadolint");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("--no-color");
         cmd.arg(filename);
         let inner = linters.spawn("hadolint", cmd)?;

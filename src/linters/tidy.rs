@@ -43,7 +43,8 @@ pub struct HtmlTidy {
 
 impl HtmlTidy {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("tidy");
+        let executable = linters.executable("tidy");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("-errors");
         cmd.arg("-quiet");
         cmd.arg(filename);

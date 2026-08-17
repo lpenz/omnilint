@@ -45,7 +45,8 @@ pub struct CCppcheck {
 
 impl CCppcheck {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("cppcheck");
+        let executable = linters.executable("cppcheck");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("--quiet");
         cmd.arg("--enable=warning");
         cmd.arg(filename);

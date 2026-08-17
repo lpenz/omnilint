@@ -44,7 +44,8 @@ pub struct PythonRuff {
 
 impl PythonRuff {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("ruff");
+        let executable = linters.executable("ruff");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("check");
         cmd.arg("--output-format");
         cmd.arg("concise");

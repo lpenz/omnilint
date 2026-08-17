@@ -40,7 +40,8 @@ pub struct LuaLuacheck {
 
 impl LuaLuacheck {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("luacheck");
+        let executable = linters.executable("luacheck");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("--formatter");
         cmd.arg("plain");
         cmd.arg(filename);

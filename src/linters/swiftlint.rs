@@ -44,7 +44,8 @@ pub struct SwiftSwiftlint {
 
 impl SwiftSwiftlint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("swiftlint");
+        let executable = linters.executable("swiftlint");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("lint");
         cmd.arg("--quiet");
         cmd.arg("--disable-sourcekit");

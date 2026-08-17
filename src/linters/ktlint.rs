@@ -45,7 +45,8 @@ pub struct KotlinKtlint {
 
 impl KotlinKtlint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("ktlint");
+        let executable = linters.executable("ktlint");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg(filename);
         let inner = linters.spawn("ktlint", cmd)?;
         Ok(Self {

@@ -43,7 +43,8 @@ pub struct JsonJq {
 
 impl JsonJq {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let mut cmd = Command::new("jq");
+        let executable = linters.executable("jq");
+        let mut cmd = Command::new(executable.as_ref());
         cmd.arg("empty");
         cmd.arg(filename);
         let inner = linters.spawn("jq", cmd)?;
