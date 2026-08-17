@@ -91,10 +91,15 @@ $ echo $?
 
 The `--ignore-missing-linters` flag makes omnilint silently skip linters that
 are not found on the `PATH`, so they are neither reported nor counted for the
-exit status:
+exit status. This can also be enabled by setting the
+`OMNILINT_IGNORE_MISSING_LINTERS` environment variable to a truthy value
+(`1`, `true`, `yes` or `on`):
 
 ```console
 $ omnilint --ignore-missing-linters files test.py
+$ echo $?
+0
+$ OMNILINT_IGNORE_MISSING_LINTERS=1 omnilint files test.py
 $ echo $?
 0
 ```

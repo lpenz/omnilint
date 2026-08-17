@@ -21,6 +21,7 @@ use crate::entry::Entry;
 use crate::linters::Linters;
 
 use clap::Parser;
+use std::env;
 use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -39,7 +40,9 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .init();
     let args = cli::Cli::parse();
     let mut linters = Linters::new();
-    linters.set_ignore_missing(args.ignore_missing_linters);
+    let ignore_missing = args.ignore_missing_linters
+        || env::var("OMNILINT_IGNORE_MISSING_LINTERS").is_ok_and(|value| env_bool(&value));
+    linters.set_ignore_missing(ignore_missing);
     let issues = match args.command {
         cli::Commands::Files { files } => {
             let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();
@@ -137,4 +140,32 @@ async fn run_streams(streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>>) -> usize 
         }
     }
     issues
+}
+
+/// Returns true if `value` is a truthy boolean string: `1`, `true`, `yes` or
+/// `on`, case-insensitively.
+fn env_bool(value: &str) -> bool {
+    matches!(
+        value.to_ascii_lowercase().as_str(),
+        "1" | "true" | "yes" | "on"
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn env_bool_truthy() {
+        for value in ["1", "true", "TRUE", "Yes", "on", "ON"] {
+            assert!(env_bool(value));
+        }
+    }
+
+    #[test]
+    fn env_bool_falsy() {
+        for value in ["0", "false", "no", "off", "", " 1", "1 ", "garbage"] {
+            assert!(!env_bool(value));
+        }
+    }
 }

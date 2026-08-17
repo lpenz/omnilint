@@ -66,6 +66,25 @@ pub fn run_ignore_missing_linters(files: &[&str]) -> String {
     )
 }
 
+/// Runs `omnilint files` on the given files with a `PATH` that contains no
+/// linter tools and with `OMNILINT_IGNORE_MISSING_LINTERS=1` set in the
+/// environment.
+///
+/// Asserts that omnilint exits with status 0, since the missing linters are
+/// ignored via the environment variable.
+pub fn run_ignore_missing_linters_env(files: &[&str]) -> String {
+    run_command(
+        "files",
+        files,
+        &[
+            ("PATH", "/nonexistent"),
+            ("OMNILINT_IGNORE_MISSING_LINTERS", "1"),
+        ],
+        0,
+        &[],
+    )
+}
+
 fn run_command(
     subcommand: &str,
     files: &[&str],
@@ -74,7 +93,10 @@ fn run_command(
     args: &[&str],
 ) -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
-    let mut command = cmd.current_dir(fixtures_dir()).arg(subcommand);
+    let mut command = cmd
+        .current_dir(fixtures_dir())
+        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
+        .arg(subcommand);
     for file in files {
         command = command.arg(file);
     }

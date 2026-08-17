@@ -55,3 +55,11 @@ fn ignore_missing_linters() {
         ""
     );
 }
+
+#[test]
+fn ignore_missing_linters_env_var() {
+    assert_eq!(
+        common::run_ignore_missing_linters_env(&["python-clean.py", "yaml-clean.yaml"]),
+        ""
+    );
+}

@@ -20,7 +20,9 @@ use std::path::PathBuf;
 )]
 pub struct Cli {
     /// Ignore linters that are not found on the `PATH`: don't report them and
-    /// don't consider them an issue for the exit status
+    /// don't consider them an issue for the exit status. Can also be enabled
+    /// by setting the `OMNILINT_IGNORE_MISSING_LINTERS` environment variable
+    /// to a truthy value (`1`, `true`, `yes` or `on`).
     #[arg(long, global = true)]
     pub ignore_missing_linters: bool,
 
