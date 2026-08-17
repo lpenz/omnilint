@@ -55,6 +55,8 @@ pub enum Commands {
     },
     /// Analyse all the files tracked by git in the current repository
     Repository,
+    /// Show the status of all supported linters
+    Inventory,
 }
 
 #[cfg(test)]
@@ -114,5 +116,11 @@ mod tests {
         let cli =
             Cli::try_parse_from(["", "files", "--format", "github-workflow", "foo.py"]).unwrap();
         assert_eq!(cli.format, OutputFormat::GithubWorkflow);
+    }
+
+    #[test]
+    fn inventory_basic() {
+        let cli = Cli::try_parse_from(["", "inventory"]).unwrap();
+        assert!(matches!(cli.command, Commands::Inventory));
     }
 }

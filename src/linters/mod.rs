@@ -219,6 +219,28 @@ pub(crate) fn poll_next(
     }
 }
 
+/// All supported linter names.
+pub(crate) const ALL_LINTERS: &[&str] = &[
+    "actionlint",
+    "clj-kondo",
+    "cppcheck",
+    "flake8",
+    "hadolint",
+    "jq",
+    "ktlint",
+    "luacheck",
+    "markdownlint-cli2",
+    "perlcritic",
+    "protolint",
+    "ruff",
+    "shellcheck",
+    "sqlfluff",
+    "swiftlint",
+    "tidy",
+    "xmllint",
+    "yamllint",
+];
+
 pub mod actionlint;
 pub mod cljkondo;
 pub mod cppcheck;

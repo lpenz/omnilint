@@ -19,7 +19,7 @@ mod linters;
 mod repo;
 
 use crate::entry::Entry;
-use crate::linters::Linters;
+use crate::linters::{ALL_LINTERS, Linters};
 
 use clap::Parser;
 use cli::OutputFormat;
@@ -73,11 +73,56 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
             let files = repo::git_ls_files()?;
             run_repository(&mut linters, files, format).await?
         }
+        cli::Commands::Inventory => {
+            run_inventory(&config, &linters).await;
+            0
+        }
     };
     if issues > 0 {
         std::process::exit(1);
     }
     Ok(())
+}
+
+/// Shows the status of all supported linters: whether they are enabled or
+/// disabled, and their version when available.
+async fn run_inventory(config: &config::Config, linters: &Linters) {
+    for &name in ALL_LINTERS {
+        let linter_config = config.linters.get(name);
+        let disabled = linter_config.is_some_and(|c| c.disabled);
+        let executable = linters.executable(name);
+        let version = get_version(executable.as_ref()).await;
+        if disabled {
+            eprintln!("{name:<20} disabled     {version}");
+        } else if version == "not found" {
+            eprintln!("{name:<20} not found");
+        } else {
+            eprintln!("{name:<20} enabled      {version}");
+        }
+    }
+}
+
+/// Tries to get the version string of an executable by running it with
+/// `--version`. Returns "not found" if the executable doesn't exist.
+async fn get_version(executable: &str) -> String {
+    match tokio::process::Command::new(executable)
+        .arg("--version")
+        .output()
+        .await
+    {
+        Ok(output) => {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            let raw = if !stdout.is_empty() {
+                stdout.trim()
+            } else {
+                stderr.trim()
+            };
+            // Strip trailing newlines and take the first line
+            raw.lines().next().unwrap_or(raw).to_string()
+        }
+        Err(_) => "not found".to_string(),
+    }
 }
 
 /// Creates a stream that lints the given file and pushes it into `streams`,

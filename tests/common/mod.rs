@@ -171,6 +171,7 @@ fn run_command(
     let mut command = cmd
         .current_dir(fixtures_dir())
         .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
+        .env_remove("OMNILINT_CONFIG")
         .arg(subcommand);
     for file in files {
         command = command.arg(file);
@@ -191,4 +192,35 @@ fn run_command(
     }
     lines.sort();
     lines.join("\n") + "\n"
+}
+
+/// Runs `omnilint inventory` and returns its stderr.
+///
+/// Asserts that omnilint exits with status 0.
+pub fn run_inventory() -> String {
+    let mut cmd = Command::cargo_bin("omnilint").unwrap();
+    let command = cmd
+        .current_dir(fixtures_dir())
+        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
+        .env_remove("OMNILINT_CONFIG")
+        .arg("inventory");
+    let output = command.assert().code(0).stdout("");
+    String::from_utf8_lossy(&output.get_output().stderr).to_string()
+}
+
+/// Runs `omnilint inventory` from a temporary directory with the given config
+/// and returns its stderr.
+///
+/// Asserts that omnilint exits with status 0.
+pub fn run_inventory_with_config(config_contents: &str) -> String {
+    let tmp = tempfile::tempdir().unwrap();
+    std::fs::write(tmp.path().join("omnilint.toml"), config_contents).unwrap();
+    let mut cmd = Command::cargo_bin("omnilint").unwrap();
+    let command = cmd
+        .current_dir(tmp.path())
+        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
+        .env_remove("OMNILINT_CONFIG")
+        .arg("inventory");
+    let output = command.assert().code(0).stdout("");
+    String::from_utf8_lossy(&output.get_output().stderr).to_string()
 }
