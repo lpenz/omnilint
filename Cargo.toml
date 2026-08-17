@@ -38,6 +38,7 @@ section = "utils"
 extended-description = """\
 Statically analyse any file with the appropriate tools
 """
+recommends = "cppcheck, jq, libperl-critic-perl, libxml2-utils, lua-check, python3-flake8, ruff, shellcheck, sqlfluff, tidy, yamllint"
 assets = [
     ["target/release/omnilint.1", "usr/share/man/man1/", "644"],
     ["target/release/omnilint", "usr/bin/", "755"],
@@ -60,3 +61,16 @@ assets = [
     { source = "target/release/_omnilint", dest = "/usr/share/zsh/site-functions/", mode = "644" },
     { source = "target/release/omnilint.fish", dest = "/usr/share/fish/vendor_completions.d/", mode = "644" },
 ]
+
+[package.metadata.generate-rpm.recommends]
+cppcheck = ""
+jq = ""
+luacheck = ""
+perl-perlcritic = ""
+python3-flake8 = ""
+python3-sqlfluff = ""
+python3-yamllint = ""
+ruff = ""
+ShellCheck = ""
+tidy-html5 = ""
+libxml2 = ""
