@@ -115,6 +115,34 @@ pub fn run_with_config(files: &[&str], config_contents: &str, code: i32) -> Stri
     let mut command = cmd
         .current_dir(tmp.path())
         .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
+        .env_remove("OMNILINT_CONFIG")
+        .arg("files");
+    for file in files {
+        command = command.arg(file);
+    }
+    command = command.env("PATH", "/nonexistent");
+    let output = command.assert().code(code).stdout("");
+    let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
+        .lines()
+        .map(Into::into)
+        .collect();
+    if lines.is_empty() {
+        return String::new();
+    }
+    lines.sort();
+    lines.join("\n") + "\n"
+}
+
+/// Runs `omnilint files` on the given files with `OMNILINT_CONFIG` set to
+/// the given path and a `PATH` that has no linter tools.
+///
+/// Asserts that omnilint exits with the given status code.
+pub fn run_with_config_env(files: &[&str], config_path: &str, code: i32) -> String {
+    let mut cmd = Command::cargo_bin("omnilint").unwrap();
+    let mut command = cmd
+        .current_dir(fixtures_dir())
+        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
+        .env("OMNILINT_CONFIG", config_path)
         .arg("files");
     for file in files {
         command = command.arg(file);

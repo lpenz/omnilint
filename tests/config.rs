@@ -54,3 +54,21 @@ fn linter_custom_path() {
          python-clean.py: [ruff] linter not found\n"
     );
 }
+
+#[test]
+fn omnilint_config_env_var() {
+    let tmp = tempfile::tempdir().unwrap();
+    std::fs::write(
+        tmp.path().join("disabled.toml"),
+        "[linters.flake8]\ndisabled = true\n",
+    )
+    .unwrap();
+    assert_eq!(
+        common::run_with_config_env(
+            &["python-clean.py"],
+            tmp.path().join("disabled.toml").to_str().unwrap(),
+            1,
+        ),
+        "python-clean.py: [ruff] linter not found\n"
+    );
+}

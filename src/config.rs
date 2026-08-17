@@ -62,12 +62,19 @@ impl Config {
     pub(crate) fn load() -> Result<Self, toml::de::Error> {
         let mut config = Config::default();
 
-        // 1. System-wide config
+        // 1. OMNILINT_CONFIG environment variable
+        if let Ok(path) = std::env::var("OMNILINT_CONFIG")
+            && let Ok(content) = fs::read_to_string(&path)
+        {
+            config.merge(&toml::from_str(&content)?);
+        }
+
+        // 2. System-wide config
         if let Ok(content) = fs::read_to_string("/etc/omnilint.toml") {
             config.merge(&toml::from_str(&content)?);
         }
 
-        // 2. User config
+        // 3. User config
         if let Some(home) = dirs() {
             let path = home.join(".config/omnilint/omnilint.toml");
             if let Ok(content) = fs::read_to_string(path) {
@@ -75,7 +82,7 @@ impl Config {
             }
         }
 
-        // 3. Project config
+        // 4. Project config
         if let Ok(content) = fs::read_to_string("omnilint.toml") {
             config.merge(&toml::from_str(&content)?);
         }
