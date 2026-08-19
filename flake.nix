@@ -33,6 +33,7 @@
               jq
               cppcheck
               go-tools
+              oxlint
               protolint
               rubocop
               texlive.bin.chktex

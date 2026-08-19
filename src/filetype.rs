@@ -30,6 +30,8 @@ pub enum Filetype {
     Ruby,
     Css,
     TeX,
+    Javascript,
+    Typescript,
 }
 
 impl Filetype {
@@ -54,6 +56,8 @@ impl Filetype {
             Some("rb") => Filetype::Ruby,
             Some("css") => Filetype::Css,
             Some("tex" | "sty" | "cls") => Filetype::TeX,
+            Some("js") => Filetype::Javascript,
+            Some("ts") => Filetype::Typescript,
             Some("proto") => Filetype::Proto,
             _ => detect_filename_or_shebang(path),
         }

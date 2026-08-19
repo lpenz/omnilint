@@ -29,6 +29,9 @@ disabled = true
 [linters.markdownlint-cli2]
 disabled = true
 
+[linters.oxlint]
+disabled = true
+
 [linters.protolint]
 disabled = true
 

@@ -155,6 +155,9 @@ impl Linters {
             Filetype::Ruby => Box::pin(rubocop::RubyRubocop::new(self, file)?),
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
+            Filetype::Javascript | Filetype::Typescript => {
+                Box::pin(oxlint::JsOxlint::new(self, file)?)
+            }
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -241,6 +244,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "ktlint",
     "luacheck",
     "markdownlint-cli2",
+    "oxlint",
     "perlcritic",
     "protolint",
     "pylint",
@@ -267,6 +271,7 @@ pub mod jq;
 pub mod ktlint;
 pub mod luacheck;
 pub mod markdownlint;
+pub mod oxlint;
 pub mod perlcritic;
 pub mod protolint;
 pub mod pylint;
