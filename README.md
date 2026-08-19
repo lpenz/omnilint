@@ -38,6 +38,7 @@ Statically analyse any file with the appropriate tools
 | Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
 | Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
 | Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) |
+| CSS        | `.css`                         | [stylelint](https://stylelint.io/) |
 
 ## Usage
 
@@ -138,6 +139,7 @@ The linters used are:
 - `protolint` for Protobuf
 - `staticcheck` and `go vet` for Go
 - `rubocop` for Ruby
+- `stylelint` for CSS
 
 ## Installation
 

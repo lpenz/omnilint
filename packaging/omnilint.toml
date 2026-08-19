@@ -40,3 +40,6 @@ disabled = true
 
 [linters.staticcheck]
 disabled = true
+
+[linters.stylelint]
+disabled = true

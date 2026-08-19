@@ -26,6 +26,7 @@
               ktlint
               swiftlint
               sqlfluff
+              stylelint
               markdownlint-cli2
               libxml2
               html-tidy

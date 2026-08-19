@@ -27,6 +27,7 @@ fn all_tracked_files() {
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\
          clj-dirty.clj:2: [clj-kondo] unused binding unused\n\
+         css-dirty.css:1: [stylelint] Empty block (block-no-empty) [error]\n\
          docker-dirty.dockerfile:1: [hadolint] Using latest is prone to errors if the image will ever update. Pin the version explicitly to a release tag\n\
          docker-dirty.dockerfile:2: [hadolint] Delete the apt lists (/var/lib/apt/lists) after installing something\n\
          docker-dirty.dockerfile:3: [hadolint] Avoid additional packages by specifying `--no-install-recommends`\n\

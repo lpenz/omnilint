@@ -153,6 +153,7 @@ impl Linters {
                 Box::pin(staticcheck.merge(govet))
             }
             Filetype::Ruby => Box::pin(rubocop::RubyRubocop::new(self, file)?),
+            Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -246,6 +247,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "shellcheck",
     "sqlfluff",
     "staticcheck",
+    "stylelint",
     "swiftlint",
     "tidy",
     "xmllint",
@@ -270,6 +272,7 @@ pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;
 pub mod staticcheck;
+pub mod stylelint;
 pub mod swiftlint;
 pub mod tidy;
 pub mod xmllint;

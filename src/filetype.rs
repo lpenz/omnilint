@@ -28,6 +28,7 @@ pub enum Filetype {
     Proto,
     Go,
     Ruby,
+    Css,
 }
 
 impl Filetype {
@@ -50,6 +51,7 @@ impl Filetype {
             Some("c" | "cc" | "cpp" | "cxx" | "h" | "hh" | "hpp" | "hxx") => Filetype::C,
             Some("go") => Filetype::Go,
             Some("rb") => Filetype::Ruby,
+            Some("css") => Filetype::Css,
             Some("proto") => Filetype::Proto,
             _ => detect_filename_or_shebang(path),
         }
