@@ -130,7 +130,8 @@ impl Linters {
             Filetype::Python => {
                 let flake8 = flake8::PythonFlake8::new(self, file)?;
                 let ruff = ruff::PythonRuff::new(self, file)?;
-                Box::pin(flake8.merge(ruff))
+                let pylint = pylint::PythonPylint::new(self, file)?;
+                Box::pin(flake8.merge(ruff).merge(pylint))
             }
             Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
             Filetype::Lua => Box::pin(luacheck::LuaLuacheck::new(self, file)?),
@@ -232,6 +233,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "markdownlint-cli2",
     "perlcritic",
     "protolint",
+    "pylint",
     "ruff",
     "shellcheck",
     "sqlfluff",
@@ -252,6 +254,7 @@ pub mod luacheck;
 pub mod markdownlint;
 pub mod perlcritic;
 pub mod protolint;
+pub mod pylint;
 pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;

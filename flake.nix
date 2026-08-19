@@ -32,7 +32,7 @@
               jq
               cppcheck
               protolint
-              (python3.withPackages (ps: [ ps.flake8 ]))
+              (python3.withPackages (ps: [ ps.flake8 ps.pylint ]))
             ];
           };
         });

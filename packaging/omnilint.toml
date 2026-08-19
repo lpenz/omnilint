@@ -26,5 +26,8 @@ disabled = true
 [linters.protolint]
 disabled = true
 
+[linters.pylint]
+disabled = true
+
 [linters.swiftlint]
 disabled = true
