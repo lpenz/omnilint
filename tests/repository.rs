@@ -31,6 +31,9 @@ fn all_tracked_files() {
          docker-dirty.dockerfile:3: [hadolint] Avoid additional packages by specifying `--no-install-recommends`\n\
          docker-dirty.dockerfile:3: [hadolint] Multiple consecutive `RUN` instructions. Consider consolidation.\n\
          docker-dirty.dockerfile:3: [hadolint] Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`\n\
+         go-dirty.go:5: [staticcheck] func unused is unused (U1000)\n\
+         go-dirty.go:6: [go-vet] fmt.Printf format %s reads arg #1, but call has 0 args\n\
+         go-dirty.go:6: [staticcheck] Printf format %s reads arg #1, but call has only 0 args (SA5009)\n\
          html-dirty.html:1: [tidy] missing <!DOCTYPE> declaration\n\
          json-dirty.json:1: [jq] Unmatched '}'\n\
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\

@@ -147,6 +147,11 @@ impl Linters {
             Filetype::Json => Box::pin(jq::JsonJq::new(self, file)?),
             Filetype::C => Box::pin(cppcheck::CCppcheck::new(self, file)?),
             Filetype::Proto => Box::pin(protolint::ProtoProtolint::new(self, file)?),
+            Filetype::Go => {
+                let staticcheck = staticcheck::GoStaticcheck::new(self, file)?;
+                let govet = govet::GoGovet::new(self, file)?;
+                Box::pin(staticcheck.merge(govet))
+            }
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -226,6 +231,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "clj-kondo",
     "cppcheck",
     "flake8",
+    "go-vet",
     "hadolint",
     "jq",
     "ktlint",
@@ -237,6 +243,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "ruff",
     "shellcheck",
     "sqlfluff",
+    "staticcheck",
     "swiftlint",
     "tidy",
     "xmllint",
@@ -247,6 +254,7 @@ pub mod actionlint;
 pub mod cljkondo;
 pub mod cppcheck;
 pub mod flake8;
+pub mod govet;
 pub mod hadolint;
 pub mod jq;
 pub mod ktlint;
@@ -258,6 +266,7 @@ pub mod pylint;
 pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;
+pub mod staticcheck;
 pub mod swiftlint;
 pub mod tidy;
 pub mod xmllint;

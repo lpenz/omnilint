@@ -36,6 +36,7 @@ Statically analyse any file with the appropriate tools
 | JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) |
 | C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
 | Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
+| Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
 
 ## Usage
 
@@ -134,6 +135,7 @@ The linters used are:
 - `jq` for JSON
 - `cppcheck` for C/C++
 - `protolint` for Protobuf
+- `staticcheck` and `go vet` for Go
 
 ## Installation
 

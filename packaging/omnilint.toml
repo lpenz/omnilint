@@ -14,6 +14,9 @@ disabled = true
 [linters.clj-kondo]
 disabled = true
 
+[linters.go-vet]
+disabled = true
+
 [linters.hadolint]
 disabled = true
 
@@ -30,4 +33,7 @@ disabled = true
 disabled = true
 
 [linters.swiftlint]
+disabled = true
+
+[linters.staticcheck]
 disabled = true
