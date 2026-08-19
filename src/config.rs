@@ -16,13 +16,27 @@ pub(crate) struct GlobalConfig {
 }
 
 /// Per-linter configuration.
-#[derive(Debug, Default, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
 pub(crate) struct LinterConfig {
-    /// Whether this linter is disabled.
-    pub(crate) disabled: bool,
+    /// Whether this linter is enabled.
+    #[serde(default = "default_true")]
+    pub(crate) enabled: bool,
     /// Custom path to the linter binary, overriding PATH lookup.
     pub(crate) path: Option<String>,
+}
+
+impl Default for LinterConfig {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            path: None,
+        }
+    }
+}
+
+fn default_true() -> bool {
+    true
 }
 
 /// The omnilint configuration, loaded from TOML files.
@@ -44,8 +58,8 @@ impl Config {
             self.linters
                 .entry(name.clone())
                 .and_modify(|existing| {
-                    if linter.disabled {
-                        existing.disabled = true;
+                    if !linter.enabled {
+                        existing.enabled = false;
                     }
                     if linter.path.is_some() {
                         existing.path = linter.path.clone();
@@ -116,8 +130,8 @@ mod tests {
 
     #[test]
     fn parse_linters_only() {
-        let config: Config = toml::from_str("[linters.flake8]\ndisabled = true\n").unwrap();
-        assert!(config.linters["flake8"].disabled);
+        let config: Config = toml::from_str("[linters.flake8]\nenabled = false\n").unwrap();
+        assert!(!config.linters["flake8"].enabled);
     }
 
     #[test]
@@ -145,7 +159,7 @@ mod tests {
         base.linters.insert(
             "flake8".to_string(),
             LinterConfig {
-                disabled: true,
+                enabled: false,
                 ..Default::default()
             },
         );
@@ -153,13 +167,13 @@ mod tests {
         overlay.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                disabled: true,
+                enabled: false,
                 ..Default::default()
             },
         );
         base.merge(&overlay);
-        assert!(base.linters["flake8"].disabled);
-        assert!(base.linters["ruff"].disabled);
+        assert!(!base.linters["flake8"].enabled);
+        assert!(!base.linters["ruff"].enabled);
     }
 
     #[test]
@@ -169,7 +183,7 @@ mod tests {
         base.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                disabled: false,
+                enabled: true,
                 ..Default::default()
             },
         );
@@ -177,12 +191,12 @@ mod tests {
         overlay.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                disabled: true,
+                enabled: false,
                 ..Default::default()
             },
         );
         base.merge(&overlay);
         assert!(base.global.ignore_missing_linters);
-        assert!(base.linters["ruff"].disabled);
+        assert!(!base.linters["ruff"].enabled);
     }
 }

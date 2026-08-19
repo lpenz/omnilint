@@ -50,7 +50,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     let disabled: std::collections::HashSet<String> = config
         .linters
         .iter()
-        .filter(|(_, c)| c.disabled)
+        .filter(|(_, c)| !c.enabled)
         .map(|(name, _)| name.clone())
         .collect();
     linters.set_disabled(disabled);
@@ -89,7 +89,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
 async fn run_inventory(config: &config::Config, linters: &Linters) {
     for &name in ALL_LINTERS {
         let linter_config = config.linters.get(name);
-        let disabled = linter_config.is_some_and(|c| c.disabled);
+        let disabled = linter_config.is_some_and(|c| !c.enabled);
         let executable = linters.executable(name);
         let version = get_version(executable.as_ref()).await;
         if disabled {

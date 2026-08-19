@@ -2,50 +2,50 @@
 #
 # The linters below are disabled because they are not available in the
 # Debian or Fedora package repositories. Users who install them manually
-# can re-enable them by overriding this file or setting disabled = false
+# can re-enable them by overriding this file or setting enabled = true
 # in their own ~/.config/omnilint/omnilint.toml or project omnilint.toml.
 
 [global]
 ignore_missing_linters = false
 
 [linters.actionlint]
-disabled = true
+enabled = false
 
 [linters.chktex]
-disabled = true
+enabled = false
 
 [linters.clj-kondo]
-disabled = true
+enabled = false
 
 [linters.go-vet]
-disabled = true
+enabled = false
 
 [linters.hadolint]
-disabled = true
+enabled = false
 
 [linters.ktlint]
-disabled = true
+enabled = false
 
 [linters.markdownlint-cli2]
-disabled = true
+enabled = false
 
 [linters.oxlint]
-disabled = true
+enabled = false
 
 [linters.protolint]
-disabled = true
+enabled = false
 
 [linters.pylint]
-disabled = true
+enabled = false
 
 [linters.rubocop]
-disabled = true
+enabled = false
 
 [linters.swiftlint]
-disabled = true
+enabled = false
 
 [linters.staticcheck]
-disabled = true
+enabled = false
 
 [linters.stylelint]
-disabled = true
+enabled = false
