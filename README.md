@@ -39,6 +39,7 @@ Statically analyse any file with the appropriate tools
 | Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
 | Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) |
 | CSS        | `.css`                         | [stylelint](https://stylelint.io/) |
+| TeX        | `.tex`, `.sty`, `.cls`         | [chktex](https://www.nongnu.org/chktex/) |
 
 ## Usage
 
@@ -140,6 +141,7 @@ The linters used are:
 - `staticcheck` and `go vet` for Go
 - `rubocop` for Ruby
 - `stylelint` for CSS
+- `chktex` for TeX/LaTeX
 
 ## Installation
 

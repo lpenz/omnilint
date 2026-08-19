@@ -29,6 +29,7 @@ pub enum Filetype {
     Go,
     Ruby,
     Css,
+    TeX,
 }
 
 impl Filetype {
@@ -52,6 +53,7 @@ impl Filetype {
             Some("go") => Filetype::Go,
             Some("rb") => Filetype::Ruby,
             Some("css") => Filetype::Css,
+            Some("tex" | "sty" | "cls") => Filetype::TeX,
             Some("proto") => Filetype::Proto,
             _ => detect_filename_or_shebang(path),
         }

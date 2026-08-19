@@ -11,6 +11,9 @@ ignore_missing_linters = false
 [linters.actionlint]
 disabled = true
 
+[linters.chktex]
+disabled = true
+
 [linters.clj-kondo]
 disabled = true
 

@@ -154,6 +154,7 @@ impl Linters {
             }
             Filetype::Ruby => Box::pin(rubocop::RubyRubocop::new(self, file)?),
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
+            Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -232,6 +233,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "actionlint",
     "clj-kondo",
     "cppcheck",
+    "chktex",
     "flake8",
     "go-vet",
     "hadolint",
@@ -255,6 +257,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
 ];
 
 pub mod actionlint;
+pub mod chktex;
 pub mod cljkondo;
 pub mod cppcheck;
 pub mod flake8;

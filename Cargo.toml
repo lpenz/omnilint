@@ -41,7 +41,7 @@ section = "utils"
 extended-description = """\
 Statically analyse any file with the appropriate tools
 """
-recommends = "cppcheck, go-tools, jq, libperl-critic-perl, libxml2-utils, lua-check, python3-flake8, pylint, rubocop, ruff, shellcheck, sqlfluff, stylelint, tidy, yamllint"
+recommends = "chktex, cppcheck, go-tools, jq, libperl-critic-perl, libxml2-utils, lua-check, python3-flake8, pylint, rubocop, ruff, shellcheck, sqlfluff, stylelint, tidy, yamllint"
 assets = [
     ["target/release/omnilint.1", "usr/share/man/man1/", "644"],
     ["target/release/omnilint", "usr/bin/", "755"],
@@ -68,6 +68,7 @@ assets = [
 ]
 
 [package.metadata.generate-rpm.recommends]
+chktex = ""
 cppcheck = ""
 go-tools = ""
 jq = ""
