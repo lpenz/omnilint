@@ -37,6 +37,7 @@ Statically analyse any file with the appropriate tools
 | C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
 | Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
 | Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
+| Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) |
 
 ## Usage
 
@@ -136,6 +137,7 @@ The linters used are:
 - `cppcheck` for C/C++
 - `protolint` for Protobuf
 - `staticcheck` and `go vet` for Go
+- `rubocop` for Ruby
 
 ## Installation
 

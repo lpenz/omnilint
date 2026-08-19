@@ -21,6 +21,7 @@ fn all_tracked_files() {
          .github/workflows/dirty.yml:3: [yamllint] truthy value should be one of [false, true]\n\
          .github/workflows/dirty.yml:8: [actionlint] element of \"steps\" section is scalar node but mapping node is expected\n\
          .github/workflows/dirty.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section\n\
+         .rubocop.yml:1: [yamllint] missing document start \"---\"\n\
          Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
          c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
@@ -61,6 +62,7 @@ fn all_tracked_files() {
          python-dirty.py:8: [flake8] F821 undefined name 'undefined_name'\n\
          python-dirty.py:8: [pylint] Undefined variable 'undefined_name' (undefined-variable)\n\
          python-dirty.py:8: [ruff] F821 Undefined name `undefined_name`\n\
+         ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n\
          shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\
          shell-dirty.sh:4: [shellcheck] Double quote to prevent globbing and word splitting.\n\
          shell-dirty.sh:5: [shellcheck] Double quote to prevent globbing and word splitting.\n\

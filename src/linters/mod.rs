@@ -152,6 +152,7 @@ impl Linters {
                 let govet = govet::GoGovet::new(self, file)?;
                 Box::pin(staticcheck.merge(govet))
             }
+            Filetype::Ruby => Box::pin(rubocop::RubyRubocop::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -241,6 +242,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "protolint",
     "pylint",
     "ruff",
+    "rubocop",
     "shellcheck",
     "sqlfluff",
     "staticcheck",
@@ -263,6 +265,7 @@ pub mod markdownlint;
 pub mod perlcritic;
 pub mod protolint;
 pub mod pylint;
+pub mod rubocop;
 pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;

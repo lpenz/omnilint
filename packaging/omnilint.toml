@@ -32,6 +32,9 @@ disabled = true
 [linters.pylint]
 disabled = true
 
+[linters.rubocop]
+disabled = true
+
 [linters.swiftlint]
 disabled = true
 

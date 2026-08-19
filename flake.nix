@@ -33,6 +33,7 @@
               cppcheck
               go-tools
               protolint
+              rubocop
               (python3.withPackages (ps: [ ps.flake8 ps.pylint ]))
             ];
           };
