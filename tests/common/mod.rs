@@ -51,38 +51,28 @@ pub fn run_without_linters(files: &[&str]) -> String {
     run_command("files", files, &[("PATH", "/nonexistent")], 1, &[])
 }
 
-/// Runs `omnilint files --ignore-missing-linters` on the given files with a
-/// `PATH` that contains no linter tools.
+/// Runs `omnilint files --default-linter-mode optional` on the given files
+/// with a `PATH` that contains no linter tools.
 ///
 /// Asserts that omnilint exits with status 0, since the missing linters are
-/// ignored.
+/// optional.
 pub fn run_ignore_missing_linters(files: &[&str]) -> String {
     run_command(
         "files",
         files,
         &[("PATH", "/nonexistent")],
         0,
-        &["--ignore-missing-linters"],
+        &["--default-linter-mode", "optional"],
     )
 }
 
 /// Runs `omnilint files` on the given files with a `PATH` that contains no
-/// linter tools and with `OMNILINT_IGNORE_MISSING_LINTERS=1` set in the
-/// environment.
+/// linter tools and a config that sets `default_linter_mode = "optional"`.
 ///
 /// Asserts that omnilint exits with status 0, since the missing linters are
-/// ignored via the environment variable.
-pub fn run_ignore_missing_linters_env(files: &[&str]) -> String {
-    run_command(
-        "files",
-        files,
-        &[
-            ("PATH", "/nonexistent"),
-            ("OMNILINT_IGNORE_MISSING_LINTERS", "1"),
-        ],
-        0,
-        &[],
-    )
+/// optional via config.
+pub fn run_ignore_missing_linters_config(files: &[&str]) -> String {
+    run_with_config(files, "[global]\ndefault_linter_mode = \"optional\"\n", 0)
 }
 
 /// Runs `omnilint files` with `--format github-workflow` on the given files
@@ -114,7 +104,6 @@ pub fn run_with_config(files: &[&str], config_contents: &str, code: i32) -> Stri
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let mut command = cmd
         .current_dir(tmp.path())
-        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
         .env_remove("OMNILINT_CONFIG")
         .arg("files");
     for file in files {
@@ -141,7 +130,6 @@ pub fn run_with_config_env(files: &[&str], config_path: &str, code: i32) -> Stri
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let mut command = cmd
         .current_dir(fixtures_dir())
-        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
         .env("OMNILINT_CONFIG", config_path)
         .arg("files");
     for file in files {
@@ -170,7 +158,6 @@ fn run_command(
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let mut command = cmd
         .current_dir(fixtures_dir())
-        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
         .env_remove("OMNILINT_CONFIG")
         .arg(subcommand);
     for file in files {
@@ -201,7 +188,6 @@ pub fn run_inventory() -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let command = cmd
         .current_dir(fixtures_dir())
-        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
         .env_remove("OMNILINT_CONFIG")
         .arg("inventory");
     let output = command.assert().code(0).stdout("");
@@ -218,7 +204,6 @@ pub fn run_inventory_with_config(config_contents: &str) -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
     let command = cmd
         .current_dir(tmp.path())
-        .env_remove("OMNILINT_IGNORE_MISSING_LINTERS")
         .env_remove("OMNILINT_CONFIG")
         .arg("inventory");
     let output = command.assert().code(0).stdout("");

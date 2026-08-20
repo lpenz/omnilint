@@ -18,12 +18,12 @@ mod filetype;
 mod linters;
 mod repo;
 
+use crate::cli::LinterMode;
 use crate::entry::Entry;
 use crate::linters::{ALL_LINTERS, Linters};
 
 use clap::Parser;
 use cli::OutputFormat;
-use std::env;
 use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::pin::Pin;
@@ -43,17 +43,18 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     let args = cli::Cli::parse();
     let mut linters = Linters::new();
     let config = config::Config::load()?;
-    let ignore_missing = args.ignore_missing_linters
-        || config.global.ignore_missing_linters
-        || env::var("OMNILINT_IGNORE_MISSING_LINTERS").is_ok_and(|value| env_bool(&value));
-    linters.set_ignore_missing(ignore_missing);
-    let disabled: std::collections::HashSet<String> = config
+    let default_mode = if args.default_linter_mode != LinterMode::default() {
+        args.default_linter_mode
+    } else {
+        config.global.default_linter_mode
+    };
+    linters.set_default_mode(default_mode);
+    let mode_overrides: std::collections::HashMap<String, LinterMode> = config
         .linters
         .iter()
-        .filter(|(_, c)| !c.enabled)
-        .map(|(name, _)| name.clone())
+        .map(|(name, c)| (name.clone(), c.mode))
         .collect();
-    linters.set_disabled(disabled);
+    linters.set_mode_overrides(mode_overrides);
     let paths: std::collections::HashMap<String, String> = config
         .linters
         .iter()
@@ -84,21 +85,18 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-/// Shows the status of all supported linters: whether they are enabled or
-/// disabled, and their version when available.
+/// Shows the status of all supported linters: their mode and version
+/// when available.
 async fn run_inventory(config: &config::Config, linters: &Linters) {
     for &name in ALL_LINTERS {
         let linter_config = config.linters.get(name);
-        let disabled = linter_config.is_some_and(|c| !c.enabled);
+        let mode = linter_config
+            .map(|c| c.mode)
+            .unwrap_or(LinterMode::Wanted)
+            .to_string();
         let executable = linters.executable(name);
         let version = get_version(executable.as_ref()).await;
-        if disabled {
-            eprintln!("{name:<20} disabled     {version}");
-        } else if version == "not found" {
-            eprintln!("{name:<20} not found");
-        } else {
-            eprintln!("{name:<20} enabled      {version}");
-        }
+        eprintln!("{name:<20} {mode:<11} {version}");
     }
 }
 
@@ -209,30 +207,5 @@ async fn run_streams(
     issues
 }
 
-/// Returns true if `value` is a truthy boolean string: `1`, `true`, `yes` or
-/// `on`, case-insensitively.
-fn env_bool(value: &str) -> bool {
-    matches!(
-        value.to_ascii_lowercase().as_str(),
-        "1" | "true" | "yes" | "on"
-    )
-}
-
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn env_bool_truthy() {
-        for value in ["1", "true", "TRUE", "Yes", "on", "ON"] {
-            assert!(env_bool(value));
-        }
-    }
-
-    #[test]
-    fn env_bool_falsy() {
-        for value in ["0", "false", "no", "off", "", " 1", "1 ", "garbage"] {
-            assert!(!env_bool(value));
-        }
-    }
-}
+mod tests {}

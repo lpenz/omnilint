@@ -11,7 +11,7 @@ fn disabled_linter_skips_output() {
     assert_eq!(
         common::run_with_config(
             &["python-clean.py"],
-            "[linters.flake8]\nenabled = false\n",
+            "[linters.flake8]\nmode = \"disabled\"\n",
             1,
         ),
         "python-clean.py: [pylint] linter not found\n\
@@ -20,11 +20,11 @@ fn disabled_linter_skips_output() {
 }
 
 #[test]
-fn disabled_linter_does_not_affect_exit_status_when_ignored() {
+fn optional_linter_skips_when_not_found() {
     assert_eq!(
         common::run_with_config(
             &["python-clean.py"],
-            "[global]\nignore_missing_linters = true\n",
+            "[global]\ndefault_linter_mode = \"optional\"\n",
             0,
         ),
         ""
@@ -32,11 +32,11 @@ fn disabled_linter_does_not_affect_exit_status_when_ignored() {
 }
 
 #[test]
-fn disabled_linter_combined_with_ignore_missing() {
+fn disabled_linter_combined_with_optional() {
     assert_eq!(
         common::run_with_config(
             &["python-clean.py"],
-            "[global]\nignore_missing_linters = true\n\n[linters.flake8]\nenabled = false\n",
+            "[global]\ndefault_linter_mode = \"optional\"\n\n[linters.flake8]\nmode = \"disabled\"\n",
             0,
         ),
         ""
@@ -62,7 +62,7 @@ fn omnilint_config_env_var() {
     let tmp = tempfile::tempdir().unwrap();
     std::fs::write(
         tmp.path().join("disabled.toml"),
-        "[linters.flake8]\nenabled = false\n",
+        "[linters.flake8]\nmode = \"disabled\"\n",
     )
     .unwrap();
     assert_eq!(

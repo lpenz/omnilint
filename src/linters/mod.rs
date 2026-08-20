@@ -2,6 +2,7 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE', which is part of this source code package.
 
+use crate::cli::LinterMode;
 use crate::entry::Entry;
 use crate::filetype::Filetype;
 
@@ -19,6 +20,7 @@ use tokio_stream::{Stream, StreamExt};
 
 /// The spawned process of a linter, or a placeholder for a linter binary that
 /// was not found on the `PATH`.
+#[derive(Debug)]
 pub(crate) enum Linter {
     Running(Box<ProcessLineStream>),
     NotFound,
@@ -43,8 +45,8 @@ impl Linter {
 /// them for every file of a matching [`Filetype`].
 pub(crate) struct Linters {
     not_found: HashSet<&'static str>,
-    ignore_missing: bool,
-    disabled: HashSet<String>,
+    default_mode: LinterMode,
+    mode_overrides: HashMap<String, LinterMode>,
     executables: HashMap<String, String>,
 }
 
@@ -52,21 +54,20 @@ impl Linters {
     pub(crate) fn new() -> Self {
         Self {
             not_found: HashSet::new(),
-            ignore_missing: false,
-            disabled: HashSet::new(),
+            default_mode: LinterMode::Wanted,
+            mode_overrides: HashMap::new(),
             executables: HashMap::new(),
         }
     }
 
-    /// Sets whether linter binaries that are not found on the `PATH` should be
-    /// silently ignored instead of being reported as missing.
-    pub(crate) fn set_ignore_missing(&mut self, ignore_missing: bool) {
-        self.ignore_missing = ignore_missing;
+    /// Sets the default [`LinterMode`] for linters that are not found.
+    pub(crate) fn set_default_mode(&mut self, mode: LinterMode) {
+        self.default_mode = mode;
     }
 
-    /// Sets the set of disabled linter names.
-    pub(crate) fn set_disabled(&mut self, disabled: HashSet<String>) {
-        self.disabled = disabled;
+    /// Sets per-linter [`LinterMode`] overrides.
+    pub(crate) fn set_mode_overrides(&mut self, overrides: HashMap<String, LinterMode>) {
+        self.mode_overrides = overrides;
     }
 
     /// Sets custom executable paths for linters.
@@ -83,29 +84,43 @@ impl Linters {
             .unwrap_or(Cow::Borrowed(name))
     }
 
+    /// Returns the effective [`LinterMode`] for `name`: per-linter override
+    /// if set, otherwise the global default.
+    fn resolve_mode(&self, name: &str) -> LinterMode {
+        self.mode_overrides
+            .get(name)
+            .copied()
+            .unwrap_or(self.default_mode)
+    }
+
     /// Returns the [`Linter`] placeholder for a missing linter, or
-    /// [`Linter::Done`] to silently skip it when missing linters are being
-    /// ignored.
-    fn missing(&mut self, name: &'static str) -> Linter {
+    /// [`Linter::Done`] to silently skip it when the mode is
+    /// [`LinterMode::Optional`].
+    fn missing(&mut self, name: &'static str, mode: LinterMode) -> color_eyre::Result<Linter> {
         self.not_found.insert(name);
-        if self.ignore_missing {
-            Linter::Done
-        } else {
-            Linter::NotFound
+        match mode {
+            LinterMode::Required => Err(color_eyre::eyre::eyre!(
+                "required linter '{}' not found",
+                name
+            )),
+            LinterMode::Wanted => Ok(Linter::NotFound),
+            LinterMode::Optional => Ok(Linter::Done),
+            LinterMode::Disabled => unreachable!(),
         }
     }
 
     /// Spawns the linter `name` with `cmd`, returning [`Linter::NotFound`]
     /// without attempting to run it again if it was already found missing.
     fn spawn(&mut self, name: &'static str, cmd: Command) -> color_eyre::Result<Linter> {
-        if self.disabled.contains(name) {
+        let mode = self.resolve_mode(name);
+        if mode == LinterMode::Disabled {
             return Ok(Linter::Done);
         }
         if self.not_found.contains(name) {
-            return Ok(self.missing(name));
+            return self.missing(name, mode);
         }
         match Linter::spawn(cmd) {
-            Ok(Linter::NotFound) => Ok(self.missing(name)),
+            Ok(Linter::NotFound) => self.missing(name, mode),
             result => result,
         }
     }
@@ -334,6 +349,49 @@ mod tests {
             linters.spawn("probe", present),
             Ok(Linter::NotFound)
         ));
+    }
+
+    #[test]
+    fn disabled_skips_entirely() {
+        let mut linters = Linters::new();
+        linters.set_mode_overrides(
+            [("probe".to_string(), LinterMode::Disabled)]
+                .into_iter()
+                .collect(),
+        );
+        let present = Command::new("/bin/true");
+        assert!(matches!(linters.spawn("probe", present), Ok(Linter::Done)));
+    }
+
+    #[test]
+    fn optional_skips_when_not_found() {
+        let mut linters = Linters::new();
+        linters.set_mode_overrides(
+            [("probe".to_string(), LinterMode::Optional)]
+                .into_iter()
+                .collect(),
+        );
+        let absent = Command::new("/nonexistent/omnilint-linter-probe");
+        assert!(matches!(linters.spawn("probe", absent), Ok(Linter::Done)));
+    }
+
+    #[test]
+    fn required_aborts_when_not_found() {
+        let mut linters = Linters::new();
+        linters.set_mode_overrides(
+            [("probe".to_string(), LinterMode::Required)]
+                .into_iter()
+                .collect(),
+        );
+        let absent = Command::new("/nonexistent/omnilint-linter-probe");
+        let result = linters.spawn("probe", absent);
+        assert!(result.is_err());
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("required linter 'probe' not found")
+        );
     }
 
     #[test]

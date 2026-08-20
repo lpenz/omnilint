@@ -7,21 +7,22 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 
+use crate::cli::LinterMode;
+
 /// Global configuration options.
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(default)]
 pub(crate) struct GlobalConfig {
-    /// Ignore linters that are not found on the `PATH`.
-    pub(crate) ignore_missing_linters: bool,
+    /// Default mode for linters that are not found on the `PATH`.
+    pub(crate) default_linter_mode: LinterMode,
 }
 
 /// Per-linter configuration.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
 pub(crate) struct LinterConfig {
-    /// Whether this linter is enabled.
-    #[serde(default = "default_true")]
-    pub(crate) enabled: bool,
+    /// Controls what happens when this linter binary is not found.
+    pub(crate) mode: LinterMode,
     /// Custom path to the linter binary, overriding PATH lookup.
     pub(crate) path: Option<String>,
 }
@@ -29,14 +30,10 @@ pub(crate) struct LinterConfig {
 impl Default for LinterConfig {
     fn default() -> Self {
         Self {
-            enabled: true,
+            mode: LinterMode::Wanted,
             path: None,
         }
     }
-}
-
-fn default_true() -> bool {
-    true
 }
 
 /// The omnilint configuration, loaded from TOML files.
@@ -51,16 +48,14 @@ impl Config {
     /// Merges another config into self: non-default values from `other`
     /// override values in self.
     fn merge(&mut self, other: &Config) {
-        if other.global.ignore_missing_linters {
-            self.global.ignore_missing_linters = true;
+        if other.global.default_linter_mode != LinterMode::default() {
+            self.global.default_linter_mode = other.global.default_linter_mode;
         }
         for (name, linter) in &other.linters {
             self.linters
                 .entry(name.clone())
                 .and_modify(|existing| {
-                    if !linter.enabled {
-                        existing.enabled = false;
-                    }
+                    existing.mode = linter.mode;
                     if linter.path.is_some() {
                         existing.path = linter.path.clone();
                     }
@@ -118,20 +113,21 @@ mod tests {
     #[test]
     fn default_config() {
         let config = Config::default();
-        assert!(!config.global.ignore_missing_linters);
+        assert_eq!(config.global.default_linter_mode, LinterMode::Wanted);
         assert!(config.linters.is_empty());
     }
 
     #[test]
     fn parse_global_only() {
-        let config: Config = toml::from_str("[global]\nignore_missing_linters = true\n").unwrap();
-        assert!(config.global.ignore_missing_linters);
+        let config: Config =
+            toml::from_str("[global]\ndefault_linter_mode = \"optional\"\n").unwrap();
+        assert_eq!(config.global.default_linter_mode, LinterMode::Optional);
     }
 
     #[test]
     fn parse_linters_only() {
-        let config: Config = toml::from_str("[linters.flake8]\nenabled = false\n").unwrap();
-        assert!(!config.linters["flake8"].enabled);
+        let config: Config = toml::from_str("[linters.flake8]\nmode = \"disabled\"\n").unwrap();
+        assert_eq!(config.linters["flake8"].mode, LinterMode::Disabled);
     }
 
     #[test]
@@ -145,21 +141,21 @@ mod tests {
     }
 
     #[test]
-    fn merge_ignore_missing() {
+    fn merge_default_linter_mode() {
         let mut base = Config::default();
         let mut overlay = Config::default();
-        overlay.global.ignore_missing_linters = true;
+        overlay.global.default_linter_mode = LinterMode::Optional;
         base.merge(&overlay);
-        assert!(base.global.ignore_missing_linters);
+        assert_eq!(base.global.default_linter_mode, LinterMode::Optional);
     }
 
     #[test]
-    fn merge_disabled_linters() {
+    fn merge_mode_overrides() {
         let mut base = Config::default();
         base.linters.insert(
             "flake8".to_string(),
             LinterConfig {
-                enabled: false,
+                mode: LinterMode::Disabled,
                 ..Default::default()
             },
         );
@@ -167,23 +163,23 @@ mod tests {
         overlay.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                enabled: false,
+                mode: LinterMode::Disabled,
                 ..Default::default()
             },
         );
         base.merge(&overlay);
-        assert!(!base.linters["flake8"].enabled);
-        assert!(!base.linters["ruff"].enabled);
+        assert_eq!(base.linters["flake8"].mode, LinterMode::Disabled);
+        assert_eq!(base.linters["ruff"].mode, LinterMode::Disabled);
     }
 
     #[test]
-    fn merge_overrides() {
+    fn merge_mode_last_wins() {
         let mut base = Config::default();
-        base.global.ignore_missing_linters = true;
+        base.global.default_linter_mode = LinterMode::Optional;
         base.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                enabled: true,
+                mode: LinterMode::Required,
                 ..Default::default()
             },
         );
@@ -191,12 +187,12 @@ mod tests {
         overlay.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                enabled: false,
+                mode: LinterMode::Disabled,
                 ..Default::default()
             },
         );
         base.merge(&overlay);
-        assert!(base.global.ignore_missing_linters);
-        assert!(!base.linters["ruff"].enabled);
+        assert_eq!(base.global.default_linter_mode, LinterMode::Optional);
+        assert_eq!(base.linters["ruff"].mode, LinterMode::Disabled);
     }
 }

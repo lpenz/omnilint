@@ -9,7 +9,36 @@
 // [`clap`]: https://docs.rs/clap/latest/clap/
 
 use clap::{Parser, Subcommand, ValueEnum};
+use serde::Deserialize;
+use std::fmt;
 use std::path::PathBuf;
+
+/// Controls what happens when a linter binary is not found on the `PATH`.
+#[derive(Debug, Default, Clone, Copy, Deserialize, PartialEq, Eq, ValueEnum)]
+#[serde(rename_all = "lowercase")]
+#[value(rename_all = "lowercase")]
+pub enum LinterMode {
+    /// Abort with an error when the linter is not found.
+    Required,
+    /// Emit an entry when the linter is not found (counts as an issue).
+    #[default]
+    Wanted,
+    /// Run the linter if available, silently skip when not found.
+    Optional,
+    /// Don't run the linter at all, even if the binary exists.
+    Disabled,
+}
+
+impl fmt::Display for LinterMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            LinterMode::Required => write!(f, "required"),
+            LinterMode::Wanted => write!(f, "wanted"),
+            LinterMode::Optional => write!(f, "optional"),
+            LinterMode::Disabled => write!(f, "disabled"),
+        }
+    }
+}
 
 #[derive(Parser, Debug)]
 #[command(
@@ -19,12 +48,11 @@ use std::path::PathBuf;
     long_about = "Statically analyse any file with the appropriate tools"
 )]
 pub struct Cli {
-    /// Ignore linters that are not found on the `PATH`: don't report them and
-    /// don't consider them an issue for the exit status. Can also be enabled
-    /// by setting the `OMNILINT_IGNORE_MISSING_LINTERS` environment variable
-    /// to a truthy value (`1`, `true`, `yes` or `on`).
-    #[arg(long, global = true)]
-    pub ignore_missing_linters: bool,
+    /// Default mode for linters that are not found on the `PATH`:
+    /// `required` (abort), `wanted` (emit entry), `optional` (skip),
+    /// or `disabled` (don't run).
+    #[arg(long, value_enum, default_value_t, global = true)]
+    pub default_linter_mode: LinterMode,
 
     /// Output format
     #[arg(long, value_enum, default_value_t, global = true)]
@@ -82,15 +110,18 @@ mod tests {
     }
 
     #[test]
-    fn ignore_missing_linters_flag() {
-        let cli = Cli::try_parse_from(["", "files", "--ignore-missing-linters", "foo.py"]).unwrap();
-        assert!(cli.ignore_missing_linters);
-        let cli = Cli::try_parse_from(["", "files", "foo.py", "--ignore-missing-linters"]).unwrap();
-        assert!(cli.ignore_missing_linters);
-        let cli = Cli::try_parse_from(["", "repository", "--ignore-missing-linters"]).unwrap();
-        assert!(cli.ignore_missing_linters);
+    fn default_linter_mode_flag() {
+        let cli = Cli::try_parse_from(["", "files", "--default-linter-mode", "optional", "foo.py"])
+            .unwrap();
+        assert_eq!(cli.default_linter_mode, LinterMode::Optional);
+        let cli = Cli::try_parse_from(["", "files", "--default-linter-mode", "disabled", "foo.py"])
+            .unwrap();
+        assert_eq!(cli.default_linter_mode, LinterMode::Disabled);
+        let cli = Cli::try_parse_from(["", "files", "--default-linter-mode", "required", "foo.py"])
+            .unwrap();
+        assert_eq!(cli.default_linter_mode, LinterMode::Required);
         let cli = Cli::try_parse_from(["", "files", "foo.py"]).unwrap();
-        assert!(!cli.ignore_missing_linters);
+        assert_eq!(cli.default_linter_mode, LinterMode::Wanted);
     }
 
     #[test]

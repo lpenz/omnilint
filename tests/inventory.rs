@@ -16,7 +16,7 @@ fn inventory_lists_linters() {
 
 #[test]
 fn inventory_disabled_linters() {
-    let output = common::run_inventory_with_config("[linters.flake8]\nenabled = false\n");
+    let output = common::run_inventory_with_config("[linters.flake8]\nmode = \"disabled\"\n");
     assert!(output.contains("flake8"));
     assert!(output.contains("disabled"));
 }
