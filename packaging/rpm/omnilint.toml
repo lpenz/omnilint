@@ -1,0 +1,99 @@
+# Default omnilint configuration for RPM.
+#
+# Linters that are available as Fedora packages are set to "wanted"
+# (the default) with a comment indicating the package name.
+# Linters that are not available in Fedora are set to "optional":
+# they will be silently skipped when not installed, but will run if
+# the user installs them manually.
+
+# chktex: `texlive-chktex-bin`
+[linters.chktex]
+mode = "wanted"
+
+# cppcheck: `cppcheck`
+[linters.cppcheck]
+mode = "wanted"
+
+# flake8: `python3-flake8`
+[linters.flake8]
+mode = "wanted"
+
+# go-vet: `golang`
+[linters.go-vet]
+mode = "wanted"
+
+# hadolint: `hadolint`
+[linters.hadolint]
+mode = "wanted"
+
+# jq: `jq`
+[linters.jq]
+mode = "wanted"
+
+# perlcritic: `perl-Perl-Critic`
+[linters.perlcritic]
+mode = "wanted"
+
+# pylint: `python3-pylint`
+[linters.pylint]
+mode = "wanted"
+
+# ruff: `ruff`
+[linters.ruff]
+mode = "wanted"
+
+# shellcheck: `ShellCheck`
+[linters.shellcheck]
+mode = "wanted"
+
+# staticcheck: `staticcheck`
+[linters.staticcheck]
+mode = "wanted"
+
+# swiftlint: `swiftlint`
+[linters.swiftlint]
+mode = "wanted"
+
+# tidy: `tidy`
+[linters.tidy]
+mode = "wanted"
+
+# xmllint: `libxml2`
+[linters.xmllint]
+mode = "wanted"
+
+# yamllint: `yamllint`
+[linters.yamllint]
+mode = "wanted"
+
+# --- The linters below are not packaged in Fedora. ---
+
+[linters.actionlint]
+mode = "optional"
+
+[linters.clj-kondo]
+mode = "optional"
+
+[linters.ktlint]
+mode = "optional"
+
+[linters.luacheck]
+mode = "optional"
+
+[linters.markdownlint-cli2]
+mode = "optional"
+
+[linters.oxlint]
+mode = "optional"
+
+[linters.protolint]
+mode = "optional"
+
+[linters.rubocop]
+mode = "optional"
+
+[linters.sqlfluff]
+mode = "optional"
+
+[linters.stylelint]
+mode = "optional"

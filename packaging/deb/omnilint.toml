@@ -1,0 +1,98 @@
+# Default omnilint configuration for Debian.
+#
+# Linters that are available as Debian packages are set to "wanted"
+# (the default) with a comment indicating the package name.
+# Linters that are not available in Debian are set to "optional":
+# they will be silently skipped when not installed, but will run if
+# the user installs them manually.
+
+# chktex: `chktex`
+[linters.chktex]
+mode = "wanted"
+
+# cppcheck: `cppcheck`
+[linters.cppcheck]
+mode = "wanted"
+
+# flake8: `python3-flake8`
+[linters.flake8]
+mode = "wanted"
+
+# go-vet: `golang-go`
+[linters.go-vet]
+mode = "wanted"
+
+# jq: `jq`
+[linters.jq]
+mode = "wanted"
+
+# luacheck: `lua-check`
+[linters.luacheck]
+mode = "wanted"
+
+# perlcritic: `libperl-critic-perl`
+[linters.perlcritic]
+mode = "wanted"
+
+# pylint: `pylint`
+[linters.pylint]
+mode = "wanted"
+
+# rubocop: `rubocop`
+[linters.rubocop]
+mode = "wanted"
+
+# shellcheck: `shellcheck`
+[linters.shellcheck]
+mode = "wanted"
+
+# sqlfluff: `sqlfluff`
+[linters.sqlfluff]
+mode = "wanted"
+
+# tidy: `tidy`
+[linters.tidy]
+mode = "wanted"
+
+# xmllint: `libxml2-utils`
+[linters.xmllint]
+mode = "wanted"
+
+# yamllint: `yamllint`
+[linters.yamllint]
+mode = "wanted"
+
+# --- The linters below are not packaged in Debian. ---
+
+[linters.actionlint]
+mode = "optional"
+
+[linters.clj-kondo]
+mode = "optional"
+
+[linters.hadolint]
+mode = "optional"
+
+[linters.ktlint]
+mode = "optional"
+
+[linters.markdownlint-cli2]
+mode = "optional"
+
+[linters.oxlint]
+mode = "optional"
+
+[linters.protolint]
+mode = "optional"
+
+[linters.ruff]
+mode = "optional"
+
+[linters.staticcheck]
+mode = "optional"
+
+[linters.stylelint]
+mode = "optional"
+
+[linters.swiftlint]
+mode = "optional"
