@@ -174,6 +174,7 @@ impl Linters {
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
             Filetype::Haskell => Box::pin(hlint::HsHlint::new(self, file)?),
             Filetype::Terraform => Box::pin(tflint::TfTflint::new(self, file)?),
+            Filetype::Nix => Box::pin(statix::NixStatix::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -278,6 +279,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "rubocop",
     "shellcheck",
     "sqlfluff",
+    "statix",
     "staticcheck",
     "stylelint",
     "swiftlint",
@@ -311,6 +313,7 @@ pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;
 pub mod staticcheck;
+pub mod statix;
 pub mod stylelint;
 pub mod swiftlint;
 pub mod tflint;

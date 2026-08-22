@@ -37,6 +37,7 @@
               eslint
               hlint
               pyright
+              statix
               tflint
               protolint
               rubocop

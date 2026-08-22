@@ -34,6 +34,7 @@ pub enum Filetype {
     Typescript,
     Haskell,
     Terraform,
+    Nix,
 }
 
 impl Filetype {
@@ -63,6 +64,7 @@ impl Filetype {
             Some("proto") => Filetype::Proto,
             Some("hs") => Filetype::Haskell,
             Some("tf") => Filetype::Terraform,
+            Some("nix") => Filetype::Nix,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -298,6 +300,11 @@ mod tests {
     #[test]
     fn detect_terraform() {
         assert_eq!(Filetype::detect(Path::new("foo.tf")), Filetype::Terraform);
+    }
+
+    #[test]
+    fn detect_nix() {
+        assert_eq!(Filetype::detect(Path::new("foo.nix")), Filetype::Nix);
     }
 
     #[test]
