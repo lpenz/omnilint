@@ -77,8 +77,10 @@ fn all_tracked_files() {
          shell-dirty.sh:5: [shellcheck] missing_var is referenced but not assigned.\n\
          sql-dirty.sql:1: [sqlfluff] AM04: Query produces an unknown number of result columns. [ambiguous.column_count]\n\
          swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n\
-         tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
-         ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
+          terraform-dirty.tf:1: [tflint] Missing version constraint for provider \"local\" in `required_providers` (terraform_required_providers)\n\
+          terraform-dirty.tf:1: [tflint] terraform \"required_version\" attribute is required (terraform_required_version)\n\
+          tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
+          ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          xml-dirty.xml:3: [xmllint] expected '>'\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
          yaml-dirty.yaml:1: [yamllint] trailing spaces\n\

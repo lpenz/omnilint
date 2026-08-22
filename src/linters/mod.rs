@@ -173,6 +173,7 @@ impl Linters {
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
             Filetype::Haskell => Box::pin(hlint::HsHlint::new(self, file)?),
+            Filetype::Terraform => Box::pin(tflint::TfTflint::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -280,6 +281,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "staticcheck",
     "stylelint",
     "swiftlint",
+    "tflint",
     "tidy",
     "xmllint",
     "yamllint",
@@ -311,6 +313,7 @@ pub mod sqlfluff;
 pub mod staticcheck;
 pub mod stylelint;
 pub mod swiftlint;
+pub mod tflint;
 pub mod tidy;
 pub mod xmllint;
 pub mod yamllint;

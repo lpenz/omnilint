@@ -33,6 +33,7 @@ pub enum Filetype {
     Javascript,
     Typescript,
     Haskell,
+    Terraform,
 }
 
 impl Filetype {
@@ -61,6 +62,7 @@ impl Filetype {
             Some("ts") => Filetype::Typescript,
             Some("proto") => Filetype::Proto,
             Some("hs") => Filetype::Haskell,
+            Some("tf") => Filetype::Terraform,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -291,6 +293,11 @@ mod tests {
     #[test]
     fn detect_haskell() {
         assert_eq!(Filetype::detect(Path::new("foo.hs")), Filetype::Haskell);
+    }
+
+    #[test]
+    fn detect_terraform() {
+        assert_eq!(Filetype::detect(Path::new("foo.tf")), Filetype::Terraform);
     }
 
     #[test]

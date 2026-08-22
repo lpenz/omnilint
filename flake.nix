@@ -37,6 +37,7 @@
               eslint
               hlint
               pyright
+              tflint
               protolint
               rubocop
               texlive.bin.chktex

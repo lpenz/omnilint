@@ -41,6 +41,7 @@ Statically analyse any file with the appropriate tools
 | Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) |
 | CSS        | `.css`                         | [stylelint](https://stylelint.io/) |
 | TeX        | `.tex`, `.sty`, `.cls`         | [chktex](https://www.nongnu.org/chktex/) |
+| Terraform  | `.tf`                          | [tflint](https://github.com/terraform-linters/tflint) |
 | JavaScript | `.js`                          | [oxlint](https://oxc.rs/) and [eslint](https://eslint.org/) |
 | TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
 
@@ -146,6 +147,7 @@ The linters used are:
 - `rubocop` for Ruby
 - `stylelint` for CSS
 - `chktex` for TeX/LaTeX
+- `tflint` for Terraform
 - `oxlint` and `eslint` for JavaScript, `oxlint` for TypeScript. eslint only
   reports findings when an [eslint configuration file](https://eslint.org/docs/latest/use/configure/)
   is present in the directory tree
