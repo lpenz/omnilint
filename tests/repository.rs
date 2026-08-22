@@ -38,6 +38,7 @@ fn all_tracked_files() {
          go-dirty.go:6: [go-vet] fmt.Printf format %s reads arg #1, but call has 0 args\n\
          go-dirty.go:6: [staticcheck] Printf format %s reads arg #1, but call has only 0 args (SA5009)\n\
          html-dirty.html:1: [tidy] missing <!DOCTYPE> declaration\n\
+         js-dirty.js:1: [eslint] Parsing error: Unexpected keyword 'debugger'\n\
          js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          json-dirty.json:1: [jq] Unmatched '}'\n\
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\

@@ -20,6 +20,7 @@
             { key = "chktex"; path = "${pkgs.texlive.bin.chktex}/bin/chktex"; }
             { key = "clj-kondo"; path = "${pkgs.clj-kondo}/bin/clj-kondo"; }
             { key = "cppcheck"; path = "${pkgs.cppcheck}/bin/cppcheck"; }
+            { key = "eslint"; path = "${pkgs.eslint}/bin/eslint"; }
             { key = "flake8"; path = "${pyPkgs}/bin/flake8"; }
             { key = "go"; path = "${pkgs.go}/bin/go"; }
             { key = "hadolint"; path = "${pkgs.hadolint}/bin/hadolint"; }
@@ -93,6 +94,7 @@
               go
               go-tools
               oxlint
+              eslint
               protolint
               rubocop
               texlive.bin.chktex

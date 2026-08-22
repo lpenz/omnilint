@@ -3,9 +3,10 @@
 // file 'LICENSE', which is part of this source code package.
 
 //! Integration tests for the analysis of JavaScript and TypeScript files,
-//! backed by oxlint.
+//! backed by oxlint and eslint.
 //!
-//! Requires `oxlint` to be available on the `PATH`.
+//! Requires `oxlint` and `eslint` to be available on the `PATH`, as well as
+//! an `eslint.config.mjs` file in the fixtures directory.
 //!
 //! Only runs when the `test-linter-tools` feature is enabled.
 
@@ -28,6 +29,7 @@ fn dirty_js() {
     assert_eq!(
         common::run(&["js-dirty.js"]),
         "Error: lint findings were emitted\n\
+         js-dirty.js:1: [eslint] Parsing error: Unexpected keyword 'debugger'\n\
          js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n"
     );
 }

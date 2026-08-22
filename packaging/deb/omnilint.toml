@@ -14,6 +14,10 @@ mode = "wanted"
 [linters.cppcheck]
 mode = "wanted"
 
+# eslint: `node-eslint`
+[linters.eslint]
+mode = "wanted"
+
 # flake8: `python3-flake8`
 [linters.flake8]
 mode = "wanted"
