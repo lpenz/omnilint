@@ -170,9 +170,12 @@ impl Linters {
             Filetype::Ruby => Box::pin(rubocop::RubyRubocop::new(self, file)?),
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
-            Filetype::Javascript | Filetype::Typescript => {
-                Box::pin(oxlint::JsOxlint::new(self, file)?)
+            Filetype::Javascript => {
+                let oxlint = oxlint::JsOxlint::new(self, file)?;
+                let eslint = eslint::JsEslint::new(self, file)?;
+                Box::pin(oxlint.merge(eslint))
             }
+            Filetype::Typescript => Box::pin(oxlint::JsOxlint::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -252,6 +255,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "clj-kondo",
     "cppcheck",
     "chktex",
+    "eslint",
     "flake8",
     "go-vet",
     "hadolint",
@@ -279,6 +283,7 @@ pub mod actionlint;
 pub mod chktex;
 pub mod cljkondo;
 pub mod cppcheck;
+pub mod eslint;
 pub mod flake8;
 pub mod govet;
 pub mod hadolint;

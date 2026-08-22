@@ -34,6 +34,7 @@
               cppcheck
               go-tools
               oxlint
+              eslint
               protolint
               rubocop
               texlive.bin.chktex
