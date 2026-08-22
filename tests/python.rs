@@ -3,10 +3,10 @@
 // file 'LICENSE', which is part of this source code package.
 
 //! Integration tests for the analysis of Python files, backed by flake8,
-//! mypy, pylint and ruff.
+//! mypy, pylint, pyright and ruff.
 //!
-//! Requires `flake8`, `mypy`, `pylint` and `ruff` to be available on the
-//! `PATH`.
+//! Requires `flake8`, `mypy`, `pylint`, `pyright` and `ruff` to be
+//! available on the `PATH`.
 //!
 //! Only runs when the `test-linter-tools` feature is enabled.
 
@@ -47,6 +47,7 @@ fn dirty() {
          python-dirty.py:8: [flake8] F821 undefined name 'undefined_name'\n\
          python-dirty.py:8: [mypy] Name \"undefined_name\" is not defined (name-defined)\n\
          python-dirty.py:8: [pylint] Undefined variable 'undefined_name' (undefined-variable)\n\
+         python-dirty.py:8: [pyright] \"undefined_name\" is not defined (reportUndefinedVariable)\n\
          python-dirty.py:8: [ruff] F821 Undefined name `undefined_name`\n"
     );
 }

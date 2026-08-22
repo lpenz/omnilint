@@ -66,6 +66,7 @@ fn all_tracked_files() {
          python-dirty.py:8: [flake8] F821 undefined name 'undefined_name'\n\
          python-dirty.py:8: [mypy] Name \"undefined_name\" is not defined (name-defined)\n\
          python-dirty.py:8: [pylint] Undefined variable 'undefined_name' (undefined-variable)\n\
+         python-dirty.py:8: [pyright] \"undefined_name\" is not defined (reportUndefinedVariable)\n\
          python-dirty.py:8: [ruff] F821 Undefined name `undefined_name`\n\
          ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n\
          shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\

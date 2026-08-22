@@ -33,6 +33,7 @@
             { key = "perlcritic"; path = "${pkgs.perlPackages.PerlCritic}/bin/perlcritic"; }
             { key = "protolint"; path = "${pkgs.protolint}/bin/protolint"; }
             { key = "pylint"; path = "${pyPkgs}/bin/pylint"; }
+            { key = "pyright"; path = "${pkgs.pyright}/bin/pyright"; }
             { key = "ruff"; path = "${pkgs.ruff}/bin/ruff"; }
             { key = "rubocop"; path = "${pkgs.rubocop}/bin/rubocop"; }
             { key = "shellcheck"; path = "${pkgs.shellcheck}/bin/shellcheck"; }
@@ -96,6 +97,7 @@
               go-tools
               oxlint
               eslint
+              pyright
               protolint
               rubocop
               texlive.bin.chktex

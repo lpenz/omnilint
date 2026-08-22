@@ -158,7 +158,8 @@ impl Linters {
                 let ruff = ruff::PythonRuff::new(self, file)?;
                 let pylint = pylint::PythonPylint::new(self, file)?;
                 let mypy = mypy::PythonMypy::new(self, file)?;
-                Box::pin(flake8.merge(ruff).merge(pylint).merge(mypy))
+                let pyright = pyright::PythonPyright::new(self, file)?;
+                Box::pin(flake8.merge(ruff).merge(pylint).merge(mypy).merge(pyright))
             }
             Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
             Filetype::Lua => Box::pin(luacheck::LuaLuacheck::new(self, file)?),
@@ -280,6 +281,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "perlcritic",
     "protolint",
     "pylint",
+    "pyright",
     "ruff",
     "rubocop",
     "shellcheck",
@@ -309,6 +311,7 @@ pub mod oxlint;
 pub mod perlcritic;
 pub mod protolint;
 pub mod pylint;
+pub mod pyright;
 pub mod rubocop;
 pub mod ruff;
 pub mod shellcheck;

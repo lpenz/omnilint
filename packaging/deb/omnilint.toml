@@ -46,6 +46,10 @@ mode = "wanted"
 [linters.pylint]
 mode = "wanted"
 
+# pyright: `pyright`
+[linters.pyright]
+mode = "wanted"
+
 # rubocop: `rubocop`
 [linters.rubocop]
 mode = "wanted"

@@ -46,6 +46,10 @@ mode = "wanted"
 [linters.mypy]
 mode = "wanted"
 
+# pyright: `pyright`
+[linters.pyright]
+mode = "wanted"
+
 # ruff: `ruff`
 [linters.ruff]
 mode = "wanted"
