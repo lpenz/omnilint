@@ -35,8 +35,11 @@ fn all_tracked_files() {
          docker-dirty.dockerfile:3: [hadolint] Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`\n\
          go-dirty.go:5: [staticcheck] func unused is unused (U1000)\n\
          go-dirty.go:6: [go-vet] fmt.Printf format %s reads arg #1, but call has 0 args\n\
-         go-dirty.go:6: [staticcheck] Printf format %s reads arg #1, but call has only 0 args (SA5009)\n\
-         html-dirty.html:1: [tidy] missing <!DOCTYPE> declaration\n\
+          go-dirty.go:6: [staticcheck] Printf format %s reads arg #1, but call has only 0 args (SA5009)\n\
+          haskell-dirty.hs:12: [hlint] Warning: Eta reduce\n\
+          haskell-dirty.hs:12: [hlint] Warning: Use concat\n\
+          haskell-dirty.hs:8: [hlint] Suggestion: Replace case with fromMaybe\n\
+          html-dirty.html:1: [tidy] missing <!DOCTYPE> declaration\n\
          js-dirty.js:1: [eslint] Parsing error: Unexpected keyword 'debugger'\n\
          js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          json-dirty.json:1: [jq] Unmatched '}'\n\

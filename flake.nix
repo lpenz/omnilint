@@ -35,6 +35,7 @@
               go-tools
               oxlint
               eslint
+              hlint
               pyright
               protolint
               rubocop

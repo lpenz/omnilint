@@ -32,6 +32,7 @@ pub enum Filetype {
     TeX,
     Javascript,
     Typescript,
+    Haskell,
 }
 
 impl Filetype {
@@ -59,6 +60,7 @@ impl Filetype {
             Some("js") => Filetype::Javascript,
             Some("ts") => Filetype::Typescript,
             Some("proto") => Filetype::Proto,
+            Some("hs") => Filetype::Haskell,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -284,6 +286,11 @@ mod tests {
     #[test]
     fn detect_lua() {
         assert_eq!(Filetype::detect(Path::new("foo.lua")), Filetype::Lua);
+    }
+
+    #[test]
+    fn detect_haskell() {
+        assert_eq!(Filetype::detect(Path::new("foo.hs")), Filetype::Haskell);
     }
 
     #[test]

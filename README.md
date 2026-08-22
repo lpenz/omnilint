@@ -37,6 +37,7 @@ Statically analyse any file with the appropriate tools
 | C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
 | Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
 | Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
+| Haskell    | `.hs`                          | [hlint](https://github.com/ndmitchell/hlint) |
 | Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) |
 | CSS        | `.css`                         | [stylelint](https://stylelint.io/) |
 | TeX        | `.tex`, `.sty`, `.cls`         | [chktex](https://www.nongnu.org/chktex/) |
@@ -141,6 +142,7 @@ The linters used are:
 - `cppcheck` for C/C++
 - `protolint` for Protobuf
 - `staticcheck` and `go vet` for Go
+- `hlint` for Haskell
 - `rubocop` for Ruby
 - `stylelint` for CSS
 - `chktex` for TeX/LaTeX
