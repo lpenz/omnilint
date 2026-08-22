@@ -38,7 +38,7 @@
               protolint
               rubocop
               texlive.bin.chktex
-              (python3.withPackages (ps: [ ps.flake8 ps.pylint ]))
+              (python3.withPackages (ps: [ ps.flake8 ps.pylint ps.mypy ]))
             ];
           };
         });

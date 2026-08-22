@@ -62,8 +62,9 @@ fn all_tracked_files() {
          python-dirty.py:7: [flake8] E305 expected 2 blank lines after class or function definition, found 1\n\
          python-dirty.py:7: [pylint] Assigning result of a function call, where the function has no return (assignment-from-no-return)\n\
          python-dirty.py:7: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
-         python-dirty.py:8: [flake8] F821 undefined name 'undefined_name'\n\
-         python-dirty.py:8: [pylint] Undefined variable 'undefined_name' (undefined-variable)\n\
+          python-dirty.py:8: [flake8] F821 undefined name 'undefined_name'\n\
+          python-dirty.py:8: [mypy] Name \"undefined_name\" is not defined (name-defined)\n\
+          python-dirty.py:8: [pylint] Undefined variable 'undefined_name' (undefined-variable)\n\
          python-dirty.py:8: [ruff] F821 Undefined name `undefined_name`\n\
          ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n\
          shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\

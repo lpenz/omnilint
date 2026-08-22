@@ -14,7 +14,8 @@ fn disabled_linter_skips_output() {
             "[linters.flake8]\nmode = \"disabled\"\n",
             1,
         ),
-        "python-clean.py: [pylint] linter not found\n\
+        "python-clean.py: [mypy] linter not found\n\
+         python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }
@@ -52,6 +53,7 @@ fn linter_custom_path() {
             1,
         ),
         "python-clean.py: [flake8] linter not found\n\
+         python-clean.py: [mypy] linter not found\n\
          python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
@@ -71,7 +73,8 @@ fn omnilint_config_env_var() {
             tmp.path().join("disabled.toml").to_str().unwrap(),
             1,
         ),
-        "python-clean.py: [pylint] linter not found\n\
+        "python-clean.py: [mypy] linter not found\n\
+         python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }
