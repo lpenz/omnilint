@@ -35,6 +35,7 @@
               go-tools
               oxlint
               eslint
+              pyright
               protolint
               rubocop
               texlive.bin.chktex

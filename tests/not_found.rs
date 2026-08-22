@@ -40,7 +40,8 @@ fn linters_not_found() {
          proto_clean.proto: [protolint] linter not found\n\
          python-clean.py: [flake8] linter not found\n\
          python-clean.py: [mypy] linter not found\n\
-         python-clean.py: [pylint] linter not found\n\
+                  python-clean.py: [pylint] linter not found\n\
+         python-clean.py: [pyright] linter not found\n\
          python-clean.py: [ruff] linter not found\n\
          shell-clean.sh: [shellcheck] linter not found\n\
          sql-clean.sql: [sqlfluff] linter not found\n\
@@ -72,7 +73,8 @@ fn github_workflow_format() {
         common::run_github_workflow(&["python-clean.py", "yaml-clean.yaml"]),
         "::warning file=python-clean.py::[flake8] linter not found\n\
          ::warning file=python-clean.py::[mypy] linter not found\n\
-         ::warning file=python-clean.py::[pylint] linter not found\n\
+                  ::warning file=python-clean.py::[pylint] linter not found\n\
+         ::warning file=python-clean.py::[pyright] linter not found\n\
          ::warning file=python-clean.py::[ruff] linter not found\n\
          ::warning file=yaml-clean.yaml::[yamllint] linter not found\n"
     );

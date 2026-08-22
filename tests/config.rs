@@ -15,7 +15,8 @@ fn disabled_linter_skips_output() {
             1,
         ),
         "python-clean.py: [mypy] linter not found\n\
-         python-clean.py: [pylint] linter not found\n\
+                  python-clean.py: [pylint] linter not found\n\
+         python-clean.py: [pyright] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }
@@ -54,7 +55,8 @@ fn linter_custom_path() {
         ),
         "python-clean.py: [flake8] linter not found\n\
          python-clean.py: [mypy] linter not found\n\
-         python-clean.py: [pylint] linter not found\n\
+                  python-clean.py: [pylint] linter not found\n\
+         python-clean.py: [pyright] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }
@@ -74,7 +76,8 @@ fn omnilint_config_env_var() {
             1,
         ),
         "python-clean.py: [mypy] linter not found\n\
-         python-clean.py: [pylint] linter not found\n\
+                  python-clean.py: [pylint] linter not found\n\
+         python-clean.py: [pyright] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }
