@@ -81,6 +81,9 @@ mode = "optional"
 [linters.ktlint]
 mode = "optional"
 
+[linters.lintr]
+mode = "optional"
+
 [linters.luacheck]
 mode = "optional"
 

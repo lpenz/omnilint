@@ -46,6 +46,7 @@ Statically analyse any file with the appropriate tools
 | JavaScript | `.js`                          | [oxlint](https://oxc.rs/) and [eslint](https://eslint.org/) |
 | TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
 | PHP        | `.php`                         | [php -l](https://www.php.net/), [phpcs](https://github.com/PHPCSStandards/PHP_CodeSniffer) and [phpmd](https://phpmd.org/) |
+| R          | `.R`, `.r`                     | [lintr](https://lintr.r-lib.org/) |
 
 ## Usage
 
@@ -155,6 +156,7 @@ The linters used are:
   reports findings when an [eslint configuration file](https://eslint.org/docs/latest/use/configure/)
   is present in the directory tree
 - `php` (with `-l`), `phpcs` and `phpmd` for PHP
+- `Rscript` with the `lintr` package for R
 
 ## Installation
 

@@ -185,6 +185,7 @@ impl Linters {
                 let phpmd = phpmd::PhpPhpmd::new(self, file)?;
                 Box::pin(phpl.merge(phpcs).merge(phpmd))
             }
+            Filetype::R => Box::pin(lintr::RLintr::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -277,6 +278,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "hlint",
     "jq",
     "ktlint",
+    "lintr",
     "luacheck",
     "markdownlint-cli2",
     "mypy",
@@ -314,6 +316,7 @@ pub mod hadolint;
 pub mod hlint;
 pub mod jq;
 pub mod ktlint;
+pub mod lintr;
 pub mod luacheck;
 pub mod markdownlint;
 pub mod mypy;

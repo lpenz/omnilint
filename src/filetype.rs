@@ -36,6 +36,7 @@ pub enum Filetype {
     Terraform,
     Nix,
     Php,
+    R,
 }
 
 impl Filetype {
@@ -67,6 +68,7 @@ impl Filetype {
             Some("tf") => Filetype::Terraform,
             Some("nix") => Filetype::Nix,
             Some("php") => Filetype::Php,
+            Some("R" | "r") => Filetype::R,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -132,6 +134,7 @@ fn is_known_extension(ext: &str) -> bool {
             | "pm"
             | "proto"
             | "py"
+            | "r"
             | "rb"
             | "rs"
             | "sh"
@@ -313,6 +316,12 @@ mod tests {
     #[test]
     fn detect_php() {
         assert_eq!(Filetype::detect(Path::new("foo.php")), Filetype::Php);
+    }
+
+    #[test]
+    fn detect_r() {
+        assert_eq!(Filetype::detect(Path::new("foo.R")), Filetype::R);
+        assert_eq!(Filetype::detect(Path::new("foo.r")), Filetype::R);
     }
 
     #[test]

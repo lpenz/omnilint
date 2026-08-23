@@ -23,6 +23,7 @@ fn linters_not_found() {
             "php-clean.php",
             "proto_clean.proto",
             "python-clean.py",
+            "r-clean.R",
             "shell-clean.sh",
             "sql-clean.sql",
             "swift-clean.swift",
@@ -46,8 +47,9 @@ fn linters_not_found() {
          python-clean.py: [mypy] linter not found\n\
                   python-clean.py: [pylint] linter not found\n\
          python-clean.py: [pyright] linter not found\n\
-         python-clean.py: [ruff] linter not found\n\
-         shell-clean.sh: [shellcheck] linter not found\n\
+          python-clean.py: [ruff] linter not found\n\
+          r-clean.R: [lintr] linter not found\n\
+          shell-clean.sh: [shellcheck] linter not found\n\
          sql-clean.sql: [sqlfluff] linter not found\n\
          swift-clean.swift: [swiftlint] linter not found\n\
          xml-clean.xml: [xmllint] linter not found\n\

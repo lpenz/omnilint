@@ -46,6 +46,10 @@ mode = "wanted"
 [linters.pylint]
 mode = "wanted"
 
+# lintr: `r-cran-lintr`
+[linters.lintr]
+mode = "wanted"
+
 # rubocop: `rubocop`
 [linters.rubocop]
 mode = "wanted"

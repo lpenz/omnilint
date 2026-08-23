@@ -46,6 +46,7 @@
               php
               php84Packages.php-codesniffer
               php84Packages.phpmd
+              (rWrapper.override { packages = [ rPackages.lintr ]; })
               (python3.withPackages (ps: [ ps.flake8 ps.pylint ps.mypy ]))
             ];
           };
