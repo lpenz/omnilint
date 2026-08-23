@@ -76,8 +76,9 @@ fn all_tracked_files() {
           python-dirty.py:8: [pylint] Undefined variable 'undefined_name' (undefined-variable)\n\
           python-dirty.py:8: [pyright] \"undefined_name\" is not defined (reportUndefinedVariable)\n\
           python-dirty.py:8: [ruff] F821 Undefined name `undefined_name`\n\
-         ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n\
-         shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\
+          ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n\
+          ruby-standard-dirty.rb:3: [standardrb] C: [Correctable] Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.\n\
+          shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\
          shell-dirty.sh:4: [shellcheck] Double quote to prevent globbing and word splitting.\n\
          shell-dirty.sh:5: [shellcheck] Double quote to prevent globbing and word splitting.\n\
          shell-dirty.sh:5: [shellcheck] missing_var is referenced but not assigned.\n\

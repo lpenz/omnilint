@@ -169,7 +169,11 @@ impl Linters {
                 let govet = govet::GoGovet::new(self, file)?;
                 Box::pin(staticcheck.merge(govet))
             }
-            Filetype::Ruby => Box::pin(rubocop::RubyRubocop::new(self, file)?),
+            Filetype::Ruby => {
+                let rubocop = rubocop::RubyRubocop::new(self, file)?;
+                let standardrb = standardrb::RubyStandardrb::new(self, file)?;
+                Box::pin(rubocop.merge(standardrb))
+            }
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
             Filetype::Haskell => Box::pin(hlint::HsHlint::new(self, file)?),
@@ -288,6 +292,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "rubocop",
     "shellcheck",
     "sqlfluff",
+    "standardrb",
     "statix",
     "staticcheck",
     "stylelint",
@@ -324,6 +329,7 @@ pub mod rubocop;
 pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;
+pub mod standardrb;
 pub mod staticcheck;
 pub mod statix;
 pub mod stylelint;

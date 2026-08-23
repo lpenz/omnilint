@@ -105,5 +105,8 @@ mode = "optional"
 [linters.sqlfluff]
 mode = "optional"
 
+[linters.standardrb]
+mode = "optional"
+
 [linters.stylelint]
 mode = "optional"

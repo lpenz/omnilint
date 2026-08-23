@@ -41,6 +41,7 @@
               tflint
               protolint
               rubocop
+              rubyPackages.standard
               texlive.bin.chktex
               php
               php84Packages.php-codesniffer

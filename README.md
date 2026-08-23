@@ -39,7 +39,7 @@ Statically analyse any file with the appropriate tools
 | Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
 | Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
 | Haskell    | `.hs`                          | [hlint](https://github.com/ndmitchell/hlint) |
-| Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) |
+| Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) and [standardrb](https://github.com/standardrb/standard) |
 | CSS        | `.css`                         | [stylelint](https://stylelint.io/) |
 | TeX        | `.tex`, `.sty`, `.cls`         | [chktex](https://www.nongnu.org/chktex/) |
 | Terraform  | `.tf`                          | [tflint](https://github.com/terraform-linters/tflint) |
@@ -147,7 +147,7 @@ The linters used are:
 - `protolint` for Protobuf
 - `staticcheck` and `go vet` for Go
 - `hlint` for Haskell
-- `rubocop` for Ruby
+- `rubocop` and `standardrb` for Ruby
 - `stylelint` for CSS
 - `chktex` for TeX/LaTeX
 - `tflint` for Terraform

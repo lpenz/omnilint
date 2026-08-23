@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-x = 40 + 2
+x = 'hello'
 puts x

@@ -107,3 +107,6 @@ mode = "optional"
 
 [linters.swiftlint]
 mode = "optional"
+
+[linters.standardrb]
+mode = "optional"
