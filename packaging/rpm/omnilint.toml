@@ -102,6 +102,9 @@ mode = "optional"
 [linters.protolint]
 mode = "optional"
 
+[linters.proselint]
+mode = "optional"
+
 [linters.rubocop]
 mode = "optional"
 

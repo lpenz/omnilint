@@ -97,7 +97,10 @@ mode = "optional"
 [linters.oxlint]
 mode = "optional"
 
-[linters.protolint]
+[linters.proselint]
+mode = "optional"
+
+[linters.ruff]
 mode = "optional"
 
 [linters.ruff]

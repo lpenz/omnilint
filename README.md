@@ -47,6 +47,7 @@ Statically analyse any file with the appropriate tools
 | TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
 | PHP        | `.php`                         | [php -l](https://www.php.net/), [phpcs](https://github.com/PHPCSStandards/PHP_CodeSniffer) and [phpmd](https://phpmd.org/) |
 | R          | `.R`, `.r`                     | [lintr](https://lintr.r-lib.org/) |
+| Text       | `.txt`                         | [proselint](https://github.com/amperser/proselint) |
 
 ## Usage
 
@@ -157,6 +158,7 @@ The linters used are:
   is present in the directory tree
 - `php` (with `-l`), `phpcs` and `phpmd` for PHP
 - `Rscript` with the `lintr` package for R
+- `proselint` for plain text files
 
 ## Installation
 

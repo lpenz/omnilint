@@ -37,6 +37,7 @@ pub enum Filetype {
     Nix,
     Php,
     R,
+    Text,
 }
 
 impl Filetype {
@@ -69,6 +70,7 @@ impl Filetype {
             Some("nix") => Filetype::Nix,
             Some("php") => Filetype::Php,
             Some("R" | "r") => Filetype::R,
+            Some("txt") => Filetype::Text,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -225,7 +227,7 @@ mod tests {
         );
         assert_eq!(
             Filetype::detect(Path::new("dockerfile.txt")),
-            Filetype::Unknown
+            Filetype::Text
         );
         assert_eq!(
             Filetype::detect(Path::new("containerfile.rs")),
@@ -325,8 +327,13 @@ mod tests {
     }
 
     #[test]
+    fn detect_text() {
+        assert_eq!(Filetype::detect(Path::new("foo.txt")), Filetype::Text);
+    }
+
+    #[test]
     fn detect_unknown() {
-        assert_eq!(Filetype::detect(Path::new("foo.txt")), Filetype::Unknown);
+        assert_eq!(Filetype::detect(Path::new("foo.md")), Filetype::Markdown);
         assert_eq!(Filetype::detect(Path::new(".py")), Filetype::Unknown);
         assert_eq!(
             Filetype::detect(Path::new("no-such-file")),

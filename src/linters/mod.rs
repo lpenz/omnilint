@@ -186,6 +186,7 @@ impl Linters {
                 Box::pin(phpl.merge(phpcs).merge(phpmd))
             }
             Filetype::R => Box::pin(lintr::RLintr::new(self, file)?),
+            Filetype::Text => Box::pin(proselint::TextProselint::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -290,6 +291,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "protolint",
     "pylint",
     "pyright",
+    "proselint",
     "ruff",
     "rubocop",
     "shellcheck",
@@ -325,6 +327,7 @@ pub mod perlcritic;
 pub mod php;
 pub mod phpcs;
 pub mod phpmd;
+pub mod proselint;
 pub mod protolint;
 pub mod pylint;
 pub mod pyright;
