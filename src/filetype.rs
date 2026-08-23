@@ -33,6 +33,7 @@ pub enum Filetype {
     Javascript,
     Typescript,
     Nix,
+    Systemd,
 }
 
 impl Filetype {
@@ -61,6 +62,10 @@ impl Filetype {
             Some("ts") => Filetype::Typescript,
             Some("proto") => Filetype::Proto,
             Some("nix") => Filetype::Nix,
+            Some(
+                "service" | "timer" | "socket" | "mount" | "path" | "target" | "slice" | "swap"
+                | "device" | "automount" | "scope",
+            ) => Filetype::Systemd,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -129,6 +134,17 @@ fn is_known_extension(ext: &str) -> bool {
             | "rs"
             | "sh"
             | "sql"
+            | "service"
+            | "timer"
+            | "socket"
+            | "mount"
+            | "path"
+            | "target"
+            | "slice"
+            | "swap"
+            | "device"
+            | "automount"
+            | "scope"
             | "swift"
             | "toml"
             | "ts"
@@ -291,6 +307,17 @@ mod tests {
     #[test]
     fn detect_lua() {
         assert_eq!(Filetype::detect(Path::new("foo.lua")), Filetype::Lua);
+    }
+
+    #[test]
+    fn detect_systemd() {
+        assert_eq!(
+            Filetype::detect(Path::new("foo.service")),
+            Filetype::Systemd
+        );
+        assert_eq!(Filetype::detect(Path::new("foo.timer")), Filetype::Systemd);
+        assert_eq!(Filetype::detect(Path::new("foo.socket")), Filetype::Systemd);
+        assert_eq!(Filetype::detect(Path::new("foo.target")), Filetype::Systemd);
     }
 
     #[test]

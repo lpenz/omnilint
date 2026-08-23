@@ -74,6 +74,10 @@ mode = "wanted"
 [linters.statix]
 mode = "wanted"
 
+# systemd-analyze: `systemd`
+[linters.systemd-analyze]
+mode = "wanted"
+
 # swiftlint: `swiftlint`
 [linters.swiftlint]
 mode = "wanted"

@@ -84,6 +84,7 @@ fn all_tracked_files() {
          shell-dirty.sh:5: [shellcheck] missing_var is referenced but not assigned.\n\
          sql-dirty.sql:1: [sqlfluff] AM04: Query produces an unknown number of result columns. [ambiguous.column_count]\n\
          swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n\
+         systemd-dirty.service:5: [systemd-analyze] Unknown key 'Foo' in section [Service], ignoring.\n\
          tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
          ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          xml-dirty.xml:3: [xmllint] expected '>'\n\

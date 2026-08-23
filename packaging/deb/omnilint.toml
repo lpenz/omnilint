@@ -66,6 +66,10 @@ mode = "wanted"
 [linters.shellcheck]
 mode = "wanted"
 
+# systemd-analyze: `systemd`
+[linters.systemd-analyze]
+mode = "wanted"
+
 # sqlfluff: `sqlfluff`
 [linters.sqlfluff]
 mode = "wanted"

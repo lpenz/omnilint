@@ -192,6 +192,7 @@ impl Linters {
             Filetype::Ruby => Box::pin(rubocop::RubyRubocop::new(self, file)?),
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
+            Filetype::Systemd => Box::pin(systemd::SystemdAnalyze::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -306,6 +307,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "staticcheck",
     "stylelint",
     "swiftlint",
+    "systemd-analyze",
     "tidy",
     "xmllint",
     "yamllint",
@@ -339,6 +341,7 @@ pub mod staticcheck;
 pub mod statix;
 pub mod stylelint;
 pub mod swiftlint;
+pub mod systemd;
 pub mod tidy;
 pub mod xmllint;
 pub mod yamllint;

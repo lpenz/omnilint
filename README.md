@@ -43,6 +43,7 @@ Statically analyse any file with the appropriate tools
 | TeX        | `.tex`, `.sty`, `.cls`         | [chktex](https://www.nongnu.org/chktex/) |
 | JavaScript | `.js`                          | [oxlint](https://oxc.rs/) and [eslint](https://eslint.org/) |
 | TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
+| systemd    | `.service`, `.timer`, `.socket`, ... | [systemd-analyze verify](https://www.freedesktop.org/software/systemd/man/latest/systemd-analyze.html) |
 
 ## Usage
 
@@ -185,6 +186,7 @@ The linters used are:
 - `oxlint` and `eslint` for JavaScript, `oxlint` for TypeScript. eslint only
   reports findings when an [eslint configuration file](https://eslint.org/docs/latest/use/configure/)
   is present in the directory tree
+- `systemd-analyze verify` for systemd unit files
 
 ## Installation
 
