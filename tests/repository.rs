@@ -87,7 +87,8 @@ fn all_tracked_files() {
          shell-dirty.sh:5: [shellcheck] Double quote to prevent globbing and word splitting.\n\
          shell-dirty.sh:5: [shellcheck] missing_var is referenced but not assigned.\n\
          sql-dirty.sql:1: [sqlfluff] AM04: Query produces an unknown number of result columns. [ambiguous.column_count]\n\
-         swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n\
+          swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n\
+          systemd-dirty.service:5: [systemd-analyze] Unknown key 'Foo' in section [Service], ignoring.\n\
           terraform-dirty.tf:1: [tflint] Missing version constraint for provider \"local\" in `required_providers` (terraform_required_providers)\n\
           terraform-dirty.tf:1: [tflint] terraform \"required_version\" attribute is required (terraform_required_version)\n\
           tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\

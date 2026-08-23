@@ -1,0 +1,6 @@
+[Unit]
+Description=Test
+
+[Service]
+Foo=yes
+ExecStart=/bin/true

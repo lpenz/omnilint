@@ -189,6 +189,7 @@ impl Linters {
             Filetype::Text => Box::pin(proselint::TextProselint::new(self, file)?),
             Filetype::Salt => Box::pin(saltlint::SaltSaltlint::new(self, file)?),
             Filetype::Bazel => Box::pin(buildifier::BazelBuildifier::new(self, file)?),
+            Filetype::Systemd => Box::pin(systemd::SystemdAnalyze::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -308,6 +309,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "staticcheck",
     "stylelint",
     "swiftlint",
+    "systemd-analyze",
     "tflint",
     "tidy",
     "xmllint",
@@ -349,6 +351,7 @@ pub mod staticcheck;
 pub mod statix;
 pub mod stylelint;
 pub mod swiftlint;
+pub mod systemd;
 pub mod tflint;
 pub mod tidy;
 pub mod xmllint;

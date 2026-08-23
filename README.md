@@ -50,6 +50,7 @@ Statically analyse any file with the appropriate tools
 | Text       | `.txt`                         | [proselint](https://github.com/amperser/proselint) |
 | SaltStack  | `.sls`                         | [salt-lint](https://github.com/warpnet/salt-lint) |
 | Bazel      | `.bzl`, `BUILD`, `WORKSPACE`, ... | [buildifier](https://github.com/bazelbuild/buildtools) |
+| systemd    | `.service`, `.timer`, `.socket`, ... | [systemd-analyze verify](https://www.freedesktop.org/software/systemd/man/latest/systemd-analyze.html) |
 
 ## Usage
 
@@ -163,6 +164,7 @@ The linters used are:
 - `proselint` for plain text files
 - `salt-lint` for SaltStack state files
 - `buildifier` for Bazel `BUILD`, `WORKSPACE` and `.bzl` files
+- `systemd-analyze verify` for systemd unit files
 
 ## Installation
 

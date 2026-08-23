@@ -41,6 +41,7 @@
               tflint
               protolint
               buildifier
+              systemd
               rubocop
               rubyPackages.standard
               texlive.bin.chktex

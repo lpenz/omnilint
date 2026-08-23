@@ -40,6 +40,7 @@ pub enum Filetype {
     Text,
     Salt,
     Bazel,
+    Systemd,
 }
 
 impl Filetype {
@@ -75,6 +76,10 @@ impl Filetype {
             Some("txt") => Filetype::Text,
             Some("sls") => Filetype::Salt,
             Some("bzl") => Filetype::Bazel,
+            Some(
+                "service" | "timer" | "socket" | "mount" | "path" | "target" | "slice" | "swap"
+                | "device" | "automount" | "scope",
+            ) => Filetype::Systemd,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -163,6 +168,17 @@ fn is_known_extension(ext: &str) -> bool {
             | "sh"
             | "sls"
             | "sql"
+            | "service"
+            | "timer"
+            | "socket"
+            | "mount"
+            | "path"
+            | "target"
+            | "slice"
+            | "swap"
+            | "device"
+            | "automount"
+            | "scope"
             | "swift"
             | "toml"
             | "ts"
@@ -373,6 +389,17 @@ mod tests {
         );
         assert_eq!(Filetype::detect(Path::new("MODULE.bazel")), Filetype::Bazel);
         assert_eq!(Filetype::detect(Path::new("build.rs")), Filetype::Unknown);
+    }
+
+    #[test]
+    fn detect_systemd() {
+        assert_eq!(
+            Filetype::detect(Path::new("foo.service")),
+            Filetype::Systemd
+        );
+        assert_eq!(Filetype::detect(Path::new("foo.timer")), Filetype::Systemd);
+        assert_eq!(Filetype::detect(Path::new("foo.socket")), Filetype::Systemd);
+        assert_eq!(Filetype::detect(Path::new("foo.target")), Filetype::Systemd);
     }
 
     #[test]
