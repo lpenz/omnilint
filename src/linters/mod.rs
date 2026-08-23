@@ -178,7 +178,8 @@ impl Linters {
             Filetype::Php => {
                 let phpl = php::PhpLint::new(self, file)?;
                 let phpcs = phpcs::PhpPhpcs::new(self, file)?;
-                Box::pin(phpl.merge(phpcs))
+                let phpmd = phpmd::PhpPhpmd::new(self, file)?;
+                Box::pin(phpl.merge(phpcs).merge(phpmd))
             }
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
@@ -279,6 +280,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "perlcritic",
     "php",
     "phpcs",
+    "phpmd",
     "protolint",
     "pylint",
     "pyright",
@@ -314,6 +316,7 @@ pub mod oxlint;
 pub mod perlcritic;
 pub mod php;
 pub mod phpcs;
+pub mod phpmd;
 pub mod protolint;
 pub mod pylint;
 pub mod pyright;

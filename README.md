@@ -45,7 +45,7 @@ Statically analyse any file with the appropriate tools
 | Terraform  | `.tf`                          | [tflint](https://github.com/terraform-linters/tflint) |
 | JavaScript | `.js`                          | [oxlint](https://oxc.rs/) and [eslint](https://eslint.org/) |
 | TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
-| PHP        | `.php`                         | [php -l](https://www.php.net/) and [phpcs](https://github.com/PHPCSStandards/PHP_CodeSniffer) |
+| PHP        | `.php`                         | [php -l](https://www.php.net/), [phpcs](https://github.com/PHPCSStandards/PHP_CodeSniffer) and [phpmd](https://phpmd.org/) |
 
 ## Usage
 
@@ -154,7 +154,7 @@ The linters used are:
 - `oxlint` and `eslint` for JavaScript, `oxlint` for TypeScript. eslint only
   reports findings when an [eslint configuration file](https://eslint.org/docs/latest/use/configure/)
   is present in the directory tree
-- `php` (with `-l`) and `phpcs` for PHP
+- `php` (with `-l`), `phpcs` and `phpmd` for PHP
 
 ## Installation
 

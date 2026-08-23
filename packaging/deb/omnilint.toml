@@ -75,6 +75,9 @@ mode = "wanted"
 [linters.actionlint]
 mode = "optional"
 
+[linters.phpmd]
+mode = "optional"
+
 [linters.clj-kondo]
 mode = "optional"
 

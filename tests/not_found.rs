@@ -40,6 +40,7 @@ fn linters_not_found() {
           markdown-clean.md: [markdownlint-cli2] linter not found\n\
           php-clean.php: [php] linter not found\n\
           php-clean.php: [phpcs] linter not found\n\
+          php-clean.php: [phpmd] linter not found\n\
           proto_clean.proto: [protolint] linter not found\n\
          python-clean.py: [flake8] linter not found\n\
          python-clean.py: [mypy] linter not found\n\

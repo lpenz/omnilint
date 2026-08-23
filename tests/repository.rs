@@ -51,6 +51,8 @@ fn all_tracked_files() {
           perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
           php-dirty.php:1: [phpcs] Header blocks must be separated by a single blank line\n\
           php-dirty.php:2: [php] syntax error, unexpected token \";\"\n\
+          php-md-dirty.php:7: [phpmd] ShortVariable: Avoid variables with short names like $x. Configured minimum length is 3.\n\
+          php-md-dirty.php:9: [phpmd] UnusedLocalVariable: Avoid unused local variables such as '$unused'.\n\
           proto_dirty.proto:4: [protolint] Found an incorrect indentation style \"\t\". \"  \" is correct.\n\
          python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
          python-clean.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\
