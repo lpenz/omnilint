@@ -175,7 +175,11 @@ impl Linters {
             Filetype::Haskell => Box::pin(hlint::HsHlint::new(self, file)?),
             Filetype::Terraform => Box::pin(tflint::TfTflint::new(self, file)?),
             Filetype::Nix => Box::pin(statix::NixStatix::new(self, file)?),
-            Filetype::Php => Box::pin(php::PhpLint::new(self, file)?),
+            Filetype::Php => {
+                let phpl = php::PhpLint::new(self, file)?;
+                let phpcs = phpcs::PhpPhpcs::new(self, file)?;
+                Box::pin(phpl.merge(phpcs))
+            }
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -274,6 +278,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "oxlint",
     "perlcritic",
     "php",
+    "phpcs",
     "protolint",
     "pylint",
     "pyright",
@@ -308,6 +313,7 @@ pub mod mypy;
 pub mod oxlint;
 pub mod perlcritic;
 pub mod php;
+pub mod phpcs;
 pub mod protolint;
 pub mod pylint;
 pub mod pyright;

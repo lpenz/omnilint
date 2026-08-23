@@ -49,6 +49,7 @@ fn all_tracked_files() {
          nix-dirty.nix:2: [statix] Consider quoting this URI expression\n\
          nix-dirty.nix:3: [statix] Useless parentheses around primitive expression\n\
           perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
+          php-dirty.php:1: [phpcs] Header blocks must be separated by a single blank line\n\
           php-dirty.php:2: [php] syntax error, unexpected token \";\"\n\
           proto_dirty.proto:4: [protolint] Found an incorrect indentation style \"\t\". \"  \" is correct.\n\
          python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\

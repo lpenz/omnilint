@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["php-dirty.php"]),
-        "php-dirty.php:2: [php] syntax error, unexpected token \";\"\n"
+        "php-dirty.php:1: [phpcs] Header blocks must be separated by a single blank line\n\
+         php-dirty.php:2: [php] syntax error, unexpected token \";\"\n"
     );
 }

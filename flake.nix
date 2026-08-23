@@ -43,6 +43,7 @@
               rubocop
               texlive.bin.chktex
               php
+              php84Packages.php-codesniffer
               (python3.withPackages (ps: [ ps.flake8 ps.pylint ps.mypy ]))
             ];
           };

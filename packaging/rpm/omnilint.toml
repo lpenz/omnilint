@@ -90,6 +90,9 @@ mode = "optional"
 [linters.oxlint]
 mode = "optional"
 
+[linters.phpcs]
+mode = "optional"
+
 [linters.protolint]
 mode = "optional"
 

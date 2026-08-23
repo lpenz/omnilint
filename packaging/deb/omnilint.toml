@@ -38,6 +38,10 @@ mode = "wanted"
 [linters.php]
 mode = "wanted"
 
+# phpcs: `phpcs`
+[linters.phpcs]
+mode = "wanted"
+
 # pylint: `pylint`
 [linters.pylint]
 mode = "wanted"
