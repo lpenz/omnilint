@@ -48,8 +48,9 @@ fn all_tracked_files() {
          markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\
          nix-dirty.nix:2: [statix] Consider quoting this URI expression\n\
          nix-dirty.nix:3: [statix] Useless parentheses around primitive expression\n\
-         perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
-         proto_dirty.proto:4: [protolint] Found an incorrect indentation style \"\t\". \"  \" is correct.\n\
+          perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
+          php-dirty.php:2: [php] syntax error, unexpected token \";\"\n\
+          proto_dirty.proto:4: [protolint] Found an incorrect indentation style \"\t\". \"  \" is correct.\n\
          python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
          python-clean.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\
          python-clean.py:1: [pylint] Module name \"python-clean\" doesn't conform to snake_case naming style (invalid-name)\n\

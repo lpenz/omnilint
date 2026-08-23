@@ -35,6 +35,7 @@ pub enum Filetype {
     Haskell,
     Terraform,
     Nix,
+    Php,
 }
 
 impl Filetype {
@@ -65,6 +66,7 @@ impl Filetype {
             Some("hs") => Filetype::Haskell,
             Some("tf") => Filetype::Terraform,
             Some("nix") => Filetype::Nix,
+            Some("php") => Filetype::Php,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -125,6 +127,7 @@ fn is_known_extension(ext: &str) -> bool {
             | "md"
             | "markdown"
             | "nix"
+            | "php"
             | "pl"
             | "pm"
             | "proto"
@@ -305,6 +308,11 @@ mod tests {
     #[test]
     fn detect_nix() {
         assert_eq!(Filetype::detect(Path::new("foo.nix")), Filetype::Nix);
+    }
+
+    #[test]
+    fn detect_php() {
+        assert_eq!(Filetype::detect(Path::new("foo.php")), Filetype::Php);
     }
 
     #[test]

@@ -34,6 +34,10 @@ mode = "wanted"
 [linters.perlcritic]
 mode = "wanted"
 
+# php: `php-cli`
+[linters.php]
+mode = "wanted"
+
 # pylint: `pylint`
 [linters.pylint]
 mode = "wanted"
