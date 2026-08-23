@@ -38,6 +38,7 @@ pub enum Filetype {
     Php,
     R,
     Text,
+    Salt,
 }
 
 impl Filetype {
@@ -71,6 +72,7 @@ impl Filetype {
             Some("php") => Filetype::Php,
             Some("R" | "r") => Filetype::R,
             Some("txt") => Filetype::Text,
+            Some("sls") => Filetype::Salt,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -140,6 +142,7 @@ fn is_known_extension(ext: &str) -> bool {
             | "rb"
             | "rs"
             | "sh"
+            | "sls"
             | "sql"
             | "swift"
             | "toml"
@@ -329,6 +332,11 @@ mod tests {
     #[test]
     fn detect_text() {
         assert_eq!(Filetype::detect(Path::new("foo.txt")), Filetype::Text);
+    }
+
+    #[test]
+    fn detect_salt() {
+        assert_eq!(Filetype::detect(Path::new("foo.sls")), Filetype::Salt);
     }
 
     #[test]

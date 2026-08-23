@@ -48,6 +48,7 @@ Statically analyse any file with the appropriate tools
 | PHP        | `.php`                         | [php -l](https://www.php.net/), [phpcs](https://github.com/PHPCSStandards/PHP_CodeSniffer) and [phpmd](https://phpmd.org/) |
 | R          | `.R`, `.r`                     | [lintr](https://lintr.r-lib.org/) |
 | Text       | `.txt`                         | [proselint](https://github.com/amperser/proselint) |
+| SaltStack  | `.sls`                         | [salt-lint](https://github.com/warpnet/salt-lint) |
 
 ## Usage
 
@@ -159,6 +160,7 @@ The linters used are:
 - `php` (with `-l`), `phpcs` and `phpmd` for PHP
 - `Rscript` with the `lintr` package for R
 - `proselint` for plain text files
+- `salt-lint` for SaltStack state files
 
 ## Installation
 

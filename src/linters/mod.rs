@@ -187,6 +187,7 @@ impl Linters {
             }
             Filetype::R => Box::pin(lintr::RLintr::new(self, file)?),
             Filetype::Text => Box::pin(proselint::TextProselint::new(self, file)?),
+            Filetype::Salt => Box::pin(saltlint::SaltSaltlint::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -227,14 +228,17 @@ fn parse_line_standard(filename: &Path, linter: &str, line: &str) -> Option<Entr
 /// `findings_on_stderr` selects which of the process streams holds the
 /// findings. If the linter binary was not found on the `PATH`, emits a single
 /// [`Entry`] reporting that before the stream ends.
-pub(crate) fn poll_next(
+pub(crate) fn poll_next<F>(
     name: &'static str,
     filename: &Path,
     inner: &mut Linter,
-    parse: fn(&Path, &str) -> Option<Entry>,
+    mut parse: F,
     findings_on_stderr: bool,
     cx: &mut Context<'_>,
-) -> Poll<Option<Entry>> {
+) -> Poll<Option<Entry>>
+where
+    F: FnMut(&Path, &str) -> Option<Entry>,
+{
     match inner {
         Linter::Running(stream) => loop {
             match ready!(Pin::new(&mut *stream).poll_next(cx)) {
@@ -294,6 +298,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "proselint",
     "ruff",
     "rubocop",
+    "salt-lint",
     "shellcheck",
     "sqlfluff",
     "standardrb",
@@ -333,6 +338,7 @@ pub mod pylint;
 pub mod pyright;
 pub mod rubocop;
 pub mod ruff;
+pub mod saltlint;
 pub mod shellcheck;
 pub mod sqlfluff;
 pub mod standardrb;

@@ -1,9 +1,12 @@
 # Project configuration for the omnilint test fixtures.
 #
-# proselint is not packaged in nixpkgs, so it is not available in the
-# development shell used to run the test suite: keep it disabled here so
-# that the fixture-based tests are deterministic regardless of whether it
-# is installed on the `PATH`.
+# proselint and salt-lint are not packaged in nixpkgs, so they are not
+# available in the development shell used to run the test suite: keep them
+# disabled here so that the fixture-based tests are deterministic
+# regardless of whether they are installed on the `PATH`.
 
 [linters.proselint]
+mode = "disabled"
+
+[linters.salt-lint]
 mode = "disabled"

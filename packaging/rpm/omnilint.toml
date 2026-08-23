@@ -108,6 +108,9 @@ mode = "optional"
 [linters.rubocop]
 mode = "optional"
 
+[linters.salt-lint]
+mode = "optional"
+
 [linters.sqlfluff]
 mode = "optional"
 

@@ -106,6 +106,9 @@ mode = "optional"
 [linters.ruff]
 mode = "optional"
 
+[linters.salt-lint]
+mode = "optional"
+
 [linters.staticcheck]
 mode = "optional"
 
