@@ -40,6 +40,7 @@
               statix
               tflint
               protolint
+              buildifier
               rubocop
               rubyPackages.standard
               texlive.bin.chktex

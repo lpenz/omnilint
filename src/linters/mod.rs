@@ -188,6 +188,7 @@ impl Linters {
             Filetype::R => Box::pin(lintr::RLintr::new(self, file)?),
             Filetype::Text => Box::pin(proselint::TextProselint::new(self, file)?),
             Filetype::Salt => Box::pin(saltlint::SaltSaltlint::new(self, file)?),
+            Filetype::Bazel => Box::pin(buildifier::BazelBuildifier::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -273,6 +274,7 @@ where
 /// All supported linter names.
 pub(crate) const ALL_LINTERS: &[&str] = &[
     "actionlint",
+    "buildifier",
     "clj-kondo",
     "cppcheck",
     "chktex",
@@ -313,6 +315,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
 ];
 
 pub mod actionlint;
+pub mod buildifier;
 pub mod chktex;
 pub mod cljkondo;
 pub mod cppcheck;

@@ -22,12 +22,14 @@ fn all_tracked_files() {
          .github/workflows/dirty.yml:8: [actionlint] element of \"steps\" section is scalar node but mapping node is expected\n\
          .github/workflows/dirty.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section\n\
          .rubocop.yml:1: [yamllint] missing document start \"---\"\n\
-         Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
-         c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
+          Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
+          bazel-dirty.bzl:1: [buildifier] module-docstring: The file has no module docstring.\n\
+          bazel-dirty.bzl:1: [buildifier] unused-variable: Variable \"ctx\" is unused. Please remove it.\n\
+          c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\
-         clj-dirty.clj:2: [clj-kondo] unused binding unused\n\
-         css-dirty.css:1: [stylelint] Empty block (block-no-empty) [error]\n\
+          clj-dirty.clj:2: [clj-kondo] unused binding unused\n\
+          css-dirty.css:1: [stylelint] Empty block (block-no-empty) [error]\n\
          docker-dirty.dockerfile:1: [hadolint] Using latest is prone to errors if the image will ever update. Pin the version explicitly to a release tag\n\
          docker-dirty.dockerfile:2: [hadolint] Delete the apt lists (/var/lib/apt/lists) after installing something\n\
          docker-dirty.dockerfile:3: [hadolint] Avoid additional packages by specifying `--no-install-recommends`\n\

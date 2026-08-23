@@ -14,6 +14,7 @@ fn linters_not_found() {
         common::run_without_linters(&[
             ".github/workflows/clean.yml",
             "Clean.kt",
+            "bazel-clean.bzl",
             "c-clean.c",
             "clj-clean.clj",
             "docker-clean.dockerfile",
@@ -32,8 +33,9 @@ fn linters_not_found() {
         ]),
         ".github/workflows/clean.yml: [actionlint] linter not found\n\
          .github/workflows/clean.yml: [yamllint] linter not found\n\
-         Clean.kt: [ktlint] linter not found\n\
-         c-clean.c: [cppcheck] linter not found\n\
+          Clean.kt: [ktlint] linter not found\n\
+          bazel-clean.bzl: [buildifier] linter not found\n\
+          c-clean.c: [cppcheck] linter not found\n\
          clj-clean.clj: [clj-kondo] linter not found\n\
          docker-clean.dockerfile: [hadolint] linter not found\n\
          html-clean.html: [tidy] linter not found\n\

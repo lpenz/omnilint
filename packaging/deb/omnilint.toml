@@ -82,6 +82,9 @@ mode = "optional"
 [linters.phpmd]
 mode = "optional"
 
+[linters.buildifier]
+mode = "optional"
+
 [linters.clj-kondo]
 mode = "optional"
 

@@ -49,6 +49,7 @@ Statically analyse any file with the appropriate tools
 | R          | `.R`, `.r`                     | [lintr](https://lintr.r-lib.org/) |
 | Text       | `.txt`                         | [proselint](https://github.com/amperser/proselint) |
 | SaltStack  | `.sls`                         | [salt-lint](https://github.com/warpnet/salt-lint) |
+| Bazel      | `.bzl`, `BUILD`, `WORKSPACE`, ... | [buildifier](https://github.com/bazelbuild/buildtools) |
 
 ## Usage
 
@@ -161,6 +162,7 @@ The linters used are:
 - `Rscript` with the `lintr` package for R
 - `proselint` for plain text files
 - `salt-lint` for SaltStack state files
+- `buildifier` for Bazel `BUILD`, `WORKSPACE` and `.bzl` files
 
 ## Installation
 

@@ -39,6 +39,7 @@ pub enum Filetype {
     R,
     Text,
     Salt,
+    Bazel,
 }
 
 impl Filetype {
@@ -73,20 +74,37 @@ impl Filetype {
             Some("R" | "r") => Filetype::R,
             Some("txt") => Filetype::Text,
             Some("sls") => Filetype::Salt,
+            Some("bzl") => Filetype::Bazel,
             _ => detect_filename_or_shebang(path),
         }
     }
 }
 
-/// Detects the file type from the filename for files without a distinguishing
-/// extension (currently just Dockerfiles), falling back to shebang detection.
+/// Detects the file type from the filename for files without a
+/// distinguishing extension (currently Dockerfiles and Bazel files),
+/// falling back to shebang detection.
 fn detect_filename_or_shebang(path: &Path) -> Filetype {
-    if let Some(name) = path.file_name().and_then(|n| n.to_str())
-        && is_dockerfile_name(name)
-    {
-        return Filetype::Dockerfile;
+    if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+        if is_bazel_name(name) {
+            return Filetype::Bazel;
+        }
+        if is_dockerfile_name(name) {
+            return Filetype::Dockerfile;
+        }
     }
     detect_shebang(path)
+}
+
+/// Returns true if `name` is a Bazel file name: any `*.bzl` file or the
+/// special `BUILD`, `BUILD.bazel`, `WORKSPACE`, `WORKSPACE.bazel` and
+/// `MODULE.bazel` names.
+fn is_bazel_name(name: &str) -> bool {
+    let lower = name.to_lowercase();
+    lower == "build"
+        || lower == "build.bazel"
+        || lower == "workspace"
+        || lower == "workspace.bazel"
+        || lower == "module.bazel"
 }
 
 /// Returns true if `name` is a Dockerfile filename: `Dockerfile`,
@@ -112,6 +130,7 @@ fn is_known_extension(ext: &str) -> bool {
     matches!(
         ext,
         "c" | "cc"
+            | "bzl"
             | "clj"
             | "cljs"
             | "cljc"
@@ -337,6 +356,23 @@ mod tests {
     #[test]
     fn detect_salt() {
         assert_eq!(Filetype::detect(Path::new("foo.sls")), Filetype::Salt);
+    }
+
+    #[test]
+    fn detect_bazel() {
+        assert_eq!(Filetype::detect(Path::new("foo.bzl")), Filetype::Bazel);
+        assert_eq!(Filetype::detect(Path::new("BUILD")), Filetype::Bazel);
+        assert_eq!(
+            Filetype::detect(Path::new("sub/dir/BUILD.bazel")),
+            Filetype::Bazel
+        );
+        assert_eq!(Filetype::detect(Path::new("WORKSPACE")), Filetype::Bazel);
+        assert_eq!(
+            Filetype::detect(Path::new("WORKSPACE.bazel")),
+            Filetype::Bazel
+        );
+        assert_eq!(Filetype::detect(Path::new("MODULE.bazel")), Filetype::Bazel);
+        assert_eq!(Filetype::detect(Path::new("build.rs")), Filetype::Unknown);
     }
 
     #[test]

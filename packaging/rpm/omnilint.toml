@@ -78,6 +78,9 @@ mode = "optional"
 [linters.clj-kondo]
 mode = "optional"
 
+[linters.buildifier]
+mode = "optional"
+
 [linters.ktlint]
 mode = "optional"
 
