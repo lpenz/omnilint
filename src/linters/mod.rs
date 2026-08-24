@@ -190,6 +190,7 @@ impl Linters {
             Filetype::Salt => Box::pin(saltlint::SaltSaltlint::new(self, file)?),
             Filetype::Bazel => Box::pin(buildifier::BazelBuildifier::new(self, file)?),
             Filetype::Systemd => Box::pin(systemd::SystemdAnalyze::new(self, file)?),
+            Filetype::Verilog => Box::pin(verilator::VerilogVerilator::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -312,6 +313,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "systemd-analyze",
     "tflint",
     "tidy",
+    "verilator",
     "xmllint",
     "yamllint",
 ];
@@ -354,6 +356,7 @@ pub mod swiftlint;
 pub mod systemd;
 pub mod tflint;
 pub mod tidy;
+pub mod verilator;
 pub mod xmllint;
 pub mod yamllint;
 

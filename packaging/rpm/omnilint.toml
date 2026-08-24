@@ -66,6 +66,10 @@ mode = "wanted"
 [linters.tidy]
 mode = "wanted"
 
+# verilator: `verilator`
+[linters.verilator]
+mode = "wanted"
+
 # xmllint: `libxml2`
 [linters.xmllint]
 mode = "wanted"

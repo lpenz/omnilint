@@ -92,8 +92,9 @@ fn all_tracked_files() {
           terraform-dirty.tf:1: [tflint] Missing version constraint for provider \"local\" in `required_providers` (terraform_required_providers)\n\
           terraform-dirty.tf:1: [tflint] terraform \"required_version\" attribute is required (terraform_required_version)\n\
           tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
-          ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
-         xml-dirty.xml:3: [xmllint] expected '>'\n\
+         ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
+          verilog-dirty.sv:5: [verilator] Operator ASSIGNW expects 4 bits on the Assign RHS, but Assign RHS's CONST '8'hff' generates 8 bits.\n\
+          xml-dirty.xml:3: [xmllint] expected '>'\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
          yaml-dirty.yaml:1: [yamllint] trailing spaces\n\
          yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n"

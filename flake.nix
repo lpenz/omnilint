@@ -42,6 +42,7 @@
               protolint
               buildifier
               systemd
+              verilator
               rubocop
               rubyPackages.standard
               texlive.bin.chktex

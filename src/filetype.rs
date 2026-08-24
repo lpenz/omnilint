@@ -41,6 +41,7 @@ pub enum Filetype {
     Salt,
     Bazel,
     Systemd,
+    Verilog,
 }
 
 impl Filetype {
@@ -80,6 +81,7 @@ impl Filetype {
                 "service" | "timer" | "socket" | "mount" | "path" | "target" | "slice" | "swap"
                 | "device" | "automount" | "scope",
             ) => Filetype::Systemd,
+            Some("v" | "sv" | "vh" | "svh") => Filetype::Verilog,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -179,10 +181,14 @@ fn is_known_extension(ext: &str) -> bool {
             | "device"
             | "automount"
             | "scope"
+            | "sv"
+            | "svh"
             | "swift"
             | "toml"
             | "ts"
             | "txt"
+            | "v"
+            | "vh"
             | "xml"
             | "yaml"
             | "yml"
@@ -400,6 +406,14 @@ mod tests {
         assert_eq!(Filetype::detect(Path::new("foo.timer")), Filetype::Systemd);
         assert_eq!(Filetype::detect(Path::new("foo.socket")), Filetype::Systemd);
         assert_eq!(Filetype::detect(Path::new("foo.target")), Filetype::Systemd);
+    }
+
+    #[test]
+    fn detect_verilog() {
+        assert_eq!(Filetype::detect(Path::new("foo.v")), Filetype::Verilog);
+        assert_eq!(Filetype::detect(Path::new("foo.sv")), Filetype::Verilog);
+        assert_eq!(Filetype::detect(Path::new("foo.vh")), Filetype::Verilog);
+        assert_eq!(Filetype::detect(Path::new("foo.svh")), Filetype::Verilog);
     }
 
     #[test]

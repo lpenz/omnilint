@@ -51,6 +51,7 @@ Statically analyse any file with the appropriate tools
 | SaltStack  | `.sls`                         | [salt-lint](https://github.com/warpnet/salt-lint) |
 | Bazel      | `.bzl`, `BUILD`, `WORKSPACE`, ... | [buildifier](https://github.com/bazelbuild/buildtools) |
 | systemd    | `.service`, `.timer`, `.socket`, ... | [systemd-analyze verify](https://www.freedesktop.org/software/systemd/man/latest/systemd-analyze.html) |
+| Verilog    | `.v`, `.sv`, `.vh`, `.svh`     | [verilator --lint-only](https://www.veripool.org/verilator/) |
 
 ## Usage
 
@@ -165,6 +166,7 @@ The linters used are:
 - `salt-lint` for SaltStack state files
 - `buildifier` for Bazel `BUILD`, `WORKSPACE` and `.bzl` files
 - `systemd-analyze verify` for systemd unit files
+- `verilator --lint-only` for Verilog and SystemVerilog files
 
 ## Installation
 
