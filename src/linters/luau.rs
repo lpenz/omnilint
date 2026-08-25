@@ -23,8 +23,7 @@
 //! foo.luau(3,7): TypeError: Type 'nil' could be converted into type 'string'
 //! ```
 //!
-//! The `<name>` component is the module name as reported by luau-analyze,
-//! which is typically the filename or a path-derived module identifier.
+//! luau-analyze is run with `--mode=strict` to enable full type checking.
 
 use crate::entry::Entry;
 use crate::linters::{Linter, Linters};
@@ -46,6 +45,7 @@ impl LuaLuau {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
         let executable = linters.executable("luau-analyze");
         let mut cmd = Command::new(executable.as_ref());
+        cmd.args(["--mode=strict"]);
         cmd.arg(filename);
         let inner = linters.spawn("luau-analyze", cmd)?;
         Ok(Self {

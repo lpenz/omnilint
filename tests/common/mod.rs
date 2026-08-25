@@ -12,7 +12,7 @@ use assert_cmd::Command;
 use std::path::{Path, PathBuf};
 
 /// Returns the fixtures directory.
-fn fixtures_dir() -> PathBuf {
+pub fn fixtures_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
 }
 

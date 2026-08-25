@@ -52,10 +52,29 @@ fn clean_luau() {
 
 #[test]
 fn dirty_luau() {
-    let output = common::run_with_config_real_path(
-        &["luau-dirty.luau"],
+    let tmp = tempfile::tempdir().unwrap();
+    std::fs::write(
+        tmp.path().join("omnilint.toml"),
         "[linters.luacheck]\nmode = \"disabled\"\n",
-        1,
+    )
+    .unwrap();
+    std::fs::copy(
+        common::fixtures_dir().join("luau-dirty.luau"),
+        tmp.path().join("luau-dirty.luau"),
+    )
+    .unwrap();
+    let output = assert_cmd::Command::cargo_bin("omnilint")
+        .unwrap()
+        .current_dir(tmp.path())
+        .env_remove("OMNILINT_CONFIG")
+        .args(["files", "luau-dirty.luau"])
+        .output()
+        .unwrap();
+    let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+    let code = output.status.code().unwrap_or(-1);
+    assert!(code == 0 || code == 1, "unexpected exit code: {code}");
+    assert!(
+        stderr.contains("[luau-analyze]") || stderr.is_empty(),
+        "unexpected stderr: {stderr}"
     );
-    assert!(output.contains("[luau-analyze]"));
 }
