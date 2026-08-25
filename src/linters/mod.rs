@@ -172,9 +172,14 @@ impl Linters {
             }
             Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
             Filetype::Lua => {
-                let luacheck = luacheck::LuaLuacheck::new(self, file)?;
-                let luac = luac::LuaLuac::new(self, file)?;
-                Box::pin(luacheck.merge(luac))
+                if is_luau(file) {
+                    Box::pin(luau::LuaLuau::new(self, file)?)
+                } else {
+                    let luacheck = luacheck::LuaLuacheck::new(self, file)?;
+                    let luac = luac::LuaLuac::new(self, file)?;
+                    let luau = luau::LuaLuau::new(self, file)?;
+                    Box::pin(luacheck.merge(luac).merge(luau))
+                }
             }
             Filetype::Perl => Box::pin(perlcritic::PerlPerlcritic::new(self, file)?),
             Filetype::Clojure => Box::pin(cljkondo::ClojureCljkondo::new(self, file)?),
@@ -221,6 +226,13 @@ fn is_github_workflow(file: &Path) -> bool {
     file.components()
         .zip(file.components().skip(1))
         .any(|(a, b)| a.as_os_str() == ".github" && b.as_os_str() == "workflows")
+}
+
+/// Returns true if `file` is a Luau source file (`.luau` extension), which
+/// should only be analysed by luau-analyze; the classic Lua tools (luacheck
+/// and luac) do not understand Luau's type-annotated syntax.
+fn is_luau(file: &Path) -> bool {
+    file.extension().and_then(|e| e.to_str()) == Some("luau")
 }
 
 /// Parses a `filename:line:col: message` line (as emitted by flake8 and ruff)
@@ -295,6 +307,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "ktlint",
     "luac",
     "luacheck",
+    "luau-analyze",
     "markdownlint-cli2",
     "mypy",
     "nix-instantiate",
@@ -330,6 +343,7 @@ pub mod jq;
 pub mod ktlint;
 pub mod luac;
 pub mod luacheck;
+pub mod luau;
 pub mod markdownlint;
 pub mod mypy;
 pub mod nix_compile;

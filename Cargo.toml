@@ -44,7 +44,7 @@ section = "utils"
 extended-description = """\
 Statically analyse any file with the appropriate tools
 """
-recommends = "chktex, cppcheck, go-tools, jq, libperl-critic-perl, libxml2-utils, lua-check, mypy, node-eslint, oxlint, python3-flake8, pylint, rubocop, ruff, shellcheck, sqlfluff, stylelint, tidy, yamllint"
+recommends = "chktex, cppcheck, go-tools, jq, libperl-critic-perl, libxml2-utils, lua-check, luau-analyze, mypy, node-eslint, oxlint, python3-flake8, pylint, rubocop, ruff, shellcheck, sqlfluff, stylelint, tidy, yamllint"
 assets = [
     ["target/release/omnilint.1", "usr/share/man/man1/", "644"],
     ["target/release/omnilint", "usr/bin/", "755"],
@@ -76,6 +76,7 @@ cppcheck = ""
 go-tools = ""
 jq = ""
 luacheck = ""
+luau-analyze = ""
 nodejs-eslint = ""
 perl-perlcritic = ""
 python3-flake8 = ""

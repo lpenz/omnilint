@@ -96,6 +96,25 @@ pub fn run_github_workflow(files: &[&str]) -> String {
 ///
 /// Asserts that omnilint exits with the given status code.
 pub fn run_with_config(files: &[&str], config_contents: &str, code: i32) -> String {
+    run_with_config_impl(files, config_contents, code, true)
+}
+
+/// Runs `omnilint files` on the given files from a temporary directory that
+/// contains an `omnilint.toml` with the given contents. Unlike
+/// [`run_with_config`], the real `PATH` is preserved so that linter tools
+/// are available.
+///
+/// Asserts that omnilint exits with the given status code.
+pub fn run_with_config_real_path(files: &[&str], config_contents: &str, code: i32) -> String {
+    run_with_config_impl(files, config_contents, code, false)
+}
+
+fn run_with_config_impl(
+    files: &[&str],
+    config_contents: &str,
+    code: i32,
+    empty_path: bool,
+) -> String {
     let tmp = tempfile::tempdir().unwrap();
     std::fs::write(tmp.path().join("omnilint.toml"), config_contents).unwrap();
     for file in files {
@@ -109,7 +128,9 @@ pub fn run_with_config(files: &[&str], config_contents: &str, code: i32) -> Stri
     for file in files {
         command = command.arg(file);
     }
-    command = command.env("PATH", "/nonexistent");
+    if empty_path {
+        command = command.env("PATH", "/nonexistent");
+    }
     let output = command.assert().code(code).stdout("");
     let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
         .lines()

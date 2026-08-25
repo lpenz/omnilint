@@ -42,6 +42,7 @@ fn linters_not_found() {
          json-clean.json: [jq] linter not found\n\
          lua-clean.lua: [luac] linter not found\n\
          lua-clean.lua: [luacheck] linter not found\n\
+         lua-clean.lua: [luau-analyze] linter not found\n\
          markdown-clean.md: [markdownlint-cli2] linter not found\n\
          nix-clean.nix: [nix-instantiate] linter not found\n\
          nix-clean.nix: [statix] linter not found\n\

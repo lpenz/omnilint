@@ -28,6 +28,7 @@
             { key = "ktlint"; path = "${pkgs.ktlint}/bin/ktlint"; }
             { key = "luac"; path = "${pkgs.lua}/bin/luac"; }
             { key = "luacheck"; path = "${pkgs.luaPackages.luacheck}/bin/luacheck"; }
+            { key = "luau-analyze"; path = "${pkgs.luau}/bin/luau-analyze"; }
             { key = "markdownlint-cli2"; path = "${pkgs.markdownlint-cli2}/bin/markdownlint-cli2"; }
             { key = "mypy"; path = "${pyPkgs}/bin/mypy"; }
             { key = "nix-instantiate"; path = "${pkgs.nix}/bin/nix-instantiate"; }
@@ -85,6 +86,7 @@
               yamllint
               actionlint
               luaPackages.luacheck
+              luau
               perlPackages.PerlCritic
               clj-kondo
               hadolint

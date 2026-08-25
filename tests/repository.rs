@@ -42,6 +42,8 @@ fn all_tracked_files() {
          js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          json-dirty.json:1: [jq] Unmatched '}'\n\
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\
+         lua-dirty.lua:1: [luau-analyze] Variable 'unused' is never used; prefix with '_' to silence\n\
+         luau-dirty.luau:2: [luau-analyze] Expected this to be 'number', but got 'string'\n\
          markdown-dirty.md:4: [markdownlint-cli2] Lists should be surrounded by blank lines [Context: \"- item one\"]\n\
          markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\
          nix-compile-dirty.nix:1: [nix-instantiate] syntax error\n\

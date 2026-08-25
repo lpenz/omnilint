@@ -43,7 +43,7 @@ impl Filetype {
             Some("yaml" | "yml") => Filetype::Yaml,
             Some("py") => Filetype::Python,
             Some("sh" | "bash" | "dash" | "ksh") => Filetype::Shell,
-            Some("lua") => Filetype::Lua,
+            Some("lua" | "luau") => Filetype::Lua,
             Some("pl" | "pm") => Filetype::Perl,
             Some("clj" | "cljs" | "cljc" | "edn") => Filetype::Clojure,
             Some("kt" | "kts") => Filetype::Kotlin,
@@ -307,6 +307,7 @@ mod tests {
     #[test]
     fn detect_lua() {
         assert_eq!(Filetype::detect(Path::new("foo.lua")), Filetype::Lua);
+        assert_eq!(Filetype::detect(Path::new("foo.luau")), Filetype::Lua);
     }
 
     #[test]
