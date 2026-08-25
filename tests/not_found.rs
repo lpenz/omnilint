@@ -30,6 +30,7 @@ fn linters_not_found() {
             "swift-clean.swift",
             "systemd-clean.service",
             "verilog-clean.sv",
+            "vhdl-clean.vhd",
             "xml-clean.xml",
             "yaml-clean.yaml",
         ]),
@@ -57,8 +58,9 @@ fn linters_not_found() {
           sql-clean.sql: [sqlfluff] linter not found\n\
           swift-clean.swift: [swiftlint] linter not found\n\
            systemd-clean.service: [systemd-analyze] linter not found\n\
-          verilog-clean.sv: [verilator] linter not found\n\
-           xml-clean.xml: [xmllint] linter not found\n\
+           verilog-clean.sv: [verilator] linter not found\n\
+           vhdl-clean.vhd: [ghdl] linter not found\n\
+            xml-clean.xml: [xmllint] linter not found\n\
          yaml-clean.yaml: [yamllint] linter not found\n"
     );
 }

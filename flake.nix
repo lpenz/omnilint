@@ -43,6 +43,7 @@
               buildifier
               systemd
               verilator
+              ghdl
               rubocop
               rubyPackages.standard
               texlive.bin.chktex

@@ -191,6 +191,7 @@ impl Linters {
             Filetype::Bazel => Box::pin(buildifier::BazelBuildifier::new(self, file)?),
             Filetype::Systemd => Box::pin(systemd::SystemdAnalyze::new(self, file)?),
             Filetype::Verilog => Box::pin(verilator::VerilogVerilator::new(self, file)?),
+            Filetype::Vhdl => Box::pin(ghdl::VhdlGhdl::new(self, file)?),
             Filetype::Javascript => {
                 let oxlint = oxlint::JsOxlint::new(self, file)?;
                 let eslint = eslint::JsEslint::new(self, file)?;
@@ -282,6 +283,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "chktex",
     "eslint",
     "flake8",
+    "ghdl",
     "go-vet",
     "hadolint",
     "hlint",
@@ -325,6 +327,7 @@ pub mod cljkondo;
 pub mod cppcheck;
 pub mod eslint;
 pub mod flake8;
+pub mod ghdl;
 pub mod govet;
 pub mod hadolint;
 pub mod hlint;

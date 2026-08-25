@@ -42,6 +42,7 @@ pub enum Filetype {
     Bazel,
     Systemd,
     Verilog,
+    Vhdl,
 }
 
 impl Filetype {
@@ -82,6 +83,7 @@ impl Filetype {
                 | "device" | "automount" | "scope",
             ) => Filetype::Systemd,
             Some("v" | "sv" | "vh" | "svh") => Filetype::Verilog,
+            Some("vhd" | "vhdl") => Filetype::Vhdl,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -188,6 +190,8 @@ fn is_known_extension(ext: &str) -> bool {
             | "ts"
             | "txt"
             | "v"
+            | "vhd"
+            | "vhdl"
             | "vh"
             | "xml"
             | "yaml"
