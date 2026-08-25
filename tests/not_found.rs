@@ -20,6 +20,7 @@ fn linters_not_found() {
             "docker-clean.dockerfile",
             "html-clean.html",
             "json-clean.json",
+            "lua-clean.lua",
             "markdown-clean.md",
             "php-clean.php",
             "proto_clean.proto",
@@ -43,6 +44,8 @@ fn linters_not_found() {
          docker-clean.dockerfile: [hadolint] linter not found\n\
          html-clean.html: [tidy] linter not found\n\
          json-clean.json: [jq] linter not found\n\
+         lua-clean.lua: [luacheck] linter not found\n\
+         lua-clean.lua: [luau-analyze] linter not found\n\
           markdown-clean.md: [markdownlint-cli2] linter not found\n\
           php-clean.php: [php] linter not found\n\
           php-clean.php: [phpcs] linter not found\n\

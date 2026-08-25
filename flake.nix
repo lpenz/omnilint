@@ -20,6 +20,7 @@
               yamllint
               actionlint
               luaPackages.luacheck
+              luau
               perlPackages.PerlCritic
               clj-kondo
               hadolint

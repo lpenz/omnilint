@@ -151,7 +151,11 @@ impl Linters {
                 Box::pin(flake8.merge(ruff).merge(pylint).merge(mypy).merge(pyright))
             }
             Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
-            Filetype::Lua => Box::pin(luacheck::LuaLuacheck::new(self, file)?),
+            Filetype::Lua => {
+                let luacheck = luacheck::LuaLuacheck::new(self, file)?;
+                let luau = luau::LuaLuau::new(self, file)?;
+                Box::pin(luacheck.merge(luau))
+            }
             Filetype::Perl => Box::pin(perlcritic::PerlPerlcritic::new(self, file)?),
             Filetype::Clojure => Box::pin(cljkondo::ClojureCljkondo::new(self, file)?),
             Filetype::Dockerfile => Box::pin(hadolint::DockerfileHadolint::new(self, file)?),
@@ -291,6 +295,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "ktlint",
     "lintr",
     "luacheck",
+    "luau-analyze",
     "markdownlint-cli2",
     "mypy",
     "oxlint",
@@ -335,6 +340,7 @@ pub mod jq;
 pub mod ktlint;
 pub mod lintr;
 pub mod luacheck;
+pub mod luau;
 pub mod markdownlint;
 pub mod mypy;
 pub mod oxlint;
