@@ -1,3 +1,2 @@
---!strict
-local x: string = "hello"
+local x = "hello"
 print(x)

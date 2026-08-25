@@ -1,3 +1,2 @@
---!strict
-local x: number = "not a number"
-print(x)
+local unused = 1
+print("hi")
