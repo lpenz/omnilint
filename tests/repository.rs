@@ -70,6 +70,16 @@ fn all_tracked_files() {
           php-md-dirty.php:7: [phpmd] ShortVariable: Avoid variables with short names like $x. Configured minimum length is 3.\n\
           php-md-dirty.php:9: [phpmd] UnusedLocalVariable: Avoid unused local variables such as '$unused'.\n\
           proto_dirty.proto:4: [protolint] Found an incorrect indentation style \"\t\". \"  \" is correct.\n\
+          py-compile-clean.py: [py_compile] linter not found\n\
+          py-compile-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
+          py-compile-clean.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\
+          py-compile-clean.py:1: [pylint] Module name \"py-compile-clean\" doesn't conform to snake_case naming style (invalid-name)\n\
+          py-compile-dirty.py: [py_compile] linter not found\n\
+          py-compile-dirty.py:2: [flake8] E999 SyntaxError: invalid syntax\n\
+          py-compile-dirty.py:2: [mypy] Invalid syntax (syntax)\n\
+          py-compile-dirty.py:2: [pylint] Parsing failed: 'invalid syntax (py-compile-dirty, line 2)' (syntax-error)\n\
+          py-compile-dirty.py:2: [pyright] Expected expression to the right of \"=\"\n\
+          py-compile-dirty.py:2: [ruff] invalid-syntax: Expected an expression\n\
           python-clean.py: [py_compile] linter not found\n\
           python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
          python-clean.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\

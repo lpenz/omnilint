@@ -188,8 +188,9 @@ impl Linters {
             }
             Filetype::Ruby => {
                 let rubocop = rubocop::RubyRubocop::new(self, file)?;
+                let ruby_compile = ruby_compile::RubyCompile::new(self, file)?;
                 let standardrb = standardrb::RubyStandardrb::new(self, file)?;
-                Box::pin(rubocop.merge(standardrb))
+                Box::pin(rubocop.merge(ruby_compile).merge(standardrb))
             }
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
@@ -329,6 +330,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "proselint",
     "ruff",
     "rubocop",
+    "ruby-compile",
     "salt-lint",
     "shellcheck",
     "sqlfluff",
@@ -377,6 +379,7 @@ pub mod py_compile;
 pub mod pylint;
 pub mod pyright;
 pub mod rubocop;
+pub mod ruby_compile;
 pub mod ruff;
 pub mod saltlint;
 pub mod shellcheck;
