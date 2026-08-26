@@ -98,6 +98,10 @@ mode = "wanted"
 [linters.yamllint]
 mode = "wanted"
 
+# zsh: `zsh`
+[linters.zsh]
+mode = "wanted"
+
 # --- The linters below are not packaged in Fedora. ---
 
 [linters.actionlint]

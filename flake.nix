@@ -50,6 +50,7 @@
             { key = "tidy"; path = "${pkgs.html-tidy}/bin/tidy"; }
             { key = "xmllint"; path = "${pkgs.libxml2}/bin/xmllint"; }
             { key = "yamllint"; path = "${pkgs.yamllint}/bin/yamllint"; }
+            { key = "zsh"; path = "${pkgs.zsh}/bin/zsh"; }
           ];
           tomlLinter = linter: "[linters.${linter.key}]\npath = \"${linter.path}\"\n";
           omnilint = pkgs.rustPlatform.buildRustPackage {
@@ -112,6 +113,7 @@
               rubocop
               texlive.bin.chktex
               (python3.withPackages (ps: [ ps.flake8 ps.pylint ps.mypy ]))
+              zsh
             ];
           };
         });

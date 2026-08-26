@@ -42,7 +42,7 @@ impl Filetype {
         match ext {
             Some("yaml" | "yml") => Filetype::Yaml,
             Some("py") => Filetype::Python,
-            Some("sh" | "bash" | "dash" | "ksh") => Filetype::Shell,
+            Some("sh" | "bash" | "dash" | "ksh" | "zsh") => Filetype::Shell,
             Some("lua" | "luau") => Filetype::Lua,
             Some("pl" | "pm") => Filetype::Perl,
             Some("clj" | "cljs" | "cljc" | "edn") => Filetype::Clojure,
@@ -152,6 +152,7 @@ fn is_known_extension(ext: &str) -> bool {
             | "xml"
             | "yaml"
             | "yml"
+            | "zsh"
     )
 }
 
@@ -176,7 +177,7 @@ fn detect_shebang(path: &Path) -> Filetype {
     }
     match interp_name.as_str() {
         "python" | "python2" | "python3" => Filetype::Python,
-        "sh" | "bash" | "dash" | "ksh" => Filetype::Shell,
+        "sh" | "bash" | "dash" | "ksh" | "zsh" => Filetype::Shell,
         _ => Filetype::Unknown,
     }
 }
@@ -302,6 +303,7 @@ mod tests {
         assert_eq!(Filetype::detect(Path::new("foo.bash")), Filetype::Shell);
         assert_eq!(Filetype::detect(Path::new("foo.dash")), Filetype::Shell);
         assert_eq!(Filetype::detect(Path::new("foo.ksh")), Filetype::Shell);
+        assert_eq!(Filetype::detect(Path::new("foo.zsh")), Filetype::Shell);
     }
 
     #[test]

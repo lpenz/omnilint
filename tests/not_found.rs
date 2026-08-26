@@ -31,6 +31,7 @@ fn linters_not_found() {
             "systemd-clean.service",
             "xml-clean.xml",
             "yaml-clean.yaml",
+            "zsh-clean.zsh",
         ]),
         ".github/workflows/clean.yml: [actionlint] linter not found\n\
          .github/workflows/clean.yml: [yamllint] linter not found\n\
@@ -38,6 +39,7 @@ fn linters_not_found() {
          Error: lint findings were emitted\n\
          bash-clean.sh: [bash] linter not found\n\
          bash-clean.sh: [shellcheck] linter not found\n\
+         bash-clean.sh: [zsh] linter not found\n\
          c-clean.c: [cppcheck] linter not found\n\
          clj-clean.clj: [clj-kondo] linter not found\n\
          docker-clean.dockerfile: [hadolint] linter not found\n\
@@ -58,11 +60,15 @@ fn linters_not_found() {
          python-clean.py: [ruff] linter not found\n\
          shell-clean.sh: [bash] linter not found\n\
          shell-clean.sh: [shellcheck] linter not found\n\
+         shell-clean.sh: [zsh] linter not found\n\
          sql-clean.sql: [sqlfluff] linter not found\n\
          swift-clean.swift: [swiftlint] linter not found\n\
          systemd-clean.service: [systemd-analyze] linter not found\n\
          xml-clean.xml: [xmllint] linter not found\n\
-         yaml-clean.yaml: [yamllint] linter not found\n"
+         yaml-clean.yaml: [yamllint] linter not found\n\
+         zsh-clean.zsh: [bash] linter not found\n\
+         zsh-clean.zsh: [shellcheck] linter not found\n\
+         zsh-clean.zsh: [zsh] linter not found\n"
     );
 }
 

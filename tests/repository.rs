@@ -29,6 +29,7 @@ fn all_tracked_files() {
          bash-dirty.sh:1: [shellcheck] Couldn't parse this if expression. Fix to allow more checks.\n\
          bash-dirty.sh:4: [shellcheck] Expected 'fi' matching previously mentioned 'if'.\n\
          bash-dirty.sh:4: [shellcheck] Expected 'fi'. Fix any mentioned problems and try again.\n\
+         bash-dirty.sh:4: [zsh] parse error near `\\n'\n\
          c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\
@@ -97,6 +98,8 @@ fn all_tracked_files() {
          xml-dirty.xml:3: [xmllint] expected '>'\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
          yaml-dirty.yaml:1: [yamllint] trailing spaces\n\
-         yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n"
+         yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n\
+         zsh-clean.zsh:1: [shellcheck] ShellCheck only supports sh/bash/dash/ksh/'busybox sh' scripts. Sorry!\n\
+         zsh-dirty.zsh:1: [shellcheck] ShellCheck only supports sh/bash/dash/ksh/'busybox sh' scripts. Sorry!\n"
     );
 }

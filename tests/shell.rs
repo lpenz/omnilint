@@ -15,13 +15,24 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run_clean(&["shell-clean.sh"]), "");
+    assert_eq!(
+        common::run_with_config_real_path(
+            &["shell-clean.sh"],
+            "[linters.zsh]\nmode = \"disabled\"\n",
+            0,
+        ),
+        ""
+    );
 }
 
 #[test]
 fn dirty() {
     assert_eq!(
-        common::run(&["shell-dirty.sh"]),
+        common::run_with_config_real_path(
+            &["shell-dirty.sh"],
+            "[linters.zsh]\nmode = \"disabled\"\n",
+            1,
+        ),
         "Error: lint findings were emitted\n\
          shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\
          shell-dirty.sh:4: [shellcheck] Double quote to prevent globbing and word splitting.\n\
