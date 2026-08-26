@@ -169,7 +169,11 @@ impl Linters {
                 let luau = luau::LuaLuau::new(self, file)?;
                 Box::pin(luacheck.merge(luau))
             }
-            Filetype::Perl => Box::pin(perlcritic::PerlPerlcritic::new(self, file)?),
+            Filetype::Perl => {
+                let perl_compile = perl_compile::PerlCompile::new(self, file)?;
+                let perlcritic = perlcritic::PerlPerlcritic::new(self, file)?;
+                Box::pin(perl_compile.merge(perlcritic))
+            }
             Filetype::Clojure => Box::pin(cljkondo::ClojureCljkondo::new(self, file)?),
             Filetype::Dockerfile => Box::pin(hadolint::DockerfileHadolint::new(self, file)?),
             Filetype::Kotlin => Box::pin(ktlint::KotlinKtlint::new(self, file)?),
@@ -319,6 +323,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "mypy",
     "nix-instantiate",
     "oxlint",
+    "perl-compile",
     "perlcritic",
     "php",
     "phpcs",
@@ -369,6 +374,7 @@ pub mod markdownlint;
 pub mod mypy;
 pub mod nix_compile;
 pub mod oxlint;
+pub mod perl_compile;
 pub mod perlcritic;
 pub mod php;
 pub mod phpcs;
