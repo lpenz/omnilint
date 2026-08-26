@@ -26,6 +26,7 @@
             { key = "hadolint"; path = "${pkgs.hadolint}/bin/hadolint"; }
             { key = "jq"; path = "${pkgs.jq}/bin/jq"; }
             { key = "ktlint"; path = "${pkgs.ktlint}/bin/ktlint"; }
+            { key = "luac"; path = "${pkgs.lua}/bin/luac"; }
             { key = "luacheck"; path = "${pkgs.luaPackages.luacheck}/bin/luacheck"; }
             { key = "markdownlint-cli2"; path = "${pkgs.markdownlint-cli2}/bin/markdownlint-cli2"; }
             { key = "mypy"; path = "${pyPkgs}/bin/mypy"; }

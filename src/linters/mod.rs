@@ -171,7 +171,11 @@ impl Linters {
                 )
             }
             Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
-            Filetype::Lua => Box::pin(luacheck::LuaLuacheck::new(self, file)?),
+            Filetype::Lua => {
+                let luacheck = luacheck::LuaLuacheck::new(self, file)?;
+                let luac = luac::LuaLuac::new(self, file)?;
+                Box::pin(luacheck.merge(luac))
+            }
             Filetype::Perl => Box::pin(perlcritic::PerlPerlcritic::new(self, file)?),
             Filetype::Clojure => Box::pin(cljkondo::ClojureCljkondo::new(self, file)?),
             Filetype::Dockerfile => Box::pin(hadolint::DockerfileHadolint::new(self, file)?),
@@ -289,6 +293,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "hadolint",
     "jq",
     "ktlint",
+    "luac",
     "luacheck",
     "markdownlint-cli2",
     "mypy",
@@ -323,6 +328,7 @@ pub mod govet;
 pub mod hadolint;
 pub mod jq;
 pub mod ktlint;
+pub mod luac;
 pub mod luacheck;
 pub mod markdownlint;
 pub mod mypy;
