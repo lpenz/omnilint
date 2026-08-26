@@ -187,7 +187,11 @@ impl Linters {
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
             Filetype::Haskell => Box::pin(hlint::HsHlint::new(self, file)?),
             Filetype::Terraform => Box::pin(tflint::TfTflint::new(self, file)?),
-            Filetype::Nix => Box::pin(statix::NixStatix::new(self, file)?),
+            Filetype::Nix => {
+                let statix = statix::NixStatix::new(self, file)?;
+                let nix_compile = nix_compile::NixNixInstantiate::new(self, file)?;
+                Box::pin(statix.merge(nix_compile))
+            }
             Filetype::Php => {
                 let phpl = php::PhpLint::new(self, file)?;
                 let phpcs = phpcs::PhpPhpcs::new(self, file)?;
@@ -304,6 +308,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "luau-analyze",
     "markdownlint-cli2",
     "mypy",
+    "nix-instantiate",
     "oxlint",
     "perlcritic",
     "php",
@@ -351,6 +356,7 @@ pub mod luacheck;
 pub mod luau;
 pub mod markdownlint;
 pub mod mypy;
+pub mod nix_compile;
 pub mod oxlint;
 pub mod perlcritic;
 pub mod php;

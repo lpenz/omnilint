@@ -108,7 +108,11 @@ fn all_tracked_files() {
           vhdl-dirty.vhd:13: [ghdl] port \"b\" cannot be read\n\
            xml-dirty.xml:3: [xmllint] expected '>'\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
-         yaml-dirty.yaml:1: [yamllint] trailing spaces\n\
-         yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n"
+          yaml-dirty.yaml:1: [yamllint] trailing spaces\n\
+          yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n\
+          zsh-clean.zsh: [zsh] linter not found\n\
+          zsh-clean.zsh:1: [shellcheck] ShellCheck only supports sh/bash/dash/ksh/'busybox sh' scripts. Sorry!\n\
+          zsh-dirty.zsh: [zsh] linter not found\n\
+          zsh-dirty.zsh:1: [shellcheck] ShellCheck only supports sh/bash/dash/ksh/'busybox sh' scripts. Sorry!\n"
     );
 }

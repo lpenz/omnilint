@@ -23,6 +23,7 @@ fn linters_not_found() {
             "json-clean.json",
             "lua-clean.lua",
             "markdown-clean.md",
+            "nix-compile-clean.nix",
             "php-clean.php",
             "proto_clean.proto",
             "python-clean.py",
@@ -51,8 +52,10 @@ fn linters_not_found() {
          json-clean.json: [jq] linter not found\n\
          lua-clean.lua: [luacheck] linter not found\n\
          lua-clean.lua: [luau-analyze] linter not found\n\
-          markdown-clean.md: [markdownlint-cli2] linter not found\n\
-          php-clean.php: [php] linter not found\n\
+           markdown-clean.md: [markdownlint-cli2] linter not found\n\
+         nix-compile-clean.nix: [nix-instantiate] linter not found\n\
+         nix-compile-clean.nix: [statix] linter not found\n\
+           php-clean.php: [php] linter not found\n\
           php-clean.php: [phpcs] linter not found\n\
           php-clean.php: [phpmd] linter not found\n\
           proto_clean.proto: [protolint] linter not found\n\
