@@ -150,7 +150,11 @@ impl Linters {
                 let pyright = pyright::PythonPyright::new(self, file)?;
                 Box::pin(flake8.merge(ruff).merge(pylint).merge(mypy).merge(pyright))
             }
-            Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
+            Filetype::Shell => {
+                let shellcheck = shellcheck::ShShellcheck::new(self, file)?;
+                let bash_lint = bash::ShBash::new(self, file)?;
+                Box::pin(shellcheck.merge(bash_lint))
+            }
             Filetype::Lua => {
                 let luacheck = luacheck::LuaLuacheck::new(self, file)?;
                 let luau = luau::LuaLuau::new(self, file)?;
@@ -281,6 +285,7 @@ where
 /// All supported linter names.
 pub(crate) const ALL_LINTERS: &[&str] = &[
     "actionlint",
+    "bash",
     "buildifier",
     "clj-kondo",
     "cppcheck",
@@ -326,6 +331,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
 ];
 
 pub mod actionlint;
+pub mod bash;
 pub mod buildifier;
 pub mod chktex;
 pub mod cljkondo;
