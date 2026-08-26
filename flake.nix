@@ -17,6 +17,7 @@
           # linter; for go-vet it differs from the linter name (go).
           linterBins = [
             { key = "actionlint"; path = "${pkgs.actionlint}/bin/actionlint"; }
+            { key = "bash"; path = "${pkgs.bash}/bin/bash"; }
             { key = "chktex"; path = "${pkgs.texlive.bin.chktex}/bin/chktex"; }
             { key = "clj-kondo"; path = "${pkgs.clj-kondo}/bin/clj-kondo"; }
             { key = "cppcheck"; path = "${pkgs.cppcheck}/bin/cppcheck"; }

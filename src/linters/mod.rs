@@ -170,7 +170,11 @@ impl Linters {
                         .merge(pyright),
                 )
             }
-            Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
+            Filetype::Shell => {
+                let shellcheck = shellcheck::ShShellcheck::new(self, file)?;
+                let bash_lint = bash::ShBash::new(self, file)?;
+                Box::pin(shellcheck.merge(bash_lint))
+            }
             Filetype::Lua => {
                 if is_luau(file) {
                     Box::pin(luau::LuaLuau::new(self, file)?)
@@ -296,6 +300,7 @@ pub(crate) fn poll_next(
 /// All supported linter names.
 pub(crate) const ALL_LINTERS: &[&str] = &[
     "actionlint",
+    "bash",
     "clj-kondo",
     "cppcheck",
     "chktex",
@@ -332,6 +337,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
 ];
 
 pub mod actionlint;
+pub mod bash;
 pub mod chktex;
 pub mod cljkondo;
 pub mod cppcheck;

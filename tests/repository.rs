@@ -24,6 +24,11 @@ fn all_tracked_files() {
          .rubocop.yml:1: [yamllint] missing document start \"---\"\n\
          Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
          Error: lint findings were emitted\n\
+         bash-dirty.sh: [bash] line 4: syntax error: unexpected end of file from `if' command on line 1\n\
+         bash-dirty.sh:1: [shellcheck] Couldn't find 'fi' for this 'if'.\n\
+         bash-dirty.sh:1: [shellcheck] Couldn't parse this if expression. Fix to allow more checks.\n\
+         bash-dirty.sh:4: [shellcheck] Expected 'fi' matching previously mentioned 'if'.\n\
+         bash-dirty.sh:4: [shellcheck] Expected 'fi'. Fix any mentioned problems and try again.\n\
          c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\

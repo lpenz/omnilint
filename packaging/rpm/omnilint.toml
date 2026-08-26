@@ -6,6 +6,10 @@
 # they will be silently skipped when not installed, but will run if
 # the user installs them manually.
 
+# bash: `bash`
+[linters.bash]
+mode = "wanted"
+
 # chktex: `texlive-chktex-bin`
 [linters.chktex]
 mode = "wanted"
