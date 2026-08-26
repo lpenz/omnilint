@@ -18,7 +18,8 @@ mod common;
 fn clean() {
     assert_eq!(
         common::run(&["python-clean.py"]),
-        "python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
+        "python-clean.py: [py_compile] linter not found\n\
+         python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
          python-clean.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\
          python-clean.py:1: [pylint] Module name \"python-clean\" doesn't conform to snake_case naming style (invalid-name)\n"
     );
@@ -28,7 +29,8 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["python-dirty.py"]),
-        "python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
+        "python-dirty.py: [py_compile] linter not found\n\
+         python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
          python-dirty.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\
          python-dirty.py:1: [pylint] Module name \"python-dirty\" doesn't conform to snake_case naming style (invalid-name)\n\
          python-dirty.py:1: [pylint] Unused import os (unused-import)\n\

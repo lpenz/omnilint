@@ -146,9 +146,17 @@ impl Linters {
                 let flake8 = flake8::PythonFlake8::new(self, file)?;
                 let ruff = ruff::PythonRuff::new(self, file)?;
                 let pylint = pylint::PythonPylint::new(self, file)?;
+                let py_compile = py_compile::PythonPyCompile::new(self, file)?;
                 let mypy = mypy::PythonMypy::new(self, file)?;
                 let pyright = pyright::PythonPyright::new(self, file)?;
-                Box::pin(flake8.merge(ruff).merge(pylint).merge(mypy).merge(pyright))
+                Box::pin(
+                    flake8
+                        .merge(ruff)
+                        .merge(pylint)
+                        .merge(py_compile)
+                        .merge(mypy)
+                        .merge(pyright),
+                )
             }
             Filetype::Shell => {
                 let shellcheck = shellcheck::ShShellcheck::new(self, file)?;
@@ -315,6 +323,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "phpcs",
     "phpmd",
     "protolint",
+    "py_compile",
     "pylint",
     "pyright",
     "proselint",
@@ -364,6 +373,7 @@ pub mod phpcs;
 pub mod phpmd;
 pub mod proselint;
 pub mod protolint;
+pub mod py_compile;
 pub mod pylint;
 pub mod pyright;
 pub mod rubocop;

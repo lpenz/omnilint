@@ -56,7 +56,13 @@ fn all_tracked_files() {
          lua-dirty.lua:1: [luau-analyze] Variable 'unused' is never used; prefix with '_' to silence\n\
          markdown-dirty.md:4: [markdownlint-cli2] Lists should be surrounded by blank lines [Context: \"- item one\"]\n\
          markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\
-         nix-dirty.nix:2: [statix] Consider quoting this URI expression\n\
+          nix-compile-dirty.nix:1: [statix] Unexpected TOKEN_R_BRACE at 18..19, wanted any of [TOKEN_SEMICOLON]\n\
+          nix-compile-dirty.nix:1: [statix] Unexpected end of file\n\
+          nix-compile-dirty.nix:1: [statix] Unexpected end of file\n\
+          nix-compile-dirty.nix:1: [statix] Unexpected end of file\n\
+          nix-compile-dirty.nix:1: [statix] Unexpected end of file, wanted any of [TOKEN_SEMICOLON]\n\
+          nix-compile-dirty.nix:1: [statix] Unexpected end of file, wanted any of [TOKEN_SEMICOLON]\n\
+          nix-dirty.nix:2: [statix] Consider quoting this URI expression\n\
          nix-dirty.nix:3: [statix] Useless parentheses around primitive expression\n\
           perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\
           php-dirty.php:1: [phpcs] Header blocks must be separated by a single blank line\n\
@@ -64,10 +70,12 @@ fn all_tracked_files() {
           php-md-dirty.php:7: [phpmd] ShortVariable: Avoid variables with short names like $x. Configured minimum length is 3.\n\
           php-md-dirty.php:9: [phpmd] UnusedLocalVariable: Avoid unused local variables such as '$unused'.\n\
           proto_dirty.proto:4: [protolint] Found an incorrect indentation style \"\t\". \"  \" is correct.\n\
-         python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
+          python-clean.py: [py_compile] linter not found\n\
+          python-clean.py:1: [pylint] Constant name \"x\" doesn't conform to UPPER_CASE naming style (invalid-name)\n\
          python-clean.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\
          python-clean.py:1: [pylint] Module name \"python-clean\" doesn't conform to snake_case naming style (invalid-name)\n\
-         python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
+          python-dirty.py: [py_compile] linter not found\n\
+          python-dirty.py:1: [flake8] F401 'os' imported but unused\n\
          python-dirty.py:1: [pylint] Missing module docstring (missing-module-docstring)\n\
          python-dirty.py:1: [pylint] Module name \"python-dirty\" doesn't conform to snake_case naming style (invalid-name)\n\
          python-dirty.py:1: [pylint] Unused import os (unused-import)\n\

@@ -24,6 +24,7 @@ fn linters_not_found() {
             "lua-clean.lua",
             "markdown-clean.md",
             "nix-compile-clean.nix",
+            "py-compile-clean.py",
             "php-clean.php",
             "proto_clean.proto",
             "python-clean.py",
@@ -56,13 +57,20 @@ fn linters_not_found() {
          nix-compile-clean.nix: [nix-instantiate] linter not found\n\
          nix-compile-clean.nix: [statix] linter not found\n\
            php-clean.php: [php] linter not found\n\
-          php-clean.php: [phpcs] linter not found\n\
-          php-clean.php: [phpmd] linter not found\n\
-          proto_clean.proto: [protolint] linter not found\n\
-         python-clean.py: [flake8] linter not found\n\
-         python-clean.py: [mypy] linter not found\n\
-                  python-clean.py: [pylint] linter not found\n\
-         python-clean.py: [pyright] linter not found\n\
+           php-clean.php: [phpcs] linter not found\n\
+           php-clean.php: [phpmd] linter not found\n\
+           proto_clean.proto: [protolint] linter not found\n\
+           py-compile-clean.py: [flake8] linter not found\n\
+           py-compile-clean.py: [mypy] linter not found\n\
+           py-compile-clean.py: [py_compile] linter not found\n\
+           py-compile-clean.py: [pylint] linter not found\n\
+           py-compile-clean.py: [pyright] linter not found\n\
+           py-compile-clean.py: [ruff] linter not found\n\
+          python-clean.py: [flake8] linter not found\n\
+          python-clean.py: [mypy] linter not found\n\
+          python-clean.py: [py_compile] linter not found\n\
+          python-clean.py: [pylint] linter not found\n\
+          python-clean.py: [pyright] linter not found\n\
           python-clean.py: [ruff] linter not found\n\
           r-clean.R: [lintr] linter not found\n\
           shell-clean.sh: [bash] linter not found\n\
@@ -103,7 +111,8 @@ fn github_workflow_format() {
         common::run_github_workflow(&["python-clean.py", "yaml-clean.yaml"]),
         "::warning file=python-clean.py::[flake8] linter not found\n\
          ::warning file=python-clean.py::[mypy] linter not found\n\
-                  ::warning file=python-clean.py::[pylint] linter not found\n\
+         ::warning file=python-clean.py::[py_compile] linter not found\n\
+         ::warning file=python-clean.py::[pylint] linter not found\n\
          ::warning file=python-clean.py::[pyright] linter not found\n\
          ::warning file=python-clean.py::[ruff] linter not found\n\
          ::warning file=yaml-clean.yaml::[yamllint] linter not found\n"
