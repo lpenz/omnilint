@@ -153,7 +153,8 @@ impl Linters {
             Filetype::Shell => {
                 let shellcheck = shellcheck::ShShellcheck::new(self, file)?;
                 let bash_lint = bash::ShBash::new(self, file)?;
-                Box::pin(shellcheck.merge(bash_lint))
+                let zsh_lint = zsh::ShZsh::new(self, file)?;
+                Box::pin(shellcheck.merge(bash_lint).merge(zsh_lint))
             }
             Filetype::Lua => {
                 let luacheck = luacheck::LuaLuacheck::new(self, file)?;
@@ -328,6 +329,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "verilator",
     "xmllint",
     "yamllint",
+    "zsh",
 ];
 
 pub mod actionlint;
@@ -374,6 +376,7 @@ pub mod tidy;
 pub mod verilator;
 pub mod xmllint;
 pub mod yamllint;
+pub mod zsh;
 
 #[cfg(test)]
 mod tests {

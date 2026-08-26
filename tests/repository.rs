@@ -23,6 +23,13 @@ fn all_tracked_files() {
          .github/workflows/dirty.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section\n\
          .rubocop.yml:1: [yamllint] missing document start \"---\"\n\
           Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
+          bash-clean.sh: [zsh] linter not found\n\
+          bash-dirty.sh: [bash] line 4: syntax error: unexpected end of file from `if' command on line 1\n\
+          bash-dirty.sh: [zsh] linter not found\n\
+          bash-dirty.sh:1: [shellcheck] Couldn't find 'fi' for this 'if'.\n\
+          bash-dirty.sh:1: [shellcheck] Couldn't parse this if expression. Fix to allow more checks.\n\
+          bash-dirty.sh:4: [shellcheck] Expected 'fi' matching previously mentioned 'if'.\n\
+          bash-dirty.sh:4: [shellcheck] Expected 'fi'. Fix any mentioned problems and try again.\n\
           bazel-dirty.bzl:1: [buildifier] module-docstring: The file has no module docstring.\n\
           bazel-dirty.bzl:1: [buildifier] unused-variable: Variable \"ctx\" is unused. Please remove it.\n\
           c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
@@ -83,6 +90,8 @@ fn all_tracked_files() {
           r-dirty.R:2: [lintr] style: [return_linter] Use implicit return behavior; explicit return() is not needed.\n\
           ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n\
           ruby-standard-dirty.rb:3: [standardrb] C: [Correctable] Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.\n\
+          shell-clean.sh: [zsh] linter not found\n\
+          shell-dirty.sh: [zsh] linter not found\n\
           shell-dirty.sh:3: [shellcheck] unused_var appears unused. Verify use (or export if used externally).\n\
          shell-dirty.sh:4: [shellcheck] Double quote to prevent globbing and word splitting.\n\
          shell-dirty.sh:5: [shellcheck] Double quote to prevent globbing and word splitting.\n\
