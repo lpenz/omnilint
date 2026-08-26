@@ -45,6 +45,8 @@ fn all_tracked_files() {
          go-dirty.go:5: [staticcheck] func unused is unused (U1000)\n\
          go-dirty.go:6: [go-vet] fmt.Printf format %s reads arg #1, but call has 0 args\n\
           go-dirty.go:6: [staticcheck] Printf format %s reads arg #1, but call has only 0 args (SA5009)\n\
+          haskell-clean.hs: [ghc] linter not found\n\
+          haskell-dirty.hs: [ghc] linter not found\n\
           haskell-dirty.hs:12: [hlint] Warning: Eta reduce\n\
           haskell-dirty.hs:12: [hlint] Warning: Use concat\n\
           haskell-dirty.hs:8: [hlint] Suggestion: Replace case with fromMaybe\n\

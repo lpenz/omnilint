@@ -199,7 +199,11 @@ impl Linters {
             }
             Filetype::Css => Box::pin(stylelint::CssStylelint::new(self, file)?),
             Filetype::TeX => Box::pin(chktex::TeXChktex::new(self, file)?),
-            Filetype::Haskell => Box::pin(hlint::HsHlint::new(self, file)?),
+            Filetype::Haskell => {
+                let ghc = ghc::HsGhc::new(self, file)?;
+                let hlint = hlint::HsHlint::new(self, file)?;
+                Box::pin(ghc.merge(hlint))
+            }
             Filetype::Terraform => Box::pin(tflint::TfTflint::new(self, file)?),
             Filetype::Nix => {
                 let statix = statix::NixStatix::new(self, file)?;
@@ -311,6 +315,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "chktex",
     "eslint",
     "flake8",
+    "ghc",
     "ghdl",
     "go-vet",
     "hadolint",
@@ -363,6 +368,7 @@ pub mod cljkondo;
 pub mod cppcheck;
 pub mod eslint;
 pub mod flake8;
+pub mod ghc;
 pub mod ghdl;
 pub mod govet;
 pub mod hadolint;

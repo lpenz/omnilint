@@ -14,13 +14,24 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run_clean(&["haskell-clean.hs"]), "");
+    assert_eq!(
+        common::run_with_config_real_path(
+            &["haskell-clean.hs"],
+            "[linters.ghc]\nmode = \"disabled\"\n",
+            0,
+        ),
+        ""
+    );
 }
 
 #[test]
 fn dirty() {
     assert_eq!(
-        common::run(&["haskell-dirty.hs"]),
+        common::run_with_config_real_path(
+            &["haskell-dirty.hs"],
+            "[linters.ghc]\nmode = \"disabled\"\n",
+            1,
+        ),
         "haskell-dirty.hs:12: [hlint] Warning: Eta reduce\n\
          haskell-dirty.hs:12: [hlint] Warning: Use concat\n\
          haskell-dirty.hs:8: [hlint] Suggestion: Replace case with fromMaybe\n"
