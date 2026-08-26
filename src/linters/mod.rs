@@ -167,7 +167,8 @@ impl Linters {
             Filetype::Lua => {
                 let luacheck = luacheck::LuaLuacheck::new(self, file)?;
                 let luau = luau::LuaLuau::new(self, file)?;
-                Box::pin(luacheck.merge(luau))
+                let luac = luac::LuaLuac::new(self, file)?;
+                Box::pin(luacheck.merge(luau).merge(luac))
             }
             Filetype::Perl => {
                 let perl_compile = perl_compile::PerlCompile::new(self, file)?;
@@ -317,6 +318,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "jq",
     "ktlint",
     "lintr",
+    "luac",
     "luacheck",
     "luau-analyze",
     "markdownlint-cli2",
@@ -368,6 +370,7 @@ pub mod hlint;
 pub mod jq;
 pub mod ktlint;
 pub mod lintr;
+pub mod luac;
 pub mod luacheck;
 pub mod luau;
 pub mod markdownlint;
