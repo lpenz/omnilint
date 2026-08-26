@@ -14,13 +14,24 @@ mod common;
 
 #[test]
 fn clean() {
-    assert_eq!(common::run_clean(&["swift-clean.swift"]), "");
+    assert_eq!(
+        common::run_with_config_real_path(
+            &["swift-clean.swift"],
+            "[linters.swiftc]\nmode = \"disabled\"\n",
+            0,
+        ),
+        ""
+    );
 }
 
 #[test]
 fn dirty() {
     assert_eq!(
-        common::run(&["swift-dirty.swift"]),
+        common::run_with_config_real_path(
+            &["swift-dirty.swift"],
+            "[linters.swiftc]\nmode = \"disabled\"\n",
+            1,
+        ),
         "swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n"
     );
 }

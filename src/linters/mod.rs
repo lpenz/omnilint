@@ -178,7 +178,11 @@ impl Linters {
             Filetype::Clojure => Box::pin(cljkondo::ClojureCljkondo::new(self, file)?),
             Filetype::Dockerfile => Box::pin(hadolint::DockerfileHadolint::new(self, file)?),
             Filetype::Kotlin => Box::pin(ktlint::KotlinKtlint::new(self, file)?),
-            Filetype::Swift => Box::pin(swiftlint::SwiftSwiftlint::new(self, file)?),
+            Filetype::Swift => {
+                let swiftc = swiftc::SwiftSwiftc::new(self, file)?;
+                let swiftlint = swiftlint::SwiftSwiftlint::new(self, file)?;
+                Box::pin(swiftc.merge(swiftlint))
+            }
             Filetype::Sql => Box::pin(sqlfluff::SqlSqlfluff::new(self, file)?),
             Filetype::Markdown => Box::pin(markdownlint::MarkdownMarkdownlint::new(self, file)?),
             Filetype::Xml => Box::pin(xmllint::XmlXmllint::new(self, file)?),
@@ -350,6 +354,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "statix",
     "staticcheck",
     "stylelint",
+    "swiftc",
     "swiftlint",
     "systemd-analyze",
     "tflint",
@@ -403,6 +408,7 @@ pub mod standardrb;
 pub mod staticcheck;
 pub mod statix;
 pub mod stylelint;
+pub mod swiftc;
 pub mod swiftlint;
 pub mod systemd;
 pub mod tflint;

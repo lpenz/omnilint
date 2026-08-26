@@ -78,6 +78,7 @@ fn linters_not_found() {
           shell-clean.sh: [shellcheck] linter not found\n\
           shell-clean.sh: [zsh] linter not found\n\
           sql-clean.sql: [sqlfluff] linter not found\n\
+          swift-clean.swift: [swiftc] linter not found\n\
           swift-clean.swift: [swiftlint] linter not found\n\
            systemd-clean.service: [systemd-analyze] linter not found\n\
            verilog-clean.sv: [verilator] linter not found\n\
