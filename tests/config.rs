@@ -75,3 +75,30 @@ fn omnilint_config_env_var() {
          python-clean.py: [ruff] linter not found\n"
     );
 }
+
+#[test]
+fn config_flag_loads_specified_file() {
+    let tmp = tempfile::tempdir().unwrap();
+    let cfg = tmp.path().join("disabled.toml");
+    std::fs::write(&cfg, "[linters.flake8]\nmode = \"disabled\"\n").unwrap();
+    assert_eq!(
+        common::run_with_config_flag(&["python-clean.py"], cfg.to_str().unwrap(), 1,),
+        "python-clean.py: [pylint] linter not found\n\
+         python-clean.py: [ruff] linter not found\n"
+    );
+}
+
+#[test]
+fn config_flag_missing_file_errors() {
+    let mut cmd = assert_cmd::Command::cargo_bin("omnilint").unwrap();
+    cmd.current_dir(common::fixtures_dir())
+        .env_remove("OMNILINT_CONFIG")
+        .env("PATH", "/nonexistent")
+        .args([
+            "files",
+            "--config",
+            "does-not-exist.toml",
+            "python-clean.py",
+        ]);
+    cmd.assert().failure();
+}

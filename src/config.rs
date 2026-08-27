@@ -4,10 +4,48 @@
 
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::fmt;
 use std::fs;
 use std::path::PathBuf;
 
 use crate::cli::LinterMode;
+
+/// Errors that can occur while loading the configuration.
+#[derive(Debug)]
+pub(crate) enum ConfigError {
+    /// The config file could not be read.
+    Read {
+        path: PathBuf,
+        source: std::io::Error,
+    },
+    /// The config file is not valid TOML.
+    Parse {
+        path: PathBuf,
+        source: toml::de::Error,
+    },
+}
+
+impl fmt::Display for ConfigError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ConfigError::Read { path, source } => {
+                write!(f, "cannot read config file {}: {source}", path.display())
+            }
+            ConfigError::Parse { path, source } => {
+                write!(f, "invalid config file {}: {source}", path.display())
+            }
+        }
+    }
+}
+
+impl std::error::Error for ConfigError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            ConfigError::Read { source, .. } => Some(source),
+            ConfigError::Parse { source, .. } => Some(source),
+        }
+    }
+}
 
 /// Global configuration options.
 #[derive(Debug, Default, Clone, Deserialize)]
@@ -64,38 +102,70 @@ impl Config {
         }
     }
 
-    /// Loads the config by merging the three config files in order:
-    /// 1. `/etc/omnilint.toml`
-    /// 2. `~/.config/omnilint/omnilint.toml`
-    /// 3. `<cwd>/omnilint.toml`
-    pub(crate) fn load() -> Result<Self, toml::de::Error> {
+    /// Loads the config by merging the config files in order.
+    ///
+    /// If `path` is `Some`, only that single file is loaded, overriding any
+    /// automatic config discovery. Otherwise, the following sources are
+    /// merged in order:
+    /// 1. The `OMNILINT_CONFIG` environment variable
+    /// 2. `/etc/omnilint.toml`
+    /// 3. `~/.config/omnilint/omnilint.toml`
+    /// 4. `<cwd>/omnilint.toml`
+    pub(crate) fn load(path: Option<&std::path::Path>) -> Result<Self, ConfigError> {
         let mut config = Config::default();
 
+        if let Some(path) = path {
+            config.merge(&Config::from_file(path)?);
+            return Ok(config);
+        }
+
         // 1. OMNILINT_CONFIG environment variable
-        if let Ok(path) = std::env::var("OMNILINT_CONFIG")
-            && let Ok(content) = fs::read_to_string(&path)
-        {
-            config.merge(&toml::from_str(&content)?);
+        if let Ok(path) = std::env::var("OMNILINT_CONFIG") {
+            config.merge(&Config::from_file(std::path::Path::new(&path))?);
         }
 
         // 2. System-wide config
         if let Ok(content) = fs::read_to_string("/etc/omnilint.toml") {
-            config.merge(&toml::from_str(&content)?);
+            config.merge(&Config::parse(
+                &content,
+                std::path::Path::new("/etc/omnilint.toml"),
+            )?);
         }
 
         // 3. User config
         if let Some(home) = dirs() {
             let path = home.join(".config/omnilint/omnilint.toml");
-            if let Ok(content) = fs::read_to_string(path) {
-                config.merge(&toml::from_str(&content)?);
+            if let Ok(content) = fs::read_to_string(&path) {
+                config.merge(&Config::parse(&content, &path)?);
             }
         }
 
         // 4. Project config
         if let Ok(content) = fs::read_to_string("omnilint.toml") {
-            config.merge(&toml::from_str(&content)?);
+            config.merge(&Config::parse(
+                &content,
+                std::path::Path::new("omnilint.toml"),
+            )?);
         }
 
+        Ok(config)
+    }
+
+    /// Loads a single config file from the given path.
+    fn from_file(path: &std::path::Path) -> Result<Self, ConfigError> {
+        let content = fs::read_to_string(path).map_err(|e| ConfigError::Read {
+            path: path.to_path_buf(),
+            source: e,
+        })?;
+        Config::parse(&content, path)
+    }
+
+    /// Parses config contents, keeping the file path for error reporting.
+    fn parse(content: &str, path: &std::path::Path) -> Result<Self, ConfigError> {
+        let config: Config = toml::from_str(content).map_err(|source| ConfigError::Parse {
+            path: path.to_path_buf(),
+            source,
+        })?;
         Ok(config)
     }
 }

@@ -42,7 +42,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .init();
     let args = cli::Cli::parse();
     let mut linters = Linters::new();
-    let config = config::Config::load()?;
+    let config = config::Config::load(args.config.as_deref())?;
     let default_mode = if args.default_linter_mode != LinterMode::default() {
         args.default_linter_mode
     } else {

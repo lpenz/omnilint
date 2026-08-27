@@ -110,6 +110,40 @@ $ echo $?
 0
 ```
 
+### Configuration
+
+omnilint is configured through one or more TOML files. The `--config <path>`
+option makes omnilint use a specific configuration file instead of the
+automatic discovery, which is useful to point at a custom config in CI or
+scripts:
+
+```console
+$ omnilint --config /path/to/omnilint.toml files test.py
+```
+
+When `--config` is not given, omnilint loads and merges configuration from the
+following sources, in order of increasing precedence:
+
+1. the `OMNILINT_CONFIG` environment variable pointing to a file
+2. `/etc/omnilint.toml`
+3. `~/.config/omnilint/omnilint.toml`
+4. `./omnilint.toml` in the current directory
+
+A config file has a `[global]` section for global options such as
+`default_linter_mode` (one of `required`, `wanted`, `optional` or `disabled`),
+and a `[linters.<name>]` section per linter with `mode` and an optional `path`:
+
+```toml
+[global]
+default_linter_mode = "optional"
+
+[linters.flake8]
+mode = "disabled"
+
+[linters.ruff]
+path = "/usr/local/bin/ruff"
+```
+
 ## Requirements
 
 The underlying linters must be installed for omnilint to analyse the

@@ -12,7 +12,7 @@ use assert_cmd::Command;
 use std::path::{Path, PathBuf};
 
 /// Returns the fixtures directory.
-fn fixtures_dir() -> PathBuf {
+pub fn fixtures_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures")
 }
 
@@ -132,6 +132,34 @@ pub fn run_with_config_env(files: &[&str], config_path: &str, code: i32) -> Stri
         .current_dir(fixtures_dir())
         .env("OMNILINT_CONFIG", config_path)
         .arg("files");
+    for file in files {
+        command = command.arg(file);
+    }
+    command = command.env("PATH", "/nonexistent");
+    let output = command.assert().code(code).stdout("");
+    let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
+        .lines()
+        .map(Into::into)
+        .collect();
+    if lines.is_empty() {
+        return String::new();
+    }
+    lines.sort();
+    lines.join("\n") + "\n"
+}
+
+/// Runs `omnilint files --config <path>` on the given files with a `PATH`
+/// that has no linter tools.
+///
+/// Asserts that omnilint exits with the given status code.
+pub fn run_with_config_flag(files: &[&str], config_path: &str, code: i32) -> String {
+    let mut cmd = Command::cargo_bin("omnilint").unwrap();
+    let mut command = cmd
+        .current_dir(fixtures_dir())
+        .env_remove("OMNILINT_CONFIG")
+        .arg("files")
+        .arg("--config")
+        .arg(config_path);
     for file in files {
         command = command.arg(file);
     }

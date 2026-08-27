@@ -58,6 +58,11 @@ pub struct Cli {
     #[arg(long, value_enum, default_value_t, global = true)]
     pub format: OutputFormat,
 
+    /// Path to an omnilint.toml configuration file to use instead of the
+    /// automatic config discovery.
+    #[arg(long, global = true)]
+    pub config: Option<PathBuf>,
+
     #[command(subcommand)]
     pub command: Commands,
 }
@@ -153,5 +158,23 @@ mod tests {
     fn inventory_basic() {
         let cli = Cli::try_parse_from(["", "inventory"]).unwrap();
         assert!(matches!(cli.command, Commands::Inventory));
+    }
+
+    #[test]
+    fn config_flag_before_subcommand() {
+        let cli = Cli::try_parse_from(["", "--config", "custom.toml", "files", "foo.py"]).unwrap();
+        assert_eq!(cli.config, Some(PathBuf::from("custom.toml")));
+    }
+
+    #[test]
+    fn config_flag_after_subcommand() {
+        let cli = Cli::try_parse_from(["", "files", "--config", "custom.toml", "foo.py"]).unwrap();
+        assert_eq!(cli.config, Some(PathBuf::from("custom.toml")));
+    }
+
+    #[test]
+    fn config_flag_default() {
+        let cli = Cli::try_parse_from(["", "files", "foo.py"]).unwrap();
+        assert_eq!(cli.config, None);
     }
 }
