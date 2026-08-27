@@ -1,0 +1,5 @@
+/target/
+work-obj93.cf
+__pycache__/
+*.py[cod]
+.ruff_cache/
