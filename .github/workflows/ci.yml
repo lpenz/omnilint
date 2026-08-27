@@ -23,6 +23,23 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
       - name: Test with linter tools
         run: nix develop -c cargo test --features test-linter-tools
+  nix-flake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: cachix/install-nix-action@v31.11.1
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Check flake outputs
+        run: nix flake check --no-build
+      - name: Build the omnilint installation
+        run: nix build ".#packages.x86_64-linux.default"
+      - name: Show the generated omnilint.toml
+        run: |
+          config=$(nix build --no-link --print-out-paths ".#packages.x86_64-linux.omnilint-config")
+          cat "$config"
+      - name: Run omnilint inventory through the wrapper
+        run: ./result/bin/omnilint inventory
   commit-check:
     runs-on: ubuntu-latest
     steps:
@@ -33,7 +50,7 @@ jobs:
         with:
           branch: false
   rust-deploy:
-    needs: [rust-test, test-linter-tools, commit-check]
+    needs: [rust-test, test-linter-tools, nix-flake, commit-check]
     uses: lpenz/ghworkflow-rust/.github/workflows/rust-deploy.yml@v0.30.0
     with:
       deb: true
