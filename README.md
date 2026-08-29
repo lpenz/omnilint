@@ -131,7 +131,8 @@ following sources, in order of increasing precedence:
 
 A config file has a `[global]` section for global options such as
 `default_linter_mode` (one of `required`, `wanted`, `optional` or `disabled`),
-and a `[linters.<name>]` section per linter with `mode` and an optional `path`:
+and a `[linters.<name>]` section per linter with `mode` and an optional `path`.
+When a per-linter `mode` is not set, the global `default_linter_mode` is used:
 
 ```toml
 [global]

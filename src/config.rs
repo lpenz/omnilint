@@ -56,22 +56,14 @@ pub(crate) struct GlobalConfig {
 }
 
 /// Per-linter configuration.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Default, Clone, Deserialize)]
 #[serde(default)]
 pub(crate) struct LinterConfig {
     /// Controls what happens when this linter binary is not found.
-    pub(crate) mode: LinterMode,
+    /// If not set, uses the global `default_linter_mode`.
+    pub(crate) mode: Option<LinterMode>,
     /// Custom path to the linter binary, overriding PATH lookup.
     pub(crate) path: Option<String>,
-}
-
-impl Default for LinterConfig {
-    fn default() -> Self {
-        Self {
-            mode: LinterMode::Wanted,
-            path: None,
-        }
-    }
 }
 
 /// The omnilint configuration, loaded from TOML files.
@@ -93,7 +85,9 @@ impl Config {
             self.linters
                 .entry(name.clone())
                 .and_modify(|existing| {
-                    existing.mode = linter.mode;
+                    if linter.mode.is_some() {
+                        existing.mode = linter.mode;
+                    }
                     if linter.path.is_some() {
                         existing.path = linter.path.clone();
                     }
@@ -197,7 +191,7 @@ mod tests {
     #[test]
     fn parse_linters_only() {
         let config: Config = toml::from_str("[linters.flake8]\nmode = \"disabled\"\n").unwrap();
-        assert_eq!(config.linters["flake8"].mode, LinterMode::Disabled);
+        assert_eq!(config.linters["flake8"].mode, Some(LinterMode::Disabled));
     }
 
     #[test]
@@ -208,6 +202,7 @@ mod tests {
             config.linters["flake8"].path.as_deref(),
             Some("/usr/local/bin/flake8")
         );
+        assert!(config.linters["flake8"].mode.is_none());
     }
 
     #[test]
@@ -225,7 +220,7 @@ mod tests {
         base.linters.insert(
             "flake8".to_string(),
             LinterConfig {
-                mode: LinterMode::Disabled,
+                mode: Some(LinterMode::Disabled),
                 ..Default::default()
             },
         );
@@ -233,13 +228,13 @@ mod tests {
         overlay.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                mode: LinterMode::Disabled,
+                mode: Some(LinterMode::Disabled),
                 ..Default::default()
             },
         );
         base.merge(&overlay);
-        assert_eq!(base.linters["flake8"].mode, LinterMode::Disabled);
-        assert_eq!(base.linters["ruff"].mode, LinterMode::Disabled);
+        assert_eq!(base.linters["flake8"].mode, Some(LinterMode::Disabled));
+        assert_eq!(base.linters["ruff"].mode, Some(LinterMode::Disabled));
     }
 
     #[test]
@@ -249,7 +244,7 @@ mod tests {
         base.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                mode: LinterMode::Required,
+                mode: Some(LinterMode::Required),
                 ..Default::default()
             },
         );
@@ -257,12 +252,12 @@ mod tests {
         overlay.linters.insert(
             "ruff".to_string(),
             LinterConfig {
-                mode: LinterMode::Disabled,
+                mode: Some(LinterMode::Disabled),
                 ..Default::default()
             },
         );
         base.merge(&overlay);
         assert_eq!(base.global.default_linter_mode, LinterMode::Optional);
-        assert_eq!(base.linters["ruff"].mode, LinterMode::Disabled);
+        assert_eq!(base.linters["ruff"].mode, Some(LinterMode::Disabled));
     }
 }

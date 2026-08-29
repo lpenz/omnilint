@@ -406,6 +406,23 @@ mod tests {
     }
 
     #[test]
+    fn resolve_mode_prefers_override() {
+        let mut linters = Linters::new();
+        linters.set_default_mode(LinterMode::Required);
+        linters.set_mode_overrides(
+            [
+                ("configured".to_string(), LinterMode::Optional),
+                ("explicit".to_string(), LinterMode::Disabled),
+            ]
+            .into_iter()
+            .collect(),
+        );
+        assert_eq!(linters.resolve_mode("configured"), LinterMode::Optional);
+        assert_eq!(linters.resolve_mode("explicit"), LinterMode::Disabled);
+        assert_eq!(linters.resolve_mode("unconfigured"), LinterMode::Required);
+    }
+
+    #[test]
     fn github_workflow_detection() {
         assert!(is_github_workflow(Path::new(".github/workflows/ci.yml")));
         assert!(is_github_workflow(Path::new(

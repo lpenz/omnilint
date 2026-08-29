@@ -55,7 +55,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
     let mode_overrides: std::collections::HashMap<String, LinterMode> = config
         .linters
         .iter()
-        .map(|(name, c)| (name.clone(), c.mode))
+        .filter_map(|(name, c)| c.mode.map(|mode| (name.clone(), mode)))
         .collect();
     linters.set_mode_overrides(mode_overrides);
     let paths: std::collections::HashMap<String, String> = config
