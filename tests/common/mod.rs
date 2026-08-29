@@ -237,3 +237,20 @@ pub fn run_inventory_with_config(config_contents: &str) -> String {
     let output = command.assert().code(0).stdout("");
     String::from_utf8_lossy(&output.get_output().stderr).to_string()
 }
+
+/// Runs `omnilint inventory` from a temporary directory with the given config
+/// and a `PATH` that contains no linter tools.
+///
+/// Asserts that omnilint exits with the given status code.
+pub fn run_inventory_with_config_and_empty_path(config_contents: &str, code: i32) -> String {
+    let tmp = tempfile::tempdir().unwrap();
+    std::fs::write(tmp.path().join("omnilint.toml"), config_contents).unwrap();
+    let mut cmd = Command::cargo_bin("omnilint").unwrap();
+    let command = cmd
+        .current_dir(tmp.path())
+        .env_remove("OMNILINT_CONFIG")
+        .env("PATH", "/nonexistent")
+        .arg("inventory");
+    let output = command.assert().code(code).stdout("");
+    String::from_utf8_lossy(&output.get_output().stderr).to_string()
+}

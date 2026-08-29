@@ -86,7 +86,7 @@ impl Linters {
 
     /// Returns the effective [`LinterMode`] for `name`: per-linter override
     /// if set, otherwise the global default.
-    fn resolve_mode(&self, name: &str) -> LinterMode {
+    pub(crate) fn resolve_mode(&self, name: &str) -> LinterMode {
         self.mode_overrides
             .get(name)
             .copied()

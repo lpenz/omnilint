@@ -32,7 +32,8 @@ use tokio_stream::{Stream, StreamExt, StreamMap};
 /// main function, the single pub function in this lib.
 ///
 /// Exits with status 1 if any finding was emitted (including a linter that
-/// was not found), and with status 0 otherwise.
+/// was not found, or a missing required linter in the inventory), and with
+/// status 0 otherwise.
 #[tokio::main(flavor = "current_thread")]
 pub async fn main() -> Result<(), Box<dyn Error>> {
     color_eyre::install()?;
@@ -74,10 +75,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
             let files = repo::git_ls_files()?;
             run_repository(&mut linters, files, format).await?
         }
-        cli::Commands::Inventory => {
-            run_inventory(&config, &linters).await;
-            0
-        }
+        cli::Commands::Inventory => run_inventory(&linters).await,
     };
     if issues > 0 {
         std::process::exit(1);
@@ -87,17 +85,23 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
 
 /// Shows the status of all supported linters: their mode and version
 /// when available.
-async fn run_inventory(config: &config::Config, linters: &Linters) {
+///
+/// Prints a message to stderr and returns the number of [`LinterMode::Required`]
+/// linters that were not found.
+async fn run_inventory(linters: &Linters) -> usize {
+    let mut missing_required = 0;
     for &name in ALL_LINTERS {
-        let linter_config = config.linters.get(name);
-        let mode = linter_config
-            .map(|c| c.mode)
-            .unwrap_or(LinterMode::Wanted)
-            .to_string();
+        let mode = linters.resolve_mode(name);
         let executable = linters.executable(name);
         let version = get_version(executable.as_ref()).await;
+        if mode == LinterMode::Required && version == "not found" {
+            eprintln!("error: required linter '{name}' not found");
+            missing_required += 1;
+        }
+        let mode = mode.to_string();
         eprintln!("{name:<20} {mode:<11} {version}");
     }
+    missing_required
 }
 
 /// Tries to get the version string of an executable by running it with
