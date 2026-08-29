@@ -39,7 +39,7 @@ pub struct GoGovet {
 
 impl GoGovet {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("go");
+        let executable = linters.executable_for_linter("go-vet");
         let mut cmd = Command::new(executable.as_ref());
         cmd.arg("vet");
         cmd.arg(filename);

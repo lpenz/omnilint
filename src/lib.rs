@@ -96,7 +96,7 @@ async fn run_inventory(linters: &Linters) -> Result<(), OmnilintError> {
     let mut missing_required = 0;
     for &name in ALL_LINTERS {
         let mode = linters.resolve_mode(name);
-        let executable = linters.executable(name);
+        let executable = linters.executable_for_linter(name);
         let version = get_version(executable.as_ref()).await;
         if mode == LinterMode::Required && version == "not found" {
             eprintln!("error: required linter '{name}' not found");
@@ -112,27 +112,36 @@ async fn run_inventory(linters: &Linters) -> Result<(), OmnilintError> {
     }
 }
 
-/// Tries to get the version string of an executable by running it with
-/// `--version`. Returns "not found" if the executable doesn't exist.
-async fn get_version(executable: &str) -> String {
-    match tokio::process::Command::new(executable)
-        .arg("--version")
+/// Runs `executable` with `arg`, returning the output if it could be
+/// spawned, or `None` if the executable doesn't exist.
+async fn run_version(executable: &str, arg: &str) -> Option<std::process::Output> {
+    tokio::process::Command::new(executable)
+        .arg(arg)
         .output()
         .await
-    {
-        Ok(output) => {
-            let stdout = String::from_utf8_lossy(&output.stdout);
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            let raw = if !stdout.is_empty() {
-                stdout.trim()
-            } else {
-                stderr.trim()
-            };
-            // Strip trailing newlines and take the first line
-            raw.lines().next().unwrap_or(raw).to_string()
-        }
-        Err(_) => "not found".to_string(),
-    }
+        .ok()
+}
+
+/// Tries to get the version string of an executable by running it with
+/// `--version`, falling back to `version` for tools that don't accept that
+/// flag (e.g. go). Returns "not found" if the executable doesn't exist.
+async fn get_version(executable: &str) -> String {
+    let output = match run_version(executable, "--version").await {
+        Some(output) if output.status.success() => output,
+        _ => match run_version(executable, "version").await {
+            Some(output) => output,
+            None => return "not found".to_string(),
+        },
+    };
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let raw = if !stdout.is_empty() {
+        stdout.trim()
+    } else {
+        stderr.trim()
+    };
+    // Strip trailing newlines and take the first line
+    raw.lines().next().unwrap_or(raw).to_string()
 }
 
 /// Creates a stream that lints the given file and pushes it into `streams`,

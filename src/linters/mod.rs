@@ -84,6 +84,17 @@ impl Linters {
             .unwrap_or(Cow::Borrowed(name))
     }
 
+    /// Returns the effective executable for linter `name`, mapping linter
+    /// names that are run through a different binary to the one used for
+    /// the `PATH`/config lookup: e.g. the `go-vet` linter is executed as
+    /// `go`.
+    pub(crate) fn executable_for_linter<'a>(&'a self, name: &'a str) -> Cow<'a, str> {
+        match name {
+            "go-vet" => self.executable("go"),
+            _ => self.executable(name),
+        }
+    }
+
     /// Returns the effective [`LinterMode`] for `name`: per-linter override
     /// if set, otherwise the global default.
     pub(crate) fn resolve_mode(&self, name: &str) -> LinterMode {
