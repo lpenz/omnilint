@@ -23,6 +23,7 @@ fn all_tracked_files() {
          .github/workflows/dirty.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section\n\
          .rubocop.yml:1: [yamllint] missing document start \"---\"\n\
          Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
+         Error: lint findings were emitted\n\
          c-dirty.c:5: [cppcheck] Memory leak: p [memleak]\n\
          clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\

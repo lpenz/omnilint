@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["css-dirty.css"]),
-        "css-dirty.css:1: [stylelint] Empty block (block-no-empty) [error]\n"
+        "Error: lint findings were emitted\n\
+         css-dirty.css:1: [stylelint] Empty block (block-no-empty) [error]\n"
     );
 }

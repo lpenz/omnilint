@@ -27,7 +27,8 @@ fn clean_ts() {
 fn dirty_js() {
     assert_eq!(
         common::run(&["js-dirty.js"]),
-        "js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n"
+        "Error: lint findings were emitted\n\
+         js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n"
     );
 }
 
@@ -35,6 +36,7 @@ fn dirty_js() {
 fn dirty_ts() {
     assert_eq!(
         common::run(&["ts-dirty.ts"]),
-        "ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n"
+        "Error: lint findings were emitted\n\
+         ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n"
     );
 }

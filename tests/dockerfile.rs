@@ -21,7 +21,8 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["docker-dirty.dockerfile"]),
-        "docker-dirty.dockerfile:1: [hadolint] Using latest is prone to errors if the image will ever update. Pin the version explicitly to a release tag\n\
+        "Error: lint findings were emitted\n\
+         docker-dirty.dockerfile:1: [hadolint] Using latest is prone to errors if the image will ever update. Pin the version explicitly to a release tag\n\
          docker-dirty.dockerfile:2: [hadolint] Delete the apt lists (/var/lib/apt/lists) after installing something\n\
          docker-dirty.dockerfile:3: [hadolint] Avoid additional packages by specifying `--no-install-recommends`\n\
          docker-dirty.dockerfile:3: [hadolint] Multiple consecutive `RUN` instructions. Consider consolidation.\n\

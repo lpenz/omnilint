@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["lua-dirty.lua"]),
-        "lua-dirty.lua:1: [luacheck] unused variable 'unused'\n"
+        "Error: lint findings were emitted\n\
+         lua-dirty.lua:1: [luacheck] unused variable 'unused'\n"
     );
 }

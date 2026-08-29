@@ -22,7 +22,8 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["go-dirty.go"]),
-        "go-dirty.go:5: [staticcheck] func unused is unused (U1000)\n\
+        "Error: lint findings were emitted\n\
+         go-dirty.go:5: [staticcheck] func unused is unused (U1000)\n\
          go-dirty.go:6: [go-vet] fmt.Printf format %s reads arg #1, but call has 0 args\n\
          go-dirty.go:6: [staticcheck] Printf format %s reads arg #1, but call has only 0 args (SA5009)\n"
     );

@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["tex-dirty.tex"]),
-        "tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n"
+        "Error: lint findings were emitted\n\
+         tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n"
     );
 }

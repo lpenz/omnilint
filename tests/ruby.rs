@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["ruby-dirty.rb"]),
-        "ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n"
+        "Error: lint findings were emitted\n\
+         ruby-dirty.rb:1: [rubocop] C: [Correctable] Style/FrozenStringLiteralComment: Missing frozen string literal comment.\n"
     );
 }

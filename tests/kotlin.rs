@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["Dirty.kt"]),
-        "Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n"
+        "Dirty.kt:2: [ktlint] Unnecessary semicolon (standard:no-semi)\n\
+         Error: lint findings were emitted\n"
     );
 }

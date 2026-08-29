@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["perl-dirty.pl"]),
-        "perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n"
+        "Error: lint findings were emitted\n\
+         perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n"
     );
 }

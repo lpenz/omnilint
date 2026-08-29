@@ -31,6 +31,7 @@ fn linters_not_found() {
         ".github/workflows/clean.yml: [actionlint] linter not found\n\
          .github/workflows/clean.yml: [yamllint] linter not found\n\
          Clean.kt: [ktlint] linter not found\n\
+         Error: lint findings were emitted\n\
          c-clean.c: [cppcheck] linter not found\n\
          clj-clean.clj: [clj-kondo] linter not found\n\
          docker-clean.dockerfile: [hadolint] linter not found\n\
@@ -72,6 +73,7 @@ fn github_workflow_format() {
         "::warning file=python-clean.py::[flake8] linter not found\n\
          ::warning file=python-clean.py::[pylint] linter not found\n\
          ::warning file=python-clean.py::[ruff] linter not found\n\
-         ::warning file=yaml-clean.yaml::[yamllint] linter not found\n"
+         ::warning file=yaml-clean.yaml::[yamllint] linter not found\n\
+         Error: lint findings were emitted\n"
     );
 }

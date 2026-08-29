@@ -21,7 +21,8 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["clj-dirty.clj"]),
-        "clj-dirty.clj:1: [clj-kondo] unused binding x\n\
+        "Error: lint findings were emitted\n\
+         clj-dirty.clj:1: [clj-kondo] unused binding x\n\
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\
          clj-dirty.clj:2: [clj-kondo] unused binding unused\n"
     );

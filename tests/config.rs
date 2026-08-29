@@ -14,7 +14,8 @@ fn disabled_linter_skips_output() {
             "[linters.flake8]\nmode = \"disabled\"\n",
             1,
         ),
-        "python-clean.py: [pylint] linter not found\n\
+        "Error: lint findings were emitted\n\
+         python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }
@@ -51,7 +52,8 @@ fn linter_custom_path() {
             "[linters.flake8]\npath = \"/nonexistent/flake8\"\n",
             1,
         ),
-        "python-clean.py: [flake8] linter not found\n\
+        "Error: lint findings were emitted\n\
+         python-clean.py: [flake8] linter not found\n\
          python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
@@ -71,7 +73,8 @@ fn omnilint_config_env_var() {
             tmp.path().join("disabled.toml").to_str().unwrap(),
             1,
         ),
-        "python-clean.py: [pylint] linter not found\n\
+        "Error: lint findings were emitted\n\
+         python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }
@@ -83,7 +86,8 @@ fn config_flag_loads_specified_file() {
     std::fs::write(&cfg, "[linters.flake8]\nmode = \"disabled\"\n").unwrap();
     assert_eq!(
         common::run_with_config_flag(&["python-clean.py"], cfg.to_str().unwrap(), 1,),
-        "python-clean.py: [pylint] linter not found\n\
+        "Error: lint findings were emitted\n\
+         python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
 }

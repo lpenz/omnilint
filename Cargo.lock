@@ -503,6 +503,7 @@ dependencies = [
  "man",
  "serde",
  "tempfile",
+ "thiserror",
  "tokio",
  "tokio-process-stream",
  "tokio-stream",

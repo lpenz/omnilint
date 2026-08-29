@@ -14,12 +14,14 @@ mod cli;
 
 mod config;
 mod entry;
+mod error;
 mod filetype;
 mod linters;
 mod repo;
 
 use crate::cli::LinterMode;
 use crate::entry::Entry;
+use crate::error::OmnilintError;
 use crate::linters::{ALL_LINTERS, Linters};
 
 use clap::Parser;
@@ -32,8 +34,8 @@ use tokio_stream::{Stream, StreamExt, StreamMap};
 /// main function, the single pub function in this lib.
 ///
 /// Exits with status 1 if any finding was emitted (including a linter that
-/// was not found, or a missing required linter in the inventory), and with
-/// status 0 otherwise.
+/// was not found, or a missing required linter in the inventory), printing
+/// the reason to stderr, and with status 0 otherwise.
 #[tokio::main(flavor = "current_thread")]
 pub async fn main() -> Result<(), Box<dyn Error>> {
     color_eyre::install()?;
@@ -63,7 +65,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         .collect();
     linters.set_executables(paths);
     let format = args.format;
-    let issues = match args.command {
+    let run_result: Result<(), OmnilintError> = match args.command {
         cli::Commands::Files { files } => {
             let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();
             for file in &files {
@@ -77,7 +79,8 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         }
         cli::Commands::Inventory => run_inventory(&linters).await,
     };
-    if issues > 0 {
+    if let Err(error) = run_result {
+        eprintln!("Error: {error}");
         std::process::exit(1);
     }
     Ok(())
@@ -86,9 +89,10 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
 /// Shows the status of all supported linters: their mode and version
 /// when available.
 ///
-/// Prints a message to stderr and returns the number of [`LinterMode::Required`]
-/// linters that were not found.
-async fn run_inventory(linters: &Linters) -> usize {
+/// Prints a message to stderr for each [`LinterMode::Required`] linter that
+/// was not found, and returns [`OmnilintError::MissingRequiredLinters`] if
+/// any were missing.
+async fn run_inventory(linters: &Linters) -> Result<(), OmnilintError> {
     let mut missing_required = 0;
     for &name in ALL_LINTERS {
         let mode = linters.resolve_mode(name);
@@ -101,7 +105,11 @@ async fn run_inventory(linters: &Linters) -> usize {
         let mode = mode.to_string();
         eprintln!("{name:<20} {mode:<11} {version}");
     }
-    missing_required
+    if missing_required > 0 {
+        Err(OmnilintError::MissingRequiredLinters)
+    } else {
+        Ok(())
+    }
 }
 
 /// Tries to get the version string of an executable by running it with
@@ -142,12 +150,13 @@ fn push_stream(
 
 /// Lints each file of the given stream as soon as it is produced, running
 /// all the linters in parallel, and prints the resulting [`Entry`] values to
-/// stderr. Returns the number of entries emitted.
+/// stderr. Returns [`OmnilintError::Findings`] if any entry was emitted, or
+/// a runtime error from the linter infrastructure.
 async fn run_repository(
     linters: &mut Linters,
     files: impl Stream<Item = PathBuf> + Unpin,
     format: OutputFormat,
-) -> color_eyre::Result<usize> {
+) -> color_eyre::Result<Result<(), OmnilintError>> {
     let mut files = files;
     let mut streams: StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>> = StreamMap::new();
     let mut next_id = 0;
@@ -177,7 +186,11 @@ async fn run_repository(
         eprintln!("{}", entry.format_output(format));
         issues += 1;
     }
-    Ok(issues)
+    if issues > 0 {
+        Ok(Err(OmnilintError::Findings))
+    } else {
+        Ok(Ok(()))
+    }
 }
 
 /// Creates a linter stream for `file`, if any, and adds it to `streams`.
@@ -195,11 +208,12 @@ fn add_file(
 }
 
 /// Lints all the given streams in parallel, printing the resulting
-/// [`Entry`] values to stderr. Returns the number of entries emitted.
+/// [`Entry`] values to stderr. Returns [`OmnilintError::Findings`] if any
+/// entry was emitted.
 async fn run_streams(
     streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>>,
     format: OutputFormat,
-) -> usize {
+) -> Result<(), OmnilintError> {
     let merged = streams.into_iter().reduce(|a, b| Box::pin(a.merge(b)));
     let mut issues = 0;
     if let Some(mut merged) = merged {
@@ -208,7 +222,11 @@ async fn run_streams(
             issues += 1;
         }
     }
-    issues
+    if issues > 0 {
+        Err(OmnilintError::Findings)
+    } else {
+        Ok(())
+    }
 }
 
 #[cfg(test)]

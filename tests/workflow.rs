@@ -17,7 +17,8 @@ mod common;
 fn clean() {
     assert_eq!(
         common::run(&[".github/workflows/clean.yml"]),
-        ".github/workflows/clean.yml:3: [yamllint] truthy value should be one of [false, true]\n"
+        ".github/workflows/clean.yml:3: [yamllint] truthy value should be one of [false, true]\n\
+         Error: lint findings were emitted\n"
     );
 }
 
@@ -27,6 +28,7 @@ fn dirty() {
         common::run(&[".github/workflows/dirty.yml"]),
         ".github/workflows/dirty.yml:3: [yamllint] truthy value should be one of [false, true]\n\
          .github/workflows/dirty.yml:8: [actionlint] element of \"steps\" section is scalar node but mapping node is expected\n\
-         .github/workflows/dirty.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section\n"
+         .github/workflows/dirty.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section\n\
+         Error: lint findings were emitted\n"
     );
 }

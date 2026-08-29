@@ -21,7 +21,8 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["yaml-dirty.yaml"]),
-        "yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
+        "Error: lint findings were emitted\n\
+         yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
          yaml-dirty.yaml:1: [yamllint] trailing spaces\n\
          yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n"
     );

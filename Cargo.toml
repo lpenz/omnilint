@@ -20,6 +20,7 @@ clap = { version = "4.6.4", features = ["derive"] }
 color-eyre = "0.6.5"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1.53.1", features = ["macros", "rt", "process"] }
+thiserror = "2"
 tokio-process-stream = "0.4"
 tokio-stream = { version = "0.1.19", features = ["io-util"] }
 toml = "0.8"

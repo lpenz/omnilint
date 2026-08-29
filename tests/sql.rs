@@ -21,6 +21,7 @@ fn clean() {
 fn dirty() {
     assert_eq!(
         common::run(&["sql-dirty.sql"]),
-        "sql-dirty.sql:1: [sqlfluff] AM04: Query produces an unknown number of result columns. [ambiguous.column_count]\n"
+        "Error: lint findings were emitted\n\
+         sql-dirty.sql:1: [sqlfluff] AM04: Query produces an unknown number of result columns. [ambiguous.column_count]\n"
     );
 }
