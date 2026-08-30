@@ -48,7 +48,7 @@ pub fn run_repository() -> String {
 /// Asserts that omnilint exits with status 1, since a missing linter counts
 /// as an issue.
 pub fn run_without_linters(files: &[&str]) -> String {
-    run_command("files", files, &[("PATH", "/nonexistent")], 1, &[])
+    run_command_no_config("files", files, &[("PATH", "/nonexistent")], 1, &[])
 }
 
 /// Runs `omnilint files --default-linter-mode optional` on the given files
@@ -57,7 +57,7 @@ pub fn run_without_linters(files: &[&str]) -> String {
 /// Asserts that omnilint exits with status 0, since the missing linters are
 /// optional.
 pub fn run_ignore_missing_linters(files: &[&str]) -> String {
-    run_command(
+    run_command_no_config(
         "files",
         files,
         &[("PATH", "/nonexistent")],
@@ -81,7 +81,7 @@ pub fn run_ignore_missing_linters_config(files: &[&str]) -> String {
 /// Asserts that omnilint exits with status 1, since missing linters count as
 /// issues.
 pub fn run_github_workflow(files: &[&str]) -> String {
-    run_command(
+    run_command_no_config(
         "files",
         files,
         &[("PATH", "/nonexistent")],
@@ -183,11 +183,35 @@ fn run_command(
     code: i32,
     args: &[&str],
 ) -> String {
+    run_command_impl(subcommand, files, envs, code, args, false)
+}
+
+/// Like [`run_command`], but always removes `OMNILINT_CONFIG` so that linters
+/// are resolved from the `PATH` (which may be empty in the isolation tests)
+/// instead of from a configured nix path.
+fn run_command_no_config(
+    subcommand: &str,
+    files: &[&str],
+    envs: &[(&str, &str)],
+    code: i32,
+    args: &[&str],
+) -> String {
+    run_command_impl(subcommand, files, envs, code, args, true)
+}
+
+fn run_command_impl(
+    subcommand: &str,
+    files: &[&str],
+    envs: &[(&str, &str)],
+    code: i32,
+    args: &[&str],
+    remove_config: bool,
+) -> String {
     let mut cmd = Command::cargo_bin("omnilint").unwrap();
-    let mut command = cmd
-        .current_dir(fixtures_dir())
-        .env_remove("OMNILINT_CONFIG")
-        .arg(subcommand);
+    let mut command = cmd.current_dir(fixtures_dir()).arg(subcommand);
+    if remove_config {
+        command = command.env_remove("OMNILINT_CONFIG");
+    }
     for file in files {
         command = command.arg(file);
     }
