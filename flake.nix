@@ -12,7 +12,7 @@
       packages = nixpkgs.lib.genAttrs systems (system:
         let
           pkgs = import nixpkgs { inherit system; };
-          pyPkgs = pkgs.python3.withPackages (ps: [ ps.flake8 ps.pylint ]);
+          pyPkgs = pkgs.python3.withPackages (ps: [ ps.flake8 ps.mypy ps.pylint ]);
           # The key is the executable name that omnilint uses to look up the
           # linter; for go-vet it differs from the linter name (go).
           linterBins = [
@@ -28,6 +28,7 @@
             { key = "ktlint"; path = "${pkgs.ktlint}/bin/ktlint"; }
             { key = "luacheck"; path = "${pkgs.luaPackages.luacheck}/bin/luacheck"; }
             { key = "markdownlint-cli2"; path = "${pkgs.markdownlint-cli2}/bin/markdownlint-cli2"; }
+            { key = "mypy"; path = "${pyPkgs}/bin/mypy"; }
             { key = "oxlint"; path = "${pkgs.oxlint}/bin/oxlint"; }
             { key = "perlcritic"; path = "${pkgs.perlPackages.PerlCritic}/bin/perlcritic"; }
             { key = "protolint"; path = "${pkgs.protolint}/bin/protolint"; }
@@ -98,7 +99,7 @@
               protolint
               rubocop
               texlive.bin.chktex
-              (python3.withPackages (ps: [ ps.flake8 ps.pylint ]))
+              (python3.withPackages (ps: [ ps.flake8 ps.pylint ps.mypy ]))
             ];
           };
         });

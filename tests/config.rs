@@ -15,6 +15,7 @@ fn disabled_linter_skips_output() {
             1,
         ),
         "Error: lint findings were emitted\n\
+         python-clean.py: [mypy] linter not found\n\
          python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
@@ -54,6 +55,7 @@ fn linter_custom_path() {
         ),
         "Error: lint findings were emitted\n\
          python-clean.py: [flake8] linter not found\n\
+         python-clean.py: [mypy] linter not found\n\
          python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
@@ -74,6 +76,7 @@ fn omnilint_config_env_var() {
             1,
         ),
         "Error: lint findings were emitted\n\
+         python-clean.py: [mypy] linter not found\n\
          python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );
@@ -87,6 +90,7 @@ fn config_flag_loads_specified_file() {
     assert_eq!(
         common::run_with_config_flag(&["python-clean.py"], cfg.to_str().unwrap(), 1,),
         "Error: lint findings were emitted\n\
+         python-clean.py: [mypy] linter not found\n\
          python-clean.py: [pylint] linter not found\n\
          python-clean.py: [ruff] linter not found\n"
     );

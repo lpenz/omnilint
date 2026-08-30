@@ -38,6 +38,10 @@ mode = "wanted"
 [linters.perlcritic]
 mode = "wanted"
 
+# mypy: `mypy`
+[linters.mypy]
+mode = "wanted"
+
 # pylint: `pylint`
 [linters.pylint]
 mode = "wanted"
