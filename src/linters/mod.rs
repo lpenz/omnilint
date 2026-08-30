@@ -198,6 +198,7 @@ impl Linters {
                 Box::pin(oxlint.merge(eslint))
             }
             Filetype::Typescript => Box::pin(oxlint::JsOxlint::new(self, file)?),
+            Filetype::Nix => Box::pin(statix::NixStatix::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -296,6 +297,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "rubocop",
     "shellcheck",
     "sqlfluff",
+    "statix",
     "staticcheck",
     "stylelint",
     "swiftlint",
@@ -328,6 +330,7 @@ pub mod ruff;
 pub mod shellcheck;
 pub mod sqlfluff;
 pub mod staticcheck;
+pub mod statix;
 pub mod stylelint;
 pub mod swiftlint;
 pub mod tidy;

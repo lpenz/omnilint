@@ -66,6 +66,10 @@ mode = "wanted"
 [linters.staticcheck]
 mode = "wanted"
 
+# statix: `statix`
+[linters.statix]
+mode = "wanted"
+
 # swiftlint: `swiftlint`
 [linters.swiftlint]
 mode = "wanted"

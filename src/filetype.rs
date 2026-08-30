@@ -32,6 +32,7 @@ pub enum Filetype {
     TeX,
     Javascript,
     Typescript,
+    Nix,
 }
 
 impl Filetype {
@@ -59,6 +60,7 @@ impl Filetype {
             Some("js") => Filetype::Javascript,
             Some("ts") => Filetype::Typescript,
             Some("proto") => Filetype::Proto,
+            Some("nix") => Filetype::Nix,
             _ => detect_filename_or_shebang(path),
         }
     }
@@ -266,6 +268,11 @@ mod tests {
     #[test]
     fn detect_proto() {
         assert_eq!(Filetype::detect(Path::new("foo.proto")), Filetype::Proto);
+    }
+
+    #[test]
+    fn detect_nix() {
+        assert_eq!(Filetype::detect(Path::new("foo.nix")), Filetype::Nix);
     }
 
     #[test]

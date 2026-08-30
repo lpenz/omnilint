@@ -39,6 +39,7 @@
             { key = "rubocop"; path = "${pkgs.rubocop}/bin/rubocop"; }
             { key = "shellcheck"; path = "${pkgs.shellcheck}/bin/shellcheck"; }
             { key = "sqlfluff"; path = "${pkgs.sqlfluff}/bin/sqlfluff"; }
+            { key = "statix"; path = "${pkgs.statix}/bin/statix"; }
             { key = "staticcheck"; path = "${pkgs.go-tools}/bin/staticcheck"; }
             { key = "stylelint"; path = "${pkgs.stylelint}/bin/stylelint"; }
             { key = "swiftlint"; path = "${pkgs.swiftlint}/bin/swiftlint"; }
@@ -88,6 +89,7 @@
               ktlint
               swiftlint
               sqlfluff
+              statix
               stylelint
               markdownlint-cli2
               libxml2

@@ -66,6 +66,10 @@ mode = "wanted"
 [linters.sqlfluff]
 mode = "wanted"
 
+# statix: `statix`
+[linters.statix]
+mode = "wanted"
+
 # tidy: `tidy`
 [linters.tidy]
 mode = "wanted"
