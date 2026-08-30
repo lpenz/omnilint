@@ -44,6 +44,13 @@ fn all_tracked_files() {
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\
          markdown-dirty.md:4: [markdownlint-cli2] Lists should be surrounded by blank lines [Context: \"- item one\"]\n\
          markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\
+         nix-compile-dirty.nix:1: [nix-instantiate] syntax error\n\
+         nix-compile-dirty.nix:1: [statix] Unexpected TOKEN_R_BRACE at 18..19, wanted any of [TOKEN_SEMICOLON]\n\
+         nix-compile-dirty.nix:1: [statix] Unexpected end of file\n\
+         nix-compile-dirty.nix:1: [statix] Unexpected end of file\n\
+         nix-compile-dirty.nix:1: [statix] Unexpected end of file\n\
+         nix-compile-dirty.nix:1: [statix] Unexpected end of file, wanted any of [TOKEN_SEMICOLON]\n\
+         nix-compile-dirty.nix:1: [statix] Unexpected end of file, wanted any of [TOKEN_SEMICOLON]\n\
          nix-dirty.nix:2: [statix] Consider quoting this URI expression\n\
          nix-dirty.nix:3: [statix] Useless parentheses around primitive expression\n\
          perl-dirty.pl:1: [perlcritic] Code before strictures are enabled\n\

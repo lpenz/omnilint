@@ -31,7 +31,7 @@ Statically analyse any file with the appropriate tools
 | Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
 | SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
 | Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
-| Nix        | `.nix`                         | [statix](https://github.com/oppiliappan/statix) |
+| Nix        | `.nix`                         | [nix-instantiate](https://nixos.org/manual/nix/stable/) and [statix](https://github.com/oppiliappan/statix) |
 | XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
 | HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
 | JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) |
@@ -172,6 +172,7 @@ The linters used are:
 - `sqlfluff` for SQL
 - `markdownlint-cli2` for Markdown
 - `statix` for Nix
+- `nix-instantiate` for Nix syntax checking
 - `xmllint` for XML
 - `tidy` for HTML
 - `jq` for JSON

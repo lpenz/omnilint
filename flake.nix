@@ -29,6 +29,7 @@
             { key = "luacheck"; path = "${pkgs.luaPackages.luacheck}/bin/luacheck"; }
             { key = "markdownlint-cli2"; path = "${pkgs.markdownlint-cli2}/bin/markdownlint-cli2"; }
             { key = "mypy"; path = "${pyPkgs}/bin/mypy"; }
+            { key = "nix-instantiate"; path = "${pkgs.nix}/bin/nix-instantiate"; }
             { key = "oxlint"; path = "${pkgs.oxlint}/bin/oxlint"; }
             { key = "perlcritic"; path = "${pkgs.perlPackages.PerlCritic}/bin/perlcritic"; }
             { key = "protolint"; path = "${pkgs.protolint}/bin/protolint"; }
@@ -101,6 +102,7 @@
               oxlint
               eslint
               pyright
+              nix
               protolint
               rubocop
               texlive.bin.chktex

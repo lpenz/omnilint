@@ -39,6 +39,7 @@ fn linters_not_found() {
          html-clean.html: [tidy] linter not found\n\
          json-clean.json: [jq] linter not found\n\
          markdown-clean.md: [markdownlint-cli2] linter not found\n\
+         nix-clean.nix: [nix-instantiate] linter not found\n\
          nix-clean.nix: [statix] linter not found\n\
          proto_clean.proto: [protolint] linter not found\n\
          python-clean.py: [flake8] linter not found\n\

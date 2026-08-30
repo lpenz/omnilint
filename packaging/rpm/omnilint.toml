@@ -46,6 +46,10 @@ mode = "wanted"
 [linters.mypy]
 mode = "wanted"
 
+# nix-instantiate: `nix`
+[linters.nix-instantiate]
+mode = "wanted"
+
 # pyright: `pyright`
 [linters.pyright]
 mode = "wanted"

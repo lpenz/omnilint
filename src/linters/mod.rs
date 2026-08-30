@@ -198,7 +198,11 @@ impl Linters {
                 Box::pin(oxlint.merge(eslint))
             }
             Filetype::Typescript => Box::pin(oxlint::JsOxlint::new(self, file)?),
-            Filetype::Nix => Box::pin(statix::NixStatix::new(self, file)?),
+            Filetype::Nix => {
+                let statix = statix::NixStatix::new(self, file)?;
+                let nix_compile = nix_compile::NixNixInstantiate::new(self, file)?;
+                Box::pin(statix.merge(nix_compile))
+            }
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -287,6 +291,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "luacheck",
     "markdownlint-cli2",
     "mypy",
+    "nix-instantiate",
     "oxlint",
     "perlcritic",
     "protolint",
@@ -319,6 +324,7 @@ pub mod ktlint;
 pub mod luacheck;
 pub mod markdownlint;
 pub mod mypy;
+pub mod nix_compile;
 pub mod oxlint;
 pub mod perlcritic;
 pub mod protolint;
