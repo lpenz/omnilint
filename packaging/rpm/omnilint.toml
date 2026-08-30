@@ -50,6 +50,10 @@ mode = "wanted"
 [linters.pyright]
 mode = "wanted"
 
+# py_compile: `python3`
+[linters.py_compile]
+mode = "wanted"
+
 # ruff: `ruff`
 [linters.ruff]
 mode = "wanted"

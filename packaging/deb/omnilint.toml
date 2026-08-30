@@ -46,6 +46,10 @@ mode = "wanted"
 [linters.pylint]
 mode = "wanted"
 
+# py_compile: `python3`
+[linters.py_compile]
+mode = "wanted"
+
 # pyright: `pyright`
 [linters.pyright]
 mode = "wanted"

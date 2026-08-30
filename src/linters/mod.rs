@@ -91,6 +91,7 @@ impl Linters {
     pub(crate) fn executable_for_linter<'a>(&'a self, name: &'a str) -> Cow<'a, str> {
         match name {
             "go-vet" => self.executable("go"),
+            "py_compile" => self.executable("python3"),
             _ => self.executable(name),
         }
     }
@@ -157,9 +158,17 @@ impl Linters {
                 let flake8 = flake8::PythonFlake8::new(self, file)?;
                 let ruff = ruff::PythonRuff::new(self, file)?;
                 let pylint = pylint::PythonPylint::new(self, file)?;
+                let py_compile = py_compile::PythonPyCompile::new(self, file)?;
                 let mypy = mypy::PythonMypy::new(self, file)?;
                 let pyright = pyright::PythonPyright::new(self, file)?;
-                Box::pin(flake8.merge(ruff).merge(pylint).merge(mypy).merge(pyright))
+                Box::pin(
+                    flake8
+                        .merge(ruff)
+                        .merge(pylint)
+                        .merge(py_compile)
+                        .merge(mypy)
+                        .merge(pyright),
+                )
             }
             Filetype::Shell => Box::pin(shellcheck::ShShellcheck::new(self, file)?),
             Filetype::Lua => Box::pin(luacheck::LuaLuacheck::new(self, file)?),
@@ -280,6 +289,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "oxlint",
     "perlcritic",
     "protolint",
+    "py_compile",
     "pylint",
     "pyright",
     "ruff",
@@ -310,6 +320,7 @@ pub mod mypy;
 pub mod oxlint;
 pub mod perlcritic;
 pub mod protolint;
+pub mod py_compile;
 pub mod pylint;
 pub mod pyright;
 pub mod rubocop;

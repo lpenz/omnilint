@@ -20,7 +20,7 @@ Statically analyse any file with the appropriate tools
 
 | File type  | Extensions / shebang          | Linters                              |
 |------------|-------------------------------|--------------------------------------|
-| Python     | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ... | [flake8](https://flake8.pycqa.org/), [mypy](https://mypy-lang.org/), [pylint](https://pylint.readthedocs.io/), [pyright](https://microsoft.github.io/pyright/) and [ruff](https://docs.astral.sh/ruff/) |
+| Python     | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ... | [flake8](https://flake8.pycqa.org/), [mypy](https://mypy-lang.org/), [py_compile](https://docs.python.org/3/library/py_compile.html), [pylint](https://pylint.readthedocs.io/), [pyright](https://microsoft.github.io/pyright/) and [ruff](https://docs.astral.sh/ruff/) |
 | YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) and [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows (`.github/workflows/`) |
 | Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/) |
 | Lua        | `.lua`                        | [luacheck](https://luacheck.readthedocs.io/) |
@@ -158,7 +158,7 @@ found:
 
 The linters used are:
 
-- `flake8`, `mypy`, `pylint`, `pyright` and `ruff` for Python
+- `flake8`, `mypy`, `py_compile`, `pylint`, `pyright` and `ruff` for Python
 - `yamllint` for YAML, and `actionlint` for GitHub Actions workflow files
   (under `.github/workflows/`)
 - `shellcheck` for Shell

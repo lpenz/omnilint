@@ -32,6 +32,7 @@
             { key = "oxlint"; path = "${pkgs.oxlint}/bin/oxlint"; }
             { key = "perlcritic"; path = "${pkgs.perlPackages.PerlCritic}/bin/perlcritic"; }
             { key = "protolint"; path = "${pkgs.protolint}/bin/protolint"; }
+            { key = "py_compile"; path = "${pkgs.python3}/bin/python3"; }
             { key = "pylint"; path = "${pyPkgs}/bin/pylint"; }
             { key = "pyright"; path = "${pkgs.pyright}/bin/pyright"; }
             { key = "ruff"; path = "${pkgs.ruff}/bin/ruff"; }
