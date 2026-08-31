@@ -21,21 +21,8 @@ jobs:
       - uses: cachix/install-nix-action@v31.11.1
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-      - name: Check flake outputs
-        run: nix flake check --no-build
-      - name: Build the omnilint installation
-        run: nix build ".#packages.x86_64-linux.default"
-      - name: Build the linter config and export it
-        run: |
-          cfg=$(nix build --no-link --print-out-paths \
-            ".#packages.x86_64-linux.omnilint-config")
-          echo "OMNILINT_CONFIG=$cfg" >> "$GITHUB_ENV"
-      - name: Show the generated omnilint.toml
-        run: cat "$OMNILINT_CONFIG"
-      - name: Run omnilint inventory through the wrapper
-        run: ./result/bin/omnilint inventory
-      - name: Test with linter tools
-        run: nix develop -c cargo test --features test-linter-tools
+      - name: Run the nix-flake test script
+        run: ./test-nix.sh
   commit-check:
     runs-on: ubuntu-latest
     steps:
