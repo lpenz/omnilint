@@ -34,6 +34,7 @@ pub enum Filetype {
     Typescript,
     Nix,
     Systemd,
+    Toml,
 }
 
 impl Filetype {
@@ -62,6 +63,7 @@ impl Filetype {
             Some("ts") => Filetype::Typescript,
             Some("proto") => Filetype::Proto,
             Some("nix") => Filetype::Nix,
+            Some("toml") => Filetype::Toml,
             Some(
                 "service" | "timer" | "socket" | "mount" | "path" | "target" | "slice" | "swap"
                 | "device" | "automount" | "scope",
@@ -331,6 +333,11 @@ mod tests {
             Filetype::detect(Path::new("no-such-file")),
             Filetype::Unknown
         );
+    }
+
+    #[test]
+    fn detect_toml() {
+        assert_eq!(Filetype::detect(Path::new("foo.toml")), Filetype::Toml);
     }
 
     #[test]

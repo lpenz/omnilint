@@ -98,6 +98,7 @@ fn all_tracked_files() {
          swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n\
          systemd-dirty.service:5: [systemd-analyze] Unknown key 'Foo' in section [Service], ignoring.\n\
          tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
+         toml-dirty.toml:6: [toml-parse] duplicate key `server` in document root\n\
          ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          xml-dirty.xml:3: [xmllint] expected '>'\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\

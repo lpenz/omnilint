@@ -222,6 +222,7 @@ impl Linters {
                 let nix_compile = nix_compile::NixNixInstantiate::new(self, file)?;
                 Box::pin(statix.merge(nix_compile))
             }
+            Filetype::Toml => Box::pin(toml::TomlTomlParse::new(self, file)?),
             _ => return Ok(None),
         };
         Ok(Some(stream))
@@ -302,6 +303,12 @@ pub(crate) fn poll_next(
     }
 }
 
+/// Returns true if `name` is a linter built into omnilint itself, which has
+/// no external executable and is therefore never "not found".
+pub(crate) fn is_builtin(name: &str) -> bool {
+    matches!(name, "toml-parse")
+}
+
 /// All supported linter names.
 pub(crate) const ALL_LINTERS: &[&str] = &[
     "actionlint",
@@ -338,6 +345,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "swiftlint",
     "systemd-analyze",
     "tidy",
+    "toml-parse",
     "xmllint",
     "yamllint",
     "zsh",
@@ -377,6 +385,7 @@ pub mod stylelint;
 pub mod swiftlint;
 pub mod systemd;
 pub mod tidy;
+pub mod toml;
 pub mod xmllint;
 pub mod yamllint;
 pub mod zsh;

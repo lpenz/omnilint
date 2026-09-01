@@ -22,7 +22,7 @@ mod repo;
 use crate::cli::LinterMode;
 use crate::entry::Entry;
 use crate::error::OmnilintError;
-use crate::linters::{ALL_LINTERS, Linters};
+use crate::linters::{ALL_LINTERS, Linters, is_builtin};
 
 use clap::Parser;
 use cli::OutputFormat;
@@ -96,8 +96,12 @@ async fn run_inventory(linters: &Linters) -> Result<(), OmnilintError> {
     let mut missing_required = 0;
     for &name in ALL_LINTERS {
         let mode = linters.resolve_mode(name);
-        let executable = linters.executable_for_linter(name);
-        let version = get_version(executable.as_ref()).await;
+        let version = if is_builtin(name) {
+            "built-in".to_string()
+        } else {
+            let executable = linters.executable_for_linter(name);
+            get_version(executable.as_ref()).await
+        };
         if mode == LinterMode::Required && version == "not found" {
             eprintln!("error: required linter '{name}' not found");
             missing_required += 1;

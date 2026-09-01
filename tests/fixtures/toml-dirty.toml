@@ -1,0 +1,7 @@
+title = "TOML Example"
+
+[server]
+port = 8080
+
+[server]
+name = "dup"

@@ -1,0 +1,9 @@
+title = "TOML Example"
+
+[owner]
+name = "Tom"
+
+[servers]
+
+  [servers.alpha]
+  ip = "10.0.0.1"

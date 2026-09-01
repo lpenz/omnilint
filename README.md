@@ -44,6 +44,7 @@ Statically analyse any file with the appropriate tools
 | JavaScript | `.js`                          | [oxlint](https://oxc.rs/) and [eslint](https://eslint.org/) |
 | TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
 | systemd    | `.service`, `.timer`, `.socket`, ... | [systemd-analyze verify](https://www.freedesktop.org/software/systemd/man/latest/systemd-analyze.html) |
+| TOML       | `.toml`                        | built-in [toml](https://crates.io/crates/toml) parser |
 
 ## Usage
 
@@ -187,6 +188,8 @@ The linters used are:
   reports findings when an [eslint configuration file](https://eslint.org/docs/latest/use/configure/)
   is present in the directory tree
 - `systemd-analyze verify` for systemd unit files
+- a built-in [toml](https://crates.io/crates/toml) parser for TOML, requiring
+  no external tool
 
 ## Installation
 
