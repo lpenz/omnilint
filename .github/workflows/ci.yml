@@ -45,7 +45,7 @@ jobs:
       publish_packagecloud_repository_deb: |
         ["debian/debian/trixie",
          "debian/debian/forky",
-         "ubuntu/ubuntu/noble"]
+         "ubuntu/ubuntu/resolute"]
       publish_packagecloud_repository_rpm: |
         ["rpm/rpm_any/rpm_any"]
     secrets:
