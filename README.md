@@ -30,7 +30,7 @@ Statically analyse any file with the appropriate tools
 | Kotlin     | `.kt`, `.kts`                  | [ktlint](https://pinterest.github.io/ktlint/) |
 | Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
 | SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
-| Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
+| Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [proselint](https://github.com/amperser/proselint) |
 | Nix        | `.nix`                         | [nix-instantiate](https://nixos.org/manual/nix/stable/) and [statix](https://github.com/oppiliappan/statix) |
 | XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
 | HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
@@ -171,7 +171,7 @@ The linters used are:
 - `ktlint` for Kotlin
 - `swiftlint` for Swift
 - `sqlfluff` for SQL
-- `markdownlint-cli2` for Markdown
+- `markdownlint-cli2` and `proselint` for Markdown
 - `statix` for Nix
 - `nix-instantiate` for Nix syntax checking
 - `xmllint` for XML

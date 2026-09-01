@@ -58,6 +58,10 @@ mode = "wanted"
 [linters.pyright]
 mode = "wanted"
 
+# proselint: `proselint`
+[linters.proselint]
+mode = "wanted"
+
 # py_compile: `python3`
 [linters.py_compile]
 mode = "wanted"

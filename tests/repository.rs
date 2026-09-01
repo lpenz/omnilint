@@ -52,6 +52,10 @@ fn all_tracked_files() {
          luau-dirty.luau:2: [luau-analyze] Expected this to be 'number', but got 'string'\n\
          markdown-dirty.md:4: [markdownlint-cli2] Lists should be surrounded by blank lines [Context: \"- item one\"]\n\
          markdown-dirty.md:5: [markdownlint-cli2] Trailing spaces [Expected: 0 or 2; Actual: 3]\n\
+         markdown-prose-dirty.md:3: [proselint] uncomparables: Comparison of an uncomparable: 'very unique' is not comparable.\n\
+         markdown-prose-dirty.md:3: [proselint] weasel_words.very: Substitute 'damn' every time you're inclined to write 'very'; your editor will delete it and the writing will be just as it should be.\n\
+         markdown-prose-dirty.md:5: [proselint] misc.greylist: Use of 'utilize'. Do you know anyone who needs to utilize the word utilize?\n\
+         markdown-prose-dirty.md:6: [proselint] redundancy.misc.after_the_deadline: Redundancy. Use 'every' instead of 'each and every'.\n\
          nix-compile-dirty.nix:1: [nix-instantiate] syntax error\n\
          nix-compile-dirty.nix:1: [statix] Unexpected TOKEN_R_BRACE at 18..19, wanted any of [TOKEN_SEMICOLON]\n\
          nix-compile-dirty.nix:1: [statix] Unexpected end of file\n\

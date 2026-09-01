@@ -192,7 +192,11 @@ impl Linters {
             Filetype::Kotlin => Box::pin(ktlint::KotlinKtlint::new(self, file)?),
             Filetype::Swift => Box::pin(swiftlint::SwiftSwiftlint::new(self, file)?),
             Filetype::Sql => Box::pin(sqlfluff::SqlSqlfluff::new(self, file)?),
-            Filetype::Markdown => Box::pin(markdownlint::MarkdownMarkdownlint::new(self, file)?),
+            Filetype::Markdown => {
+                let markdownlint = markdownlint::MarkdownMarkdownlint::new(self, file)?;
+                let proselint = proselint::MarkdownProselint::new(self, file)?;
+                Box::pin(markdownlint.merge(proselint))
+            }
             Filetype::Xml => Box::pin(xmllint::XmlXmllint::new(self, file)?),
             Filetype::Html => Box::pin(tidy::HtmlTidy::new(self, file)?),
             Filetype::Json => Box::pin(jq::JsonJq::new(self, file)?),
@@ -320,6 +324,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "oxlint",
     "perlcritic",
     "protolint",
+    "proselint",
     "py_compile",
     "pylint",
     "pyright",
@@ -357,6 +362,7 @@ pub mod mypy;
 pub mod nix_compile;
 pub mod oxlint;
 pub mod perlcritic;
+pub mod proselint;
 pub mod protolint;
 pub mod py_compile;
 pub mod pylint;

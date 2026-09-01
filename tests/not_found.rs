@@ -49,6 +49,7 @@ fn linters_not_found() {
          lua-clean.lua: [luacheck] linter not found\n\
          lua-clean.lua: [luau-analyze] linter not found\n\
          markdown-clean.md: [markdownlint-cli2] linter not found\n\
+         markdown-clean.md: [proselint] linter not found\n\
          nix-clean.nix: [nix-instantiate] linter not found\n\
          nix-clean.nix: [statix] linter not found\n\
          proto_clean.proto: [protolint] linter not found\n\

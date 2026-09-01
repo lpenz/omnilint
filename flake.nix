@@ -36,6 +36,7 @@
             { key = "oxlint"; path = "${pkgs.oxlint}/bin/oxlint"; }
             { key = "perlcritic"; path = "${pkgs.perlPackages.PerlCritic}/bin/perlcritic"; }
             { key = "protolint"; path = "${pkgs.protolint}/bin/protolint"; }
+            { key = "proselint"; path = "${pkgs.proselint}/bin/proselint"; }
             { key = "py_compile"; path = "${pkgs.python3}/bin/python3"; }
             { key = "pylint"; path = "${pyPkgs}/bin/pylint"; }
             { key = "pyright"; path = "${pkgs.pyright}/bin/pyright"; }
@@ -109,6 +110,7 @@
               pyright
               nix
               protolint
+              proselint
               systemd
               rubocop
               texlive.bin.chktex

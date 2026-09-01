@@ -62,6 +62,10 @@ mode = "wanted"
 [linters.pyright]
 mode = "wanted"
 
+# proselint: `python3-proselint`
+[linters.proselint]
+mode = "wanted"
+
 # rubocop: `rubocop`
 [linters.rubocop]
 mode = "wanted"
