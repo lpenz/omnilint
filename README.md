@@ -34,7 +34,7 @@ Statically analyse any file with the appropriate tools
 | Nix        | `.nix`                         | [nix-instantiate](https://nixos.org/manual/nix/stable/) and [statix](https://github.com/oppiliappan/statix) |
 | XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
 | HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
-| JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) |
+| JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) and a built-in parser |
 | C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
 | Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
 | Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
@@ -177,7 +177,7 @@ The linters used are:
 - `nix-instantiate` for Nix syntax checking
 - `xmllint` for XML
 - `tidy` for HTML
-- `jq` for JSON
+- `jq` for JSON, plus a built-in [serde_json](https://crates.io/crates/serde_json) parser
 - `cppcheck` for C/C++
 - `protolint` for Protobuf
 - `staticcheck` and `go vet` for Go

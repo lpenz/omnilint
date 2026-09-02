@@ -199,7 +199,11 @@ impl Linters {
             }
             Filetype::Xml => Box::pin(xmllint::XmlXmllint::new(self, file)?),
             Filetype::Html => Box::pin(tidy::HtmlTidy::new(self, file)?),
-            Filetype::Json => Box::pin(jq::JsonJq::new(self, file)?),
+            Filetype::Json => {
+                let jq = jq::JsonJq::new(self, file)?;
+                let json_parse = json_parse::JsonJsonParse::new(self, file)?;
+                Box::pin(jq.merge(json_parse))
+            }
             Filetype::C => Box::pin(cppcheck::CCppcheck::new(self, file)?),
             Filetype::Proto => Box::pin(protolint::ProtoProtolint::new(self, file)?),
             Filetype::Go => {
@@ -306,7 +310,7 @@ pub(crate) fn poll_next(
 /// Returns true if `name` is a linter built into omnilint itself, which has
 /// no external executable and is therefore never "not found".
 pub(crate) fn is_builtin(name: &str) -> bool {
-    matches!(name, "toml-parse")
+    matches!(name, "toml-parse" | "json-parse")
 }
 
 /// All supported linter names.
@@ -321,6 +325,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "go-vet",
     "hadolint",
     "jq",
+    "json-parse",
     "ktlint",
     "luac",
     "luacheck",
@@ -361,6 +366,7 @@ pub mod flake8;
 pub mod govet;
 pub mod hadolint;
 pub mod jq;
+pub mod json_parse;
 pub mod ktlint;
 pub mod luac;
 pub mod luacheck;

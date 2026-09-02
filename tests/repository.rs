@@ -47,6 +47,7 @@ fn all_tracked_files() {
          js-dirty.js:1: [eslint] Parsing error: Unexpected keyword 'debugger'\n\
          js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          json-dirty.json:1: [jq] Unmatched '}'\n\
+         json-dirty.json:1: [json-parse] expected value at line 1 column 15\n\
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\
          lua-dirty.lua:1: [luau-analyze] Variable 'unused' is never used; prefix with '_' to silence\n\
          luau-dirty.luau:2: [luau-analyze] Expected this to be 'number', but got 'string'\n\
