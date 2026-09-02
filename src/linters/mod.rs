@@ -197,7 +197,11 @@ impl Linters {
                 let proselint = proselint::MarkdownProselint::new(self, file)?;
                 Box::pin(markdownlint.merge(proselint))
             }
-            Filetype::Xml => Box::pin(xmllint::XmlXmllint::new(self, file)?),
+            Filetype::Xml => {
+                let xmllint = xmllint::XmlXmllint::new(self, file)?;
+                let xml_parse = xml_parse::XmlXmlParse::new(self, file)?;
+                Box::pin(xmllint.merge(xml_parse))
+            }
             Filetype::Html => Box::pin(tidy::HtmlTidy::new(self, file)?),
             Filetype::Json => {
                 let jq = jq::JsonJq::new(self, file)?;
@@ -310,7 +314,7 @@ pub(crate) fn poll_next(
 /// Returns true if `name` is a linter built into omnilint itself, which has
 /// no external executable and is therefore never "not found".
 pub(crate) fn is_builtin(name: &str) -> bool {
-    matches!(name, "toml-parse" | "json-parse")
+    matches!(name, "toml-parse" | "json-parse" | "xml-parse")
 }
 
 /// All supported linter names.
@@ -352,6 +356,7 @@ pub(crate) const ALL_LINTERS: &[&str] = &[
     "tidy",
     "toml-parse",
     "xmllint",
+    "xml-parse",
     "yamllint",
     "zsh",
 ];
@@ -392,6 +397,7 @@ pub mod swiftlint;
 pub mod systemd;
 pub mod tidy;
 pub mod toml;
+pub mod xml_parse;
 pub mod xmllint;
 pub mod yamllint;
 pub mod zsh;

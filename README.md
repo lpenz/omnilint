@@ -32,7 +32,7 @@ Statically analyse any file with the appropriate tools
 | SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
 | Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [proselint](https://github.com/amperser/proselint) |
 | Nix        | `.nix`                         | [nix-instantiate](https://nixos.org/manual/nix/stable/) and [statix](https://github.com/oppiliappan/statix) |
-| XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) |
+| XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) and a built-in parser |
 | HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
 | JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) and a built-in parser |
 | C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
@@ -175,7 +175,7 @@ The linters used are:
 - `markdownlint-cli2` and `proselint` for Markdown
 - `statix` for Nix
 - `nix-instantiate` for Nix syntax checking
-- `xmllint` for XML
+- `xmllint` for XML, plus a built-in [quick-xml](https://crates.io/crates/quick-xml) parser
 - `tidy` for HTML
 - `jq` for JSON, plus a built-in [serde_json](https://crates.io/crates/serde_json) parser
 - `cppcheck` for C/C++

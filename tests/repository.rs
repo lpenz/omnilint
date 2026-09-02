@@ -101,7 +101,8 @@ fn all_tracked_files() {
          tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
          toml-dirty.toml:6: [toml-parse] duplicate key `server` in document root\n\
          ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
-         xml-dirty.xml:3: [xmllint] expected '>'\n\
+         xml-dirty.xml: [xml-parse] ill-formed document: expected `</child>`, but `</b>` was found\n\
+         xml-dirty.xml:2: [xmllint] Opening and ending tag mismatch: child line 2 and b\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\
          yaml-dirty.yaml:1: [yamllint] trailing spaces\n\
          yaml-dirty.yaml:2: [yamllint] duplication of key \"foo\" in mapping\n\
