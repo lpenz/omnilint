@@ -26,32 +26,30 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters};
+use crate::linters::{CommandLinter, Linters, Spec, into_entries};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct SystemdAnalyze {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct SystemdAnalyze(CommandLinter);
 
 impl SystemdAnalyze {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("systemd-analyze");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("verify");
-        cmd.arg(filename);
-        let inner = linters.spawn("systemd-analyze", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "systemd-analyze",
+                args: &["verify"],
+                findings_on_stderr: true,
+                parse: |f, l| into_entries(f, l, Self::parse_line),
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
@@ -75,21 +73,7 @@ impl SystemdAnalyze {
     }
 }
 
-impl Stream for SystemdAnalyze {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "systemd-analyze",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            true,
-            cx,
-        )
-    }
-}
+linter_stream!(SystemdAnalyze);
 
 #[cfg(test)]
 mod tests {

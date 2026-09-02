@@ -21,53 +21,36 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters, parse_line_standard};
+use crate::linters::{CommandLinter, Linters, Spec, parse_line_standard};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct GoStaticcheck {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct GoStaticcheck(CommandLinter);
 
 impl GoStaticcheck {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("staticcheck");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg(filename);
-        let inner = linters.spawn("staticcheck", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        parse_line_standard(filename, "staticcheck", line)
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "staticcheck",
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
 
-impl Stream for GoStaticcheck {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "staticcheck",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    parse_line_standard(filename, "staticcheck", line)
 }
+
+linter_stream!(GoStaticcheck);
 
 #[cfg(test)]
 mod tests {
@@ -75,27 +58,26 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entry =
-            GoStaticcheck::parse_line(Path::new("test.go"), "test.go:10:2: undefined: something")
-                .unwrap();
+        let entries = parse_line(Path::new("test.go"), "test.go:10:2: undefined: something");
+        assert_eq!(entries.len(), 1);
         assert_eq!(
-            entry.to_string(),
+            entries[0].to_string(),
             "test.go:10: [staticcheck] undefined: something"
         );
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(GoStaticcheck::parse_line(Path::new("test.go"), "").is_none());
+        assert!(parse_line(Path::new("test.go"), "").is_empty());
     }
 
     #[test]
     fn parse_line_too_few_parts() {
-        assert!(GoStaticcheck::parse_line(Path::new("test.go"), "no colons here").is_none());
+        assert!(parse_line(Path::new("test.go"), "no colons here").is_empty());
     }
 
     #[test]
     fn parse_line_non_numeric() {
-        assert!(GoStaticcheck::parse_line(Path::new("test.go"), "test.go:x:y: msg").is_none());
+        assert!(parse_line(Path::new("test.go"), "test.go:x:y: msg").is_empty());
     }
 }

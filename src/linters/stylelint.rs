@@ -23,54 +23,38 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters, parse_line_standard};
+use crate::linters::{CommandLinter, Linters, Spec, parse_line_standard};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct CssStylelint {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct CssStylelint(CommandLinter);
 
 impl CssStylelint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("stylelint");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("--formatter=unix");
-        cmd.arg(filename);
-        let inner = linters.spawn("stylelint", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        parse_line_standard(filename, "stylelint", line)
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "stylelint",
+                args: &["--formatter=unix"],
+                findings_on_stderr: true,
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
 
-impl Stream for CssStylelint {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "stylelint",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            true,
-            cx,
-        )
-    }
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    parse_line_standard(filename, "stylelint", line)
 }
+
+linter_stream!(CssStylelint);
 
 #[cfg(test)]
 mod tests {
@@ -78,29 +62,29 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entry = CssStylelint::parse_line(
+        let entries = parse_line(
             Path::new("test.css"),
             "test.css:1:1: Unexpected empty block (block-no-empty)",
-        )
-        .unwrap();
+        );
+        assert_eq!(entries.len(), 1);
         assert_eq!(
-            entry.to_string(),
+            entries[0].to_string(),
             "test.css:1: [stylelint] Unexpected empty block (block-no-empty)"
         );
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(CssStylelint::parse_line(Path::new("test.css"), "").is_none());
+        assert!(parse_line(Path::new("test.css"), "").is_empty());
     }
 
     #[test]
     fn parse_line_too_few_parts() {
-        assert!(CssStylelint::parse_line(Path::new("test.css"), "no colons here").is_none());
+        assert!(parse_line(Path::new("test.css"), "no colons here").is_empty());
     }
 
     #[test]
     fn parse_line_non_numeric() {
-        assert!(CssStylelint::parse_line(Path::new("test.css"), "test.css:x:y: msg").is_none());
+        assert!(parse_line(Path::new("test.css"), "test.css:x:y: msg").is_empty());
     }
 }

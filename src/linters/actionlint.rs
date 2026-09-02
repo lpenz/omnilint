@@ -26,56 +26,41 @@
 //! The template iterates over the slice of errors, so it must use `range`.
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters, parse_line_standard};
+use crate::linters::{CommandLinter, Linters, Spec, parse_line_standard};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct GithubWorkflowActionlint {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct GithubWorkflowActionlint(CommandLinter);
 
 impl GithubWorkflowActionlint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("actionlint");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("-no-color");
-        cmd.arg("-format");
-        cmd.arg("{{range .}}{{.Filepath}}:{{.Line}}:{{.Column}}: {{.Message}}\\n{{end}}");
-        cmd.arg(filename);
-        let inner = linters.spawn("actionlint", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        parse_line_standard(filename, "actionlint", line)
-    }
-}
-
-impl Stream for GithubWorkflowActionlint {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "actionlint",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "actionlint",
+                args: &[
+                    "-no-color",
+                    "-format",
+                    "{{range .}}{{.Filepath}}:{{.Line}}:{{.Column}}: {{.Message}}\\n{{end}}",
+                ],
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
+
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    parse_line_standard(filename, "actionlint", line)
+}
+
+linter_stream!(GithubWorkflowActionlint);
 
 #[cfg(test)]
 mod tests {
@@ -83,26 +68,24 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entry = GithubWorkflowActionlint::parse_line(
+        let entries = parse_line(
             Path::new(".github/workflows/ci.yml"),
             ".github/workflows/ci.yml:8:9: step must run script with \"run\" section or run action with \"uses\" section",
-        )
-        .unwrap();
+        );
+        assert_eq!(entries.len(), 1);
         assert_eq!(
-            entry.to_string(),
+            entries[0].to_string(),
             ".github/workflows/ci.yml:8: [actionlint] step must run script with \"run\" section or run action with \"uses\" section"
         );
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(GithubWorkflowActionlint::parse_line(Path::new("x.yml"), "").is_none());
+        assert!(parse_line(Path::new("x.yml"), "").is_empty());
     }
 
     #[test]
     fn parse_line_non_numeric() {
-        assert!(
-            GithubWorkflowActionlint::parse_line(Path::new("x.yml"), "x.yml:x:y: msg").is_none()
-        );
+        assert!(parse_line(Path::new("x.yml"), "x.yml:x:y: msg").is_empty());
     }
 }

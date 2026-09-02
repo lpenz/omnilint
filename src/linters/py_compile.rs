@@ -20,33 +20,31 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters};
+use crate::linters::{CommandLinter, Executable, Linters, Spec, into_entries};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct PythonPyCompile {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct PythonPyCompile(CommandLinter);
 
 impl PythonPyCompile {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable_for_linter("py_compile");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("-m");
-        cmd.arg("py_compile");
-        cmd.arg(filename);
-        let inner = linters.spawn("py_compile", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "py_compile",
+                args: &["-m", "py_compile"],
+                findings_on_stderr: true,
+                exec: Executable::Mapped,
+                parse: |f, l| into_entries(f, l, Self::parse_line),
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
@@ -62,21 +60,7 @@ impl PythonPyCompile {
     }
 }
 
-impl Stream for PythonPyCompile {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "py_compile",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            true,
-            cx,
-        )
-    }
-}
+linter_stream!(PythonPyCompile);
 
 #[cfg(test)]
 mod tests {

@@ -25,20 +25,14 @@
 //! number (e.g. the notice emitted for ignored files) are skipped.
 
 use crate::entry::Entry;
-use crate::linters::Linter;
-use crate::linters::Linters;
+use crate::linters::{CommandLinter, Linters, Spec};
 
 use serde::Deserialize;
-use std::collections::VecDeque;
 use std::path::Path;
-use std::path::PathBuf;
 use std::pin::Pin;
-use std::task::Context;
-use std::task::Poll;
+use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
-use tokio_process_stream::Item as ProcessItem;
 use tokio_stream::Stream;
 
 #[derive(Deserialize)]
@@ -56,86 +50,54 @@ struct EsLintMessage {
     rule_id: Option<String>,
 }
 
-pub struct JsEslint {
-    filename: PathBuf,
-    inner: Linter,
-    pending: VecDeque<Entry>,
-}
+pub struct JsEslint(CommandLinter);
 
 impl JsEslint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("eslint");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("--format=json");
-        cmd.arg(filename);
-        let inner = linters.spawn("eslint", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-            pending: VecDeque::new(),
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
-        let Ok(results) = serde_json::from_str::<Vec<EsLintResult>>(line) else {
-            return Vec::new();
-        };
-        let mut entries = Vec::new();
-        for result in results {
-            for message in result.messages {
-                let Some(line_num) = message.line else {
-                    // Messages without a location, e.g. the notice emitted
-                    // for ignored files, are not findings.
-                    continue;
-                };
-                let msg = match &message.rule_id {
-                    Some(rule_id) => format!("{} ({rule_id})", message.message),
-                    None => message.message.clone(),
-                };
-                let entry = match message.column {
-                    Some(col_num) if col_num > 0 => {
-                        Entry::new_line_col(filename, "eslint", &msg, line_num, col_num)
-                    }
-                    _ => Entry::new_line(filename, "eslint", &msg, line_num),
-                };
-                if let Ok(entry) = entry {
-                    entries.push(entry);
-                }
-            }
-        }
-        entries
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "eslint",
+                args: &["--format=json"],
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
 
-impl Stream for JsEslint {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Entry>> {
-        let this = self.get_mut();
-        loop {
-            if let Some(entry) = this.pending.pop_front() {
-                return Poll::Ready(Some(entry));
-            }
-            match &mut this.inner {
-                Linter::Running(stream) => match Pin::new(&mut **stream).poll_next(cx) {
-                    Poll::Ready(Some(ProcessItem::Stdout(line))) => {
-                        this.pending.extend(Self::parse_line(&this.filename, &line));
-                    }
-                    Poll::Ready(Some(_)) => continue,
-                    Poll::Ready(None) => return Poll::Ready(None),
-                    Poll::Pending => return Poll::Pending,
-                },
-                Linter::NotFound => {
-                    this.inner = Linter::Done;
-                    return Poll::Ready(Some(
-                        Entry::new(&this.filename, "eslint", "linter not found").unwrap(),
-                    ));
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    let Ok(results) = serde_json::from_str::<Vec<EsLintResult>>(line) else {
+        return Vec::new();
+    };
+    let mut entries = Vec::new();
+    for result in results {
+        for message in result.messages {
+            let Some(line_num) = message.line else {
+                // Messages without a location, e.g. the notice emitted
+                // for ignored files, are not findings.
+                continue;
+            };
+            let msg = match &message.rule_id {
+                Some(rule_id) => format!("{} ({rule_id})", message.message),
+                None => message.message.clone(),
+            };
+            let entry = match message.column {
+                Some(col_num) if col_num > 0 => {
+                    Entry::new_line_col(filename, "eslint", &msg, line_num, col_num)
                 }
-                Linter::Done => return Poll::Ready(None),
+                _ => Entry::new_line(filename, "eslint", &msg, line_num),
+            };
+            if let Ok(entry) = entry {
+                entries.push(entry);
             }
         }
     }
+    entries
 }
+
+linter_stream!(JsEslint);
 
 #[cfg(test)]
 mod tests {
@@ -143,7 +105,7 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entries = JsEslint::parse_line(
+        let entries = parse_line(
             Path::new("test.js"),
             r#"[{"filePath":"test.js","messages":[{"ruleId":"no-unused-vars","severity":2,"message":"'x' is assigned a value but never used.","line":1,"column":5}]}]"#,
         );
@@ -156,7 +118,7 @@ mod tests {
 
     #[test]
     fn parse_line_multiple_messages() {
-        let entries = JsEslint::parse_line(
+        let entries = parse_line(
             Path::new("test.js"),
             r#"[{"filePath":"test.js","messages":[
                 {"ruleId":"a-rule","severity":2,"message":"first","line":1,"column":1},
@@ -170,7 +132,7 @@ mod tests {
 
     #[test]
     fn parse_line_skips_messages_without_location() {
-        let entries = JsEslint::parse_line(
+        let entries = parse_line(
             Path::new("test.ts"),
             r#"[{"filePath":"test.ts","messages":[{"ruleId":null,"severity":1,"message":"File ignored because no matching configuration was supplied."}]}]"#,
         );
@@ -179,11 +141,11 @@ mod tests {
 
     #[test]
     fn parse_line_invalid_json() {
-        assert!(JsEslint::parse_line(Path::new("test.js"), "not json").is_empty());
+        assert!(parse_line(Path::new("test.js"), "not json").is_empty());
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(JsEslint::parse_line(Path::new("test.js"), "").is_empty());
+        assert!(parse_line(Path::new("test.js"), "").is_empty());
     }
 }

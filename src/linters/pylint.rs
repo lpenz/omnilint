@@ -23,33 +23,29 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters};
+use crate::linters::{CommandLinter, Linters, Spec, into_entries};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct PythonPylint {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct PythonPylint(CommandLinter);
 
 impl PythonPylint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("pylint");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("--output-format=text");
-        cmd.arg("--score=no");
-        cmd.arg(filename);
-        let inner = linters.spawn("pylint", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "pylint",
+                args: &["--output-format=text", "--score=no"],
+                parse: |f, l| into_entries(f, l, Self::parse_line),
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
@@ -73,21 +69,7 @@ impl PythonPylint {
     }
 }
 
-impl Stream for PythonPylint {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "pylint",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
-}
+linter_stream!(PythonPylint);
 
 #[cfg(test)]
 mod tests {

@@ -28,33 +28,30 @@
 //! by the parser. The severity prefix is discarded, keeping the message.
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters};
+use crate::linters::{CommandLinter, Linters, Spec, into_entries};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct CCppcheck {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct CCppcheck(CommandLinter);
 
 impl CCppcheck {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("cppcheck");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("--quiet");
-        cmd.arg("--enable=warning");
-        cmd.arg(filename);
-        let inner = linters.spawn("cppcheck", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "cppcheck",
+                args: &["--quiet", "--enable=warning"],
+                findings_on_stderr: true,
+                parse: |f, l| into_entries(f, l, Self::parse_line),
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
@@ -75,21 +72,7 @@ impl CCppcheck {
     }
 }
 
-impl Stream for CCppcheck {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "cppcheck",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            true,
-            cx,
-        )
-    }
-}
+linter_stream!(CCppcheck);
 
 #[cfg(test)]
 mod tests {

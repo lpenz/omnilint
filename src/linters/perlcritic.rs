@@ -24,56 +24,37 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters, parse_line_standard};
+use crate::linters::{CommandLinter, Linters, Spec, parse_line_standard};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct PerlPerlcritic {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct PerlPerlcritic(CommandLinter);
 
 impl PerlPerlcritic {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("perlcritic");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("--quiet");
-        cmd.arg("--verbose");
-        cmd.arg("%f:%l:%c: %m\n");
-        cmd.arg(filename);
-        let inner = linters.spawn("perlcritic", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        parse_line_standard(filename, "perlcritic", line)
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "perlcritic",
+                args: &["--quiet", "--verbose", "%f:%l:%c: %m\n"],
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
 
-impl Stream for PerlPerlcritic {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "perlcritic",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    parse_line_standard(filename, "perlcritic", line)
 }
+
+linter_stream!(PerlPerlcritic);
 
 #[cfg(test)]
 mod tests {
@@ -81,29 +62,29 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entry = PerlPerlcritic::parse_line(
+        let entries = parse_line(
             Path::new("test.pl"),
             "test.pl:2:1: Code before strictures are enabled",
-        )
-        .unwrap();
+        );
+        assert_eq!(entries.len(), 1);
         assert_eq!(
-            entry.to_string(),
+            entries[0].to_string(),
             "test.pl:2: [perlcritic] Code before strictures are enabled"
         );
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(PerlPerlcritic::parse_line(Path::new("test.pl"), "").is_none());
+        assert!(parse_line(Path::new("test.pl"), "").is_empty());
     }
 
     #[test]
     fn parse_line_too_few_parts() {
-        assert!(PerlPerlcritic::parse_line(Path::new("test.pl"), "no colons here").is_none());
+        assert!(parse_line(Path::new("test.pl"), "no colons here").is_empty());
     }
 
     #[test]
     fn parse_line_non_numeric() {
-        assert!(PerlPerlcritic::parse_line(Path::new("test.pl"), "test.pl:x:y: msg").is_none());
+        assert!(parse_line(Path::new("test.pl"), "test.pl:x:y: msg").is_empty());
     }
 }

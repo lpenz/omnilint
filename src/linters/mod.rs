@@ -9,10 +9,11 @@ use crate::filetype::Filetype;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::collections::VecDeque;
 use std::io::ErrorKind;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::pin::Pin;
-use std::task::{Context, Poll, ready};
+use std::task::{Context, Poll};
 
 use tokio::process::Command;
 use tokio_process_stream::{Item as ProcessItem, ProcessLineStream};
@@ -254,61 +255,171 @@ fn is_luau(file: &Path) -> bool {
 }
 
 /// Parses a `filename:line:col: message` line (as emitted by flake8 and ruff)
-/// into an [`Entry`], or `None` to skip the line.
-fn parse_line_standard(filename: &Path, linter: &str, line: &str) -> Option<Entry> {
+/// into zero or one [`Entry`].
+fn parse_line_standard(filename: &Path, linter: &str, line: &str) -> Vec<Entry> {
     let line = line.trim();
     let parts: Vec<&str> = line.splitn(4, ':').collect();
-    let line_num: u32 = parts.get(1)?.parse().ok()?;
-    let col_num: u32 = parts.get(2)?.parse().ok()?;
-    let msg = parts.get(3)?.trim();
+    let Some(line_num) = parts.get(1).and_then(|s| s.parse().ok()) else {
+        return Vec::new();
+    };
+    let Some(col_num) = parts.get(2).and_then(|s| s.parse().ok()) else {
+        return Vec::new();
+    };
+    let Some(msg) = parts.get(3) else {
+        return Vec::new();
+    };
+    let msg = msg.trim();
     if line_num == 0 {
-        return Some(Entry::new(filename, linter, msg).unwrap());
+        return vec![Entry::new(filename, linter, msg).unwrap()];
     }
-    Some(Entry::new_line_col(filename, linter, msg, line_num, col_num).unwrap())
+    vec![Entry::new_line_col(filename, linter, msg, line_num, col_num).unwrap()]
 }
 
-/// Polls a linter's `inner` process stream, converting its lines into
-/// [`Entry`] values via `parse` and discarding the lines on the other stream.
-/// `findings_on_stderr` selects which of the process streams holds the
-/// findings. If the linter binary was not found on the `PATH`, emits a single
-/// [`Entry`] reporting that before the stream ends.
-pub(crate) fn poll_next(
-    name: &'static str,
-    filename: &Path,
-    inner: &mut Linter,
-    parse: fn(&Path, &str) -> Option<Entry>,
-    findings_on_stderr: bool,
-    cx: &mut Context<'_>,
-) -> Poll<Option<Entry>> {
-    match inner {
-        Linter::Running(stream) => loop {
-            match ready!(Pin::new(&mut *stream).poll_next(cx)) {
-                Some(ProcessItem::Stdout(line)) => {
-                    if !findings_on_stderr && let Some(entry) = parse(filename, &line) {
-                        return Poll::Ready(Some(entry));
-                    }
-                }
-                Some(ProcessItem::Stderr(line)) => {
-                    if findings_on_stderr && let Some(entry) = parse(filename, &line) {
-                        return Poll::Ready(Some(entry));
-                    }
-                }
-                Some(ProcessItem::Done(_)) => {
-                    // Linters end in error when they find violations; the output is
-                    // already on stdout, so we can just ignore the exit status.
-                    continue;
-                }
-                None => return Poll::Ready(None),
-            }
-        },
-        Linter::NotFound => {
-            *inner = Linter::Done;
-            Poll::Ready(Some(
-                Entry::new(filename, name, "linter not found").unwrap(),
-            ))
+/// Selects how the executable for a linter is resolved.
+#[derive(Clone, Copy)]
+pub(crate) enum Executable {
+    /// The executable is looked up by the linter's own name.
+    Named,
+    /// The executable is resolved through [`Linters::executable_for_linter`],
+    /// for linters that run through a differently-named binary.
+    Mapped,
+}
+
+/// The data that describes an external linter: how to run it and how to turn
+/// each line of its output into [`Entry`] values.
+#[derive(Clone, Copy)]
+pub(crate) struct Spec {
+    /// The linter name, used for PATH/config lookup, mode resolution and
+    /// entry reporting.
+    pub name: &'static str,
+    /// Static arguments passed to the tool before the target filename.
+    pub args: &'static [&'static str],
+    /// Arguments computed at spawn time and inserted after `args` but before
+    /// the target filename. Used for tools that take dynamically-derived
+    /// options; most linters leave this at its default no-op.
+    pub extra_args: fn() -> Vec<String>,
+    /// Whether the findings are emitted on stderr rather than on stdout.
+    pub findings_on_stderr: bool,
+    /// How to resolve the executable to run.
+    pub exec: Executable,
+    /// Parses one line of the tool's output into zero or more entries.
+    pub parse: fn(&Path, &str) -> Vec<Entry>,
+}
+
+impl Default for Spec {
+    fn default() -> Self {
+        Self {
+            name: "",
+            args: &[],
+            extra_args: || Vec::new(),
+            findings_on_stderr: false,
+            exec: Executable::Named,
+            parse: |_, _| Vec::new(),
         }
-        Linter::Done => Poll::Ready(None),
     }
+}
+
+/// A shared stream implementation for every linter that runs an external tool.
+///
+/// It spawns the tool with [`Spec`], polls its output lines, converts each
+/// line into [`Entry`] values with [`Spec::parse`], and buffers the multiple
+/// entries that a single line may produce. If the tool binary was not found on
+/// the `PATH`, it emits a single [`Entry`] reporting that before the stream
+/// ends.
+pub(crate) struct CommandLinter {
+    filename: PathBuf,
+    inner: Linter,
+    pending: VecDeque<Entry>,
+    name: &'static str,
+    findings_on_stderr: bool,
+    parse: fn(&Path, &str) -> Vec<Entry>,
+}
+
+impl CommandLinter {
+    pub(crate) fn new(
+        linters: &mut Linters,
+        spec: Spec,
+        filename: &Path,
+    ) -> color_eyre::Result<Self> {
+        let executable = match spec.exec {
+            Executable::Named => linters.executable(spec.name),
+            Executable::Mapped => linters.executable_for_linter(spec.name),
+        };
+        let mut cmd = Command::new(executable.as_ref());
+        for arg in spec.args {
+            cmd.arg(arg);
+        }
+        for arg in (spec.extra_args)() {
+            cmd.arg(arg);
+        }
+        cmd.arg(filename);
+        let inner = linters.spawn(spec.name, cmd)?;
+        Ok(Self {
+            filename: filename.to_path_buf(),
+            inner,
+            pending: VecDeque::new(),
+            name: spec.name,
+            findings_on_stderr: spec.findings_on_stderr,
+            parse: spec.parse,
+        })
+    }
+
+    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Entry>> {
+        let this = self.get_mut();
+        loop {
+            if let Some(entry) = this.pending.pop_front() {
+                return Poll::Ready(Some(entry));
+            }
+            match &mut this.inner {
+                Linter::Running(stream) => match Pin::new(&mut **stream).poll_next(cx) {
+                    Poll::Ready(Some(ProcessItem::Stdout(line))) => {
+                        if !this.findings_on_stderr {
+                            this.pending.extend((this.parse)(&this.filename, &line));
+                        }
+                    }
+                    Poll::Ready(Some(ProcessItem::Stderr(line))) => {
+                        if this.findings_on_stderr {
+                            this.pending.extend((this.parse)(&this.filename, &line));
+                        }
+                    }
+                    Poll::Ready(Some(_)) => continue,
+                    Poll::Ready(None) => return Poll::Ready(None),
+                    Poll::Pending => return Poll::Pending,
+                },
+                Linter::NotFound => {
+                    this.inner = Linter::Done;
+                    return Poll::Ready(Some(
+                        Entry::new(&this.filename, this.name, "linter not found").unwrap(),
+                    ));
+                }
+                Linter::Done => return Poll::Ready(None),
+            }
+        }
+    }
+}
+
+/// Turns the output of a single-finding `parse_line` function into a
+/// [`Spec`]-compatible `Vec<Entry>` parser.
+pub(crate) fn into_entries(
+    filename: &Path,
+    line: &str,
+    parse: fn(&Path, &str) -> Option<Entry>,
+) -> Vec<Entry> {
+    parse(filename, line).into_iter().collect()
+}
+
+/// Implements [`Stream`] for a wrapper struct that owns a single
+/// [`CommandLinter`] in its first field, delegating the polling to it.
+macro_rules! linter_stream {
+    ($t:ty) => {
+        impl Stream for $t {
+            type Item = Entry;
+
+            fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+                Pin::new(&mut self.get_mut().0).poll_next(cx)
+            }
+        }
+    };
 }
 
 /// Returns true if `name` is a linter built into omnilint itself, which has
@@ -408,33 +519,22 @@ mod tests {
 
     #[test]
     fn not_found_emits_single_entry() {
-        let mut inner = Linter::NotFound;
+        let mut inner = CommandLinter {
+            filename: PathBuf::from("foo.py"),
+            inner: Linter::NotFound,
+            pending: VecDeque::new(),
+            name: "test",
+            findings_on_stderr: false,
+            parse: |_, _| Vec::new(),
+        };
         let mut cx = Context::from_waker(std::task::Waker::noop());
-        let parse = |_: &Path, _: &str| None;
         assert_eq!(
-            poll_next(
-                "test",
-                Path::new("foo.py"),
-                &mut inner,
-                parse,
-                false,
-                &mut cx
-            ),
+            Pin::new(&mut inner).poll_next(&mut cx),
             Poll::Ready(Some(
                 Entry::new(Path::new("foo.py"), "test", "linter not found").unwrap()
             ))
         );
-        assert_eq!(
-            poll_next(
-                "test",
-                Path::new("foo.py"),
-                &mut inner,
-                parse,
-                false,
-                &mut cx
-            ),
-            Poll::Ready(None)
-        );
+        assert_eq!(Pin::new(&mut inner).poll_next(&mut cx), Poll::Ready(None));
     }
 
     #[test]

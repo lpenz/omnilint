@@ -27,33 +27,29 @@
 //! the parser before the message is stored in the [`Entry`].
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters};
+use crate::linters::{CommandLinter, Linters, Spec, into_entries};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct YamlYamllint {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct YamlYamllint(CommandLinter);
 
 impl YamlYamllint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("yamllint");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("-f");
-        cmd.arg("parsable");
-        cmd.arg(filename);
-        let inner = linters.spawn("yamllint", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "yamllint",
+                args: &["-f", "parsable"],
+                parse: |f, l| into_entries(f, l, Self::parse_line),
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
@@ -76,21 +72,7 @@ impl YamlYamllint {
     }
 }
 
-impl Stream for YamlYamllint {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "yamllint",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
-}
+linter_stream!(YamlYamllint);
 
 #[cfg(test)]
 mod tests {

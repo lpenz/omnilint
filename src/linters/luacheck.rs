@@ -23,55 +23,37 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters, parse_line_standard};
+use crate::linters::{CommandLinter, Linters, Spec, parse_line_standard};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct LuaLuacheck {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct LuaLuacheck(CommandLinter);
 
 impl LuaLuacheck {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("luacheck");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("--formatter");
-        cmd.arg("plain");
-        cmd.arg(filename);
-        let inner = linters.spawn("luacheck", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        parse_line_standard(filename, "luacheck", line)
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "luacheck",
+                args: &["--formatter", "plain"],
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
 
-impl Stream for LuaLuacheck {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "luacheck",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    parse_line_standard(filename, "luacheck", line)
 }
+
+linter_stream!(LuaLuacheck);
 
 #[cfg(test)]
 mod tests {
@@ -79,29 +61,29 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entry = LuaLuacheck::parse_line(
+        let entries = parse_line(
             Path::new("test.lua"),
             "test.lua:1:7: unused variable 'unused'",
-        )
-        .unwrap();
+        );
+        assert_eq!(entries.len(), 1);
         assert_eq!(
-            entry.to_string(),
+            entries[0].to_string(),
             "test.lua:1: [luacheck] unused variable 'unused'"
         );
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(LuaLuacheck::parse_line(Path::new("test.lua"), "").is_none());
+        assert!(parse_line(Path::new("test.lua"), "").is_empty());
     }
 
     #[test]
     fn parse_line_too_few_parts() {
-        assert!(LuaLuacheck::parse_line(Path::new("test.lua"), "no colons here").is_none());
+        assert!(parse_line(Path::new("test.lua"), "no colons here").is_empty());
     }
 
     #[test]
     fn parse_line_non_numeric() {
-        assert!(LuaLuacheck::parse_line(Path::new("test.lua"), "test.lua:x:y: msg").is_none());
+        assert!(parse_line(Path::new("test.lua"), "test.lua:x:y: msg").is_empty());
     }
 }

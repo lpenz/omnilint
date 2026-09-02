@@ -27,36 +27,35 @@
 //! do not match the format above and are skipped by the parser.
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters};
+use crate::linters::{CommandLinter, Linters, Spec, into_entries};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct SqlSqlfluff {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct SqlSqlfluff(CommandLinter);
 
 impl SqlSqlfluff {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("sqlfluff");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("lint");
-        cmd.arg("--dialect");
-        cmd.arg("ansi");
-        cmd.arg("--format");
-        cmd.arg("github-annotation-native");
-        cmd.arg(filename);
-        let inner = linters.spawn("sqlfluff", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "sqlfluff",
+                args: &[
+                    "lint",
+                    "--dialect",
+                    "ansi",
+                    "--format",
+                    "github-annotation-native",
+                ],
+                parse: |f, l| into_entries(f, l, Self::parse_line),
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 
     fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
@@ -83,21 +82,7 @@ fn attr_value(attrs: &str, key: &str) -> Option<u32> {
     attrs[start..end].parse().ok()
 }
 
-impl Stream for SqlSqlfluff {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "sqlfluff",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
-}
+linter_stream!(SqlSqlfluff);
 
 #[cfg(test)]
 mod tests {

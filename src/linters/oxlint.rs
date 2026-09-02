@@ -23,66 +23,37 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters};
+use crate::linters::{CommandLinter, Linters, Spec, parse_line_standard};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct JsOxlint {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct JsOxlint(CommandLinter);
 
 impl JsOxlint {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("oxlint");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg("--format=unix");
-        cmd.arg(filename);
-        let inner = linters.spawn("oxlint", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        let line = line.trim();
-        if line.is_empty() {
-            return None;
-        }
-        // unix format: filename:line:col: message
-        let parts: Vec<&str> = line.splitn(4, ':').collect();
-        if parts.len() < 4 {
-            return None;
-        }
-        let line_num: u32 = parts[1].trim().parse().ok()?;
-        let col_num: u32 = parts[2].trim().parse().ok()?;
-        let msg = parts[3].trim();
-        Some(Entry::new_line_col(filename, "oxlint", msg, line_num, col_num).unwrap())
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "oxlint",
+                args: &["--format=unix"],
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
 
-impl Stream for JsOxlint {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "oxlint",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    parse_line_standard(filename, "oxlint", line)
 }
+
+linter_stream!(JsOxlint);
 
 #[cfg(test)]
 mod tests {
@@ -90,29 +61,29 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entry = JsOxlint::parse_line(
+        let entries = parse_line(
             Path::new("test.js"),
             "test.js:1:5: Unexpected var, use let or const instead",
-        )
-        .unwrap();
+        );
+        assert_eq!(entries.len(), 1);
         assert_eq!(
-            entry.to_string(),
+            entries[0].to_string(),
             "test.js:1: [oxlint] Unexpected var, use let or const instead"
         );
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(JsOxlint::parse_line(Path::new("test.js"), "").is_none());
+        assert!(parse_line(Path::new("test.js"), "").is_empty());
     }
 
     #[test]
     fn parse_line_too_few_parts() {
-        assert!(JsOxlint::parse_line(Path::new("test.js"), "no colons here").is_none());
+        assert!(parse_line(Path::new("test.js"), "no colons here").is_empty());
     }
 
     #[test]
     fn parse_line_non_numeric() {
-        assert!(JsOxlint::parse_line(Path::new("test.js"), "test.js:x:y: msg").is_none());
+        assert!(parse_line(Path::new("test.js"), "test.js:x:y: msg").is_empty());
     }
 }

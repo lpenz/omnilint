@@ -31,53 +31,36 @@
 //! ```
 
 use crate::entry::Entry;
-use crate::linters::{Linter, Linters, parse_line_standard};
+use crate::linters::{CommandLinter, Linters, Spec, parse_line_standard};
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
 use color_eyre::Result;
-use tokio::process::Command;
 use tokio_stream::Stream;
 
-pub struct PythonFlake8 {
-    filename: PathBuf,
-    inner: Linter,
-}
+pub struct PythonFlake8(CommandLinter);
 
 impl PythonFlake8 {
     pub fn new(linters: &mut Linters, filename: &Path) -> Result<Self> {
-        let executable = linters.executable("flake8");
-        let mut cmd = Command::new(executable.as_ref());
-        cmd.arg(filename);
-        let inner = linters.spawn("flake8", cmd)?;
-        Ok(Self {
-            filename: filename.to_path_buf(),
-            inner,
-        })
-    }
-
-    fn parse_line(filename: &Path, line: &str) -> Option<Entry> {
-        parse_line_standard(filename, "flake8", line)
+        Ok(Self(CommandLinter::new(
+            linters,
+            Spec {
+                name: "flake8",
+                parse: parse_line,
+                ..Default::default()
+            },
+            filename,
+        )?))
     }
 }
 
-impl Stream for PythonFlake8 {
-    type Item = Entry;
-
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        let this = self.get_mut();
-        crate::linters::poll_next(
-            "flake8",
-            &this.filename,
-            &mut this.inner,
-            Self::parse_line,
-            false,
-            cx,
-        )
-    }
+fn parse_line(filename: &Path, line: &str) -> Vec<Entry> {
+    parse_line_standard(filename, "flake8", line)
 }
+
+linter_stream!(PythonFlake8);
 
 #[cfg(test)]
 mod tests {
@@ -85,36 +68,36 @@ mod tests {
 
     #[test]
     fn parse_line_standard() {
-        let entry = PythonFlake8::parse_line(
+        let entries = parse_line(
             Path::new("test.py"),
             "test.py:1:1: F401 'os' imported but unused",
-        )
-        .unwrap();
+        );
+        assert_eq!(entries.len(), 1);
         assert_eq!(
-            entry.to_string(),
+            entries[0].to_string(),
             "test.py:1: [flake8] F401 'os' imported but unused"
         );
     }
 
     #[test]
     fn parse_line_empty() {
-        assert!(PythonFlake8::parse_line(Path::new("test.py"), "").is_none());
+        assert!(parse_line(Path::new("test.py"), "").is_empty());
     }
 
     #[test]
     fn parse_line_zero_line() {
-        let entry =
-            PythonFlake8::parse_line(Path::new("test.py"), "test.py:0:1: some message").unwrap();
-        assert_eq!(entry.to_string(), "test.py: [flake8] some message");
+        let entries = parse_line(Path::new("test.py"), "test.py:0:1: some message");
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].to_string(), "test.py: [flake8] some message");
     }
 
     #[test]
     fn parse_line_too_few_parts() {
-        assert!(PythonFlake8::parse_line(Path::new("test.py"), "no colons here").is_none());
+        assert!(parse_line(Path::new("test.py"), "no colons here").is_empty());
     }
 
     #[test]
     fn parse_line_non_numeric() {
-        assert!(PythonFlake8::parse_line(Path::new("test.py"), "test.py:x:y: msg").is_none());
+        assert!(parse_line(Path::new("test.py"), "test.py:x:y: msg").is_empty());
     }
 }
