@@ -24,6 +24,8 @@ Statically analyse any file with the appropriate tools
 - [Installation](#installation)
   - [From crates.io](#from-cratesio)
   - [From source](#from-source)
+  - [NixOS](#nixos)
+  - [home-manager](#home-manager)
   - [Prebuilt packages](#prebuilt-packages)
 - [Development](#development)
 - [License](#license)
@@ -262,6 +264,44 @@ $ cargo install omnilint
 $ git clone https://github.com/lpenz/omnilint
 $ cd omnilint
 $ cargo install --path .
+```
+
+### NixOS
+
+Add the flake input and use the package in your system configuration:
+
+```nix
+{
+  inputs.omnilint.url = "github:lpenz/omnilint";
+
+  outputs = { self, nixpkgs, omnilint, ... }: {
+    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        { environment.systemPackages = [ omnilint.packages.x86_64-linux.default ]; }
+      ];
+    };
+  };
+}
+```
+
+### home-manager
+
+Add the flake input and use the package in your home configuration:
+
+```nix
+{
+  inputs.omnilint.url = "github:lpenz/omnilint";
+
+  outputs = { self, nixpkgs, omnilint, ... }: {
+    homeConfigurations.myuser = {
+      system = "x86_64-linux";
+      modules = [
+        { home.packages = [ omnilint.packages.x86_64-linux.default ]; }
+      ];
+    };
+  };
+}
 ```
 
 ### Prebuilt packages
