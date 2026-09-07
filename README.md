@@ -15,7 +15,6 @@ Statically analyse any file with the appropriate tools
 - [Usage](#usage)
   - [`omnilint files <files...>`](#omnilint-files-files)
   - [`omnilint repository`](#omnilint-repository)
-  - [GitHub Actions](#github-actions)
   - [`omnilint inventory`](#omnilint-inventory)
   - [Output format](#output-format)
   - [Exit status](#exit-status)
@@ -27,6 +26,7 @@ Statically analyse any file with the appropriate tools
   - [NixOS](#nixos)
   - [home-manager](#home-manager)
   - [Prebuilt packages](#prebuilt-packages)
+- [GitHub Actions](#github-actions)
 - [Development](#development)
 - [License](#license)
 
@@ -88,38 +88,6 @@ Analyses all the files tracked by git in the current repository:
 $ omnilint repository
 src/main.rs:5: [shellcheck] SC2148: Tips depend on target shell and yours is unknown.
 ```
-
-### GitHub Actions
-
-omnilint can run in GitHub Actions through the reusable workflow or directly
-as a composite action. Both install nix and execute the omnilint flake of this
-repository at the pinned version, which provides omnilint together with every
-supported linter at known versions. Findings are emitted with the
-`github-workflow` format, so they show up as annotations on the files and lines
-of pull requests, and the job fails when omnilint finds an issue.
-
-Using the reusable workflow:
-
-```yaml
-on: [push, pull_request]
-jobs:
-  omnilint:
-    uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.8.0
-```
-
-Using the action directly in a job:
-
-```yaml
-steps:
-  - uses: actions/checkout@v7
-  - uses: lpenz/omnilint@v0.8.0
-```
-
-Both accept an `arguments` / `with.arguments` input with extra omnilint
-arguments, e.g. `--config omnilint.toml` to point at a custom configuration
-file. The environment is stored in the [lpenz cachix
-cache](https://lpenz.cachix.org), so repeated runs in CI and across runners
-substitute the store paths instead of building them from scratch.
 
 ### `omnilint inventory`
 
@@ -312,6 +280,44 @@ Add the flake input and use the package in your home configuration:
   [packagecloud](https://packagecloud.io/app/lpenz/rpm/search?q=omnilint).
 - Releases are also published on
   [GitHub](https://github.com/lpenz/omnilint/releases) with prebuilt binaries.
+
+## GitHub Actions
+
+omnilint can run in GitHub Actions through a reusable workflow or as a
+composite action. Both use the nix flake of this repository, which provides
+omnilint together with every supported linter at pinned versions, and run
+`omnilint repository` with the `github-workflow` format so findings show up as
+annotations on the files and lines of pull requests; the job fails whenever
+omnilint finds an issue. The environment is stored in the [lpenz cachix
+cache](https://lpenz.cachix.org), so repeated runs in CI and across runners
+substitute the store paths instead of building them from scratch.
+
+Using the reusable workflow, which checks out the repository for you:
+
+```yaml
+on: [push, pull_request]
+jobs:
+  omnilint:
+    uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.9.0
+    with:
+      arguments: --config omnilint.toml
+```
+
+Using the action directly in a job, checking out the repository first:
+
+```yaml
+runs-on: ubuntu-latest
+steps:
+  - uses: actions/checkout@v7
+  - uses: lpenz/omnilint@v0.9.0
+    with:
+      arguments: --config omnilint.toml
+```
+
+The version is pinned by the `@` reference in the `uses:` line, and can be
+updated to track newer releases. Both accept an `arguments` input with extra
+omnilint arguments, e.g. `--config omnilint.toml` to point at a custom
+configuration file; omit `with:` entirely when no extra arguments are needed.
 
 ## Development
 
