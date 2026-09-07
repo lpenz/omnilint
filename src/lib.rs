@@ -69,13 +69,15 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         cli::Commands::Files { files } => {
             let mut streams: Vec<Pin<Box<dyn Stream<Item = Entry>>>> = Vec::new();
             for file in &files {
-                push_stream(&mut linters, &mut streams, file)?;
+                if !config.is_ignored(file) {
+                    push_stream(&mut linters, &mut streams, file)?;
+                }
             }
             run_streams(streams, format).await
         }
         cli::Commands::Repository => {
             let files = repo::git_ls_files()?;
-            run_repository(&mut linters, files, format).await?
+            run_repository(&mut linters, &config, files, format).await?
         }
         cli::Commands::Inventory => run_inventory(&linters).await,
     };
@@ -167,6 +169,7 @@ fn push_stream(
 /// a runtime error from the linter infrastructure.
 async fn run_repository(
     linters: &mut Linters,
+    config: &config::Config,
     files: impl Stream<Item = PathBuf> + Unpin,
     format: OutputFormat,
 ) -> color_eyre::Result<Result<(), OmnilintError>> {
@@ -177,14 +180,14 @@ async fn run_repository(
     loop {
         if streams.is_empty() {
             match files.next().await {
-                Some(file) => add_file(linters, &mut streams, &mut next_id, &file)?,
+                Some(file) => add_file(linters, config, &mut streams, &mut next_id, &file)?,
                 None => break,
             }
         } else {
             tokio::select! {
                 maybe_file = files.next() => {
                     match maybe_file {
-                        Some(file) => add_file(linters, &mut streams, &mut next_id, &file)?,
+                        Some(file) => add_file(linters, config, &mut streams, &mut next_id, &file)?,
                         None => break,
                     }
                 }
@@ -207,12 +210,17 @@ async fn run_repository(
 }
 
 /// Creates a linter stream for `file`, if any, and adds it to `streams`.
+/// Files matching an entry in the config `ignore` list are skipped.
 fn add_file(
     linters: &mut Linters,
+    config: &config::Config,
     streams: &mut StreamMap<usize, Pin<Box<dyn Stream<Item = Entry>>>>,
     next_id: &mut usize,
     file: &Path,
 ) -> color_eyre::Result<()> {
+    if config.is_ignored(file) {
+        return Ok(());
+    }
     if let Some(stream) = linters.stream_for_file(file)? {
         streams.insert(*next_id, stream);
         *next_id += 1;

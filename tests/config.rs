@@ -118,3 +118,85 @@ fn config_flag_missing_file_errors() {
         ]);
     cmd.assert().failure();
 }
+
+#[test]
+fn ignore_file_skips_output() {
+    assert_eq!(
+        common::run_with_config(
+            &["python-dirty.py"],
+            "[global]\nignore = [\"python-dirty.py\"]\n",
+            0,
+        ),
+        ""
+    );
+}
+
+#[test]
+fn ignore_glob_skips_files_inside() {
+    let tmp = tempfile::tempdir().unwrap();
+    let generated = tmp.path().join("generated");
+    std::fs::create_dir(&generated).unwrap();
+    std::fs::copy(
+        common::fixtures_dir().join("python-dirty.py"),
+        generated.join("python-dirty.py"),
+    )
+    .unwrap();
+
+    // Without the ignore, the file is analysed and fails.
+    std::fs::write(tmp.path().join("omnilint.toml"), "").unwrap();
+    let mut cmd = assert_cmd::Command::cargo_bin("omnilint").unwrap();
+    cmd.current_dir(tmp.path())
+        .env_remove("OMNILINT_CONFIG")
+        .env("PATH", "/nonexistent")
+        .args(["files", "generated/python-dirty.py"]);
+    cmd.assert().code(1);
+
+    // With a glob that matches it, the file is skipped.
+    std::fs::write(
+        tmp.path().join("omnilint.toml"),
+        "[global]\nignore = [\"**/*-dirty.py\"]\n",
+    )
+    .unwrap();
+    let mut cmd = assert_cmd::Command::cargo_bin("omnilint").unwrap();
+    cmd.current_dir(tmp.path())
+        .env_remove("OMNILINT_CONFIG")
+        .env("PATH", "/nonexistent")
+        .args(["files", "generated/python-dirty.py"]);
+    let output = cmd.assert().code(0).stdout("");
+    assert_eq!(String::from_utf8_lossy(&output.get_output().stderr), "");
+}
+
+#[test]
+fn ignore_directory_skips_files_inside() {
+    let tmp = tempfile::tempdir().unwrap();
+    let generated = tmp.path().join("generated");
+    std::fs::create_dir(&generated).unwrap();
+    std::fs::copy(
+        common::fixtures_dir().join("python-dirty.py"),
+        generated.join("python-dirty.py"),
+    )
+    .unwrap();
+
+    // Without the ignore, the file inside the directory is analysed and fails.
+    std::fs::write(tmp.path().join("omnilint.toml"), "").unwrap();
+    let mut cmd = assert_cmd::Command::cargo_bin("omnilint").unwrap();
+    cmd.current_dir(tmp.path())
+        .env_remove("OMNILINT_CONFIG")
+        .env("PATH", "/nonexistent")
+        .args(["files", "generated/python-dirty.py"]);
+    cmd.assert().code(1);
+
+    // With the directory ignored, the file inside it is skipped.
+    std::fs::write(
+        tmp.path().join("omnilint.toml"),
+        "[global]\nignore = [\"generated\"]\n",
+    )
+    .unwrap();
+    let mut cmd = assert_cmd::Command::cargo_bin("omnilint").unwrap();
+    cmd.current_dir(tmp.path())
+        .env_remove("OMNILINT_CONFIG")
+        .env("PATH", "/nonexistent")
+        .args(["files", "generated/python-dirty.py"]);
+    let output = cmd.assert().code(0).stdout("");
+    assert_eq!(String::from_utf8_lossy(&output.get_output().stderr), "");
+}

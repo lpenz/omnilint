@@ -42,6 +42,63 @@ pub fn run_repository() -> String {
     run_command("repository", &[], &[], 1, &[])
 }
 
+/// Creates a temporary git repository with the given fixture files (each a
+/// `(source, destination)` pair, destination relative to the temp dir but
+/// not necessarily under it), an `omnilint.toml` with the given contents,
+/// and runs `omnilint repository` inside it.
+///
+/// Returns its stderr with the output lines sorted so that the result is
+/// deterministic even when linters run in parallel.
+///
+/// Asserts that omnilint exits with status 0, i.e. that no issues were
+/// found.
+pub fn run_repository_git_with_config(files: &[(&str, &str)], config_contents: &str) -> String {
+    let tmp = tempfile::tempdir().unwrap();
+    for (src, dst) in files {
+        let dst_path = tmp.path().join(dst);
+        std::fs::create_dir_all(dst_path.parent().unwrap()).unwrap();
+        std::fs::copy(fixtures_dir().join(src), dst_path).unwrap();
+    }
+    std::fs::write(tmp.path().join("omnilint.toml"), config_contents).unwrap();
+    init_git_repo(tmp.path());
+    let mut cmd = Command::cargo_bin("omnilint").unwrap();
+    let command = cmd
+        .current_dir(tmp.path())
+        .env_remove("OMNILINT_CONFIG")
+        .arg("repository");
+    let output = command.assert().code(0).stdout("");
+    let mut lines: Vec<String> = String::from_utf8_lossy(&output.get_output().stderr)
+        .lines()
+        .map(Into::into)
+        .collect();
+    if lines.is_empty() {
+        return String::new();
+    }
+    lines.sort();
+    lines.join("\n") + "\n"
+}
+
+/// Initializes a git repository in the given directory and commits
+/// everything in it, so that the files are tracked.
+fn init_git_repo(dir: &Path) {
+    for args in [
+        &["init", "-q", "-b", "main"][..],
+        &["add", "-A"][..],
+        &["commit", "-q", "-m", "test"][..],
+    ] {
+        let status = std::process::Command::new("git")
+            .current_dir(dir)
+            .env("GIT_AUTHOR_NAME", "test")
+            .env("GIT_AUTHOR_EMAIL", "test@example.com")
+            .env("GIT_COMMITTER_NAME", "test")
+            .env("GIT_COMMITTER_EMAIL", "test@example.com")
+            .args(args)
+            .status()
+            .unwrap();
+        assert!(status.success(), "git {args:?} failed in {}", dir.display());
+    }
+}
+
 /// Runs `omnilint files` on the given files with a `PATH` that contains no
 /// linter tools, so that every linter reports it was not found.
 ///

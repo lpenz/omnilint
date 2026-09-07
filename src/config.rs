@@ -6,7 +6,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::cli::LinterMode;
 
@@ -53,6 +53,8 @@ impl std::error::Error for ConfigError {
 pub(crate) struct GlobalConfig {
     /// Default mode for linters that are not found on the `PATH`.
     pub(crate) default_linter_mode: LinterMode,
+    /// Files to skip, or directories whose files are all skipped.
+    pub(crate) ignore: Vec<PathBuf>,
 }
 
 /// Per-linter configuration.
@@ -81,6 +83,9 @@ impl Config {
         if other.global.default_linter_mode != LinterMode::default() {
             self.global.default_linter_mode = other.global.default_linter_mode;
         }
+        self.global
+            .ignore
+            .extend(other.global.ignore.iter().cloned());
         for (name, linter) in &other.linters {
             self.linters
                 .entry(name.clone())
@@ -162,6 +167,33 @@ impl Config {
         })?;
         Ok(config)
     }
+
+    /// Returns whether the given path matches an entry in the configured
+    /// `ignore` list.
+    ///
+    /// An entry with no glob metacharacters is a plain path: it is ignored if
+    /// it equals the entry (a file to skip, or a directory itself) or is
+    /// inside one of the listed directories. An entry with glob
+    /// metacharacters (e.g. `**/*.pyc` or `generated/**`) is treated as a
+    /// glob pattern matched against the whole path; like in `.gitignore`,
+    /// `*` matches across directory separators, so `*.pyc` also ignores
+    /// `.pyc` files in subdirectories.
+    pub(crate) fn is_ignored(&self, path: &Path) -> bool {
+        self.global.ignore.iter().any(|ignore| {
+            let pattern = ignore.to_string_lossy();
+            if is_glob(&pattern) {
+                matches!(glob::Pattern::new(&pattern), Ok(p) if p.matches_path(path))
+            } else {
+                path.starts_with(ignore)
+            }
+        })
+    }
+}
+
+/// Returns whether the given string contains glob metacharacters, i.e.
+/// whether `*`, `?`, `[` or `{` are present unescaped.
+fn is_glob(pattern: &str) -> bool {
+    pattern != glob::Pattern::escape(pattern)
 }
 
 fn dirs() -> Option<PathBuf> {
@@ -203,6 +235,73 @@ mod tests {
             Some("/usr/local/bin/flake8")
         );
         assert!(config.linters["flake8"].mode.is_none());
+    }
+
+    #[test]
+    fn parse_global_ignore() {
+        let config: Config =
+            toml::from_str("[global]\nignore = [\"generated\", \"foo.py\"]\n").unwrap();
+        assert_eq!(
+            config.global.ignore,
+            vec![PathBuf::from("generated"), PathBuf::from("foo.py")]
+        );
+    }
+
+    #[test]
+    fn is_ignored_file() {
+        let config: Config = toml::from_str("[global]\nignore = [\"foo.py\"]\n").unwrap();
+        assert!(config.is_ignored(Path::new("foo.py")));
+        assert!(!config.is_ignored(Path::new("foobar.py")));
+        assert!(!config.is_ignored(Path::new("other.py")));
+    }
+
+    #[test]
+    fn is_ignored_directory() {
+        let config: Config = toml::from_str("[global]\nignore = [\"generated\"]\n").unwrap();
+        assert!(config.is_ignored(Path::new("generated")));
+        assert!(config.is_ignored(Path::new("generated/file.py")));
+        assert!(config.is_ignored(Path::new("generated/sub/file.py")));
+        assert!(!config.is_ignored(Path::new("generated2/file.py")));
+    }
+
+    #[test]
+    fn is_ignored_glob_anywhere() {
+        let config: Config = toml::from_str("[global]\nignore = [\"**/*.pyc\"]\n").unwrap();
+        assert!(config.is_ignored(Path::new("foo.pyc")));
+        assert!(config.is_ignored(Path::new("dir/foo.pyc")));
+        assert!(config.is_ignored(Path::new("dir/sub/foo.pyc")));
+        assert!(!config.is_ignored(Path::new("foo.py")));
+        assert!(!config.is_ignored(Path::new("foo.pyc.txt")));
+    }
+
+    #[test]
+    fn is_ignored_glob_directory_contents() {
+        let config: Config = toml::from_str("[global]\nignore = [\"generated/**\"]\n").unwrap();
+        assert!(config.is_ignored(Path::new("generated/file.py")));
+        assert!(config.is_ignored(Path::new("generated/sub/file.py")));
+        assert!(!config.is_ignored(Path::new("generated2/file.py")));
+    }
+
+    #[test]
+    fn is_ignored_glob_bare_extension() {
+        let config: Config = toml::from_str("[global]\nignore = [\"*.pyc\"]\n").unwrap();
+        assert!(config.is_ignored(Path::new("foo.pyc")));
+        assert!(config.is_ignored(Path::new("dir/foo.pyc")));
+        assert!(!config.is_ignored(Path::new("foo.py")));
+        assert!(!config.is_ignored(Path::new("foo.pyc.txt")));
+    }
+
+    #[test]
+    fn merge_ignore_unions() {
+        let mut base = Config::default();
+        base.global.ignore.push(PathBuf::from("a"));
+        let mut overlay = Config::default();
+        overlay.global.ignore.push(PathBuf::from("b"));
+        base.merge(&overlay);
+        assert_eq!(
+            base.global.ignore,
+            vec![PathBuf::from("a"), PathBuf::from("b")]
+        );
     }
 
     #[test]

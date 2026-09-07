@@ -181,11 +181,15 @@ following sources, in order of increasing precedence:
 A config file has a `[global]` section for global options such as
 `default_linter_mode`, and a `[linters.<name>]` section per linter with `mode`
 and an optional `path`. When a per-linter `mode` is not set, the global
-`default_linter_mode` is used:
+`default_linter_mode` is used. The global `ignore` option takes a list of
+files to skip entirely, or directories that are skipped with all the files
+inside them; it applies to both the `files` and the `repository` subcommands:
 
 ```toml
 [global]
 default_linter_mode = "optional"
+# Skip particular files/directories, with or without glob patterns:
+ignore = ["generated/tabs.out", "third_party", "**/*.pyc", "src/**"]
 
 [linters.flake8]
 mode = "disabled"
@@ -193,6 +197,14 @@ mode = "disabled"
 [linters.ruff]
 path = "/usr/local/bin/ruff"
 ```
+
+Note that `ignore` entries are relative to the directory where omnilint is
+run, and list entries accumulate when config files are merged. An entry with
+no glob metacharacters is a plain path: it skips that file, or, if it names a
+directory, skips the directory and everything inside it. An entry with glob
+metacharacters is matched as a glob pattern against the whole path; as in
+`.gitignore`, `*` matches across directories, so `*.pyc` also matches `.pyc`
+files in subdirectories.
 
 The same effect can be achieved without a config file by passing the
 `--default-linter-mode <mode>` flag:

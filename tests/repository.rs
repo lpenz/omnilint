@@ -14,6 +14,34 @@
 mod common;
 
 #[test]
+fn ignored_globs_are_skipped() {
+    assert_eq!(
+        common::run_repository_git_with_config(
+            &[
+                ("python-dirty.py", "src/python-dirty.py"),
+                ("json-dirty.json", "generated/json-dirty.json"),
+            ],
+            "[global]\nignore = [\"src/*.py\", \"generated/**\"]\n",
+        ),
+        ""
+    );
+}
+
+#[test]
+fn ignored_files_and_directories_are_skipped() {
+    assert_eq!(
+        common::run_repository_git_with_config(
+            &[
+                ("python-dirty.py", "python-dirty.py"),
+                ("json-dirty.json", "generated/json-dirty.json"),
+            ],
+            "[global]\nignore = [\"python-dirty.py\", \"generated\"]\n",
+        ),
+        ""
+    );
+}
+
+#[test]
 fn all_tracked_files() {
     assert_eq!(
         common::run_repository(),
