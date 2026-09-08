@@ -35,7 +35,6 @@ fn dirty() {
          python-dirty.py:1: [pylint] Module name \"python-dirty\" doesn't conform to snake_case naming style (invalid-name)\n\
          python-dirty.py:1: [pylint] Unused import os (unused-import)\n\
          python-dirty.py:1: [ruff] F401 [*] `os` imported but unused\n\
-         python-dirty.py:1: [ruff] I001 [*] Import block is un-sorted or un-formatted\n\
          python-dirty.py:3: [flake8] E302 expected 2 blank lines, found 1\n\
          python-dirty.py:3: [pylint] Missing function or method docstring (missing-function-docstring)\n\
          python-dirty.py:4: [flake8] F841 local variable 'unused' is assigned to but never used\n\
