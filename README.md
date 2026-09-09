@@ -1,10 +1,10 @@
+# omnilint
+
 [![CI](https://github.com/lpenz/omnilint/actions/workflows/ci.yml/badge.svg)](https://github.com/lpenz/omnilint/actions/workflows/ci.yml)
 [![coveralls](https://coveralls.io/repos/github/lpenz/omnilint/badge.svg?branch=main)](https://coveralls.io/github/lpenz/omnilint?branch=main)
 [![dependency status](https://deps.rs/repo/github/lpenz/omnilint/status.svg)](https://deps.rs/repo/github/lpenz/omnilint)
 [![crates.io](https://img.shields.io/crates/v/omnilint)](https://crates.io/crates/omnilint)
 [![packagecloud](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/app/lpenz/debian/search?q=omnilint)
-
-# omnilint
 
 Statically analyse any file with the appropriate tools
 
@@ -40,33 +40,33 @@ Statically analyse any file with the appropriate tools
 
 ## Supported file types and linters
 
-| File type  | Extensions / shebang          | Linters                              |
-|------------|-------------------------------|--------------------------------------|
-| Python     | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ... | [flake8](https://flake8.pycqa.org/), [mypy](https://mypy-lang.org/), [py_compile](https://docs.python.org/3/library/py_compile.html), [pylint](https://pylint.readthedocs.io/), [pyright](https://microsoft.github.io/pyright/) and [ruff](https://docs.astral.sh/ruff/) |
-| YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) and [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows (`.github/workflows/`) |
-| Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `.zsh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/), [bash](https://www.gnu.org/software/bash/) and [zsh](https://zsh.sourceforge.io/) |
-| Lua        | `.lua`, `.luau`               | [luacheck](https://luacheck.readthedocs.io/), [luac](https://www.lua.org/manual/5.4/luac.html) and [luau-analyze](https://github.com/luau-lang/luau) |
-| Perl       | `.pl`, `.pm`                 | [perlcritic](https://metacpan.org/pod/Perl::Critic) |
-| Clojure    | `.clj`, `.cljs`, `.cljc`, `.edn` | [clj-kondo](https://github.com/clj-kondo/clj-kondo) |
-| Dockerfile | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `Containerfile.*`, `*.dockerfile`, `*.containerfile` | [hadolint](https://github.com/hadolint/hadolint) |
-| Kotlin     | `.kt`, `.kts`                  | [ktlint](https://pinterest.github.io/ktlint/) |
-| Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
-| SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
-| Markdown   | `.md`, `.markdown`             | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [proselint](https://github.com/amperser/proselint) |
-| Nix        | `.nix`                         | [nix-instantiate](https://nixos.org/manual/nix/stable/) and [statix](https://github.com/oppiliappan/statix) |
-| XML        | `.xml`                         | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) and a built-in [quick-xml](https://crates.io/crates/quick-xml) parser |
-| HTML       | `.html`, `.htm`                | [tidy](https://www.html-tidy.org/) |
-| JSON       | `.json`                        | [jq](https://jqlang.github.io/jq/) and a built-in [serde_json](https://crates.io/crates/serde_json) parser |
-| C/C++      | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx` | [cppcheck](https://cppcheck.sourceforge.io/) |
-| Protobuf   | `.proto`                       | [protolint](https://github.com/yoheimuta/protolint) |
-| Go         | `.go`                          | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet) |
-| Ruby       | `.rb`                          | [rubocop](https://docs.rubocop.org/) |
-| CSS        | `.css`                         | [stylelint](https://stylelint.io/) |
-| TeX        | `.tex`, `.sty`, `.cls`         | [chktex](https://www.nongnu.org/chktex/) |
-| JavaScript | `.js`                          | [oxlint](https://oxc.rs/) and [eslint](https://eslint.org/) |
-| TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
-| systemd    | `.service`, `.timer`, `.socket`, ... | [systemd-analyze verify](https://www.freedesktop.org/software/systemd/man/latest/systemd-analyze.html) |
-| TOML       | `.toml`                        | built-in [toml](https://crates.io/crates/toml) parser |
+| File type    | Extensions / shebang                                                                                | Linters                                                                                                                                                                                                                                                                  |
+|--------------|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Python       | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ...                                          | [flake8](https://flake8.pycqa.org/), [mypy](https://mypy-lang.org/), [py_compile](https://docs.python.org/3/library/py_compile.html), [pylint](https://pylint.readthedocs.io/), [pyright](https://microsoft.github.io/pyright/) and [ruff](https://docs.astral.sh/ruff/) |
+| YAML         | `.yaml`, `.yml`                                                                                     | [yamllint](https://yamllint.readthedocs.io/) and [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows (`.github/workflows/`)                                                                                                                   |
+| Shell        | `.sh`, `.bash`, `.dash`, `.ksh`, `.zsh`, `#!/bin/bash`, ...                                         | [ShellCheck](https://www.shellcheck.net/), [bash](https://www.gnu.org/software/bash/) and [zsh](https://zsh.sourceforge.io/)                                                                                                                                             |
+| Lua          | `.lua`, `.luau`                                                                                     | [luacheck](https://luacheck.readthedocs.io/), [luac](https://www.lua.org/manual/5.4/luac.html) and [luau-analyze](https://github.com/luau-lang/luau)                                                                                                                     |
+| Perl         | `.pl`, `.pm`                                                                                        | [perlcritic](https://metacpan.org/pod/Perl::Critic)                                                                                                                                                                                                                      |
+| Clojure      | `.clj`, `.cljs`, `.cljc`, `.edn`                                                                    | [clj-kondo](https://github.com/clj-kondo/clj-kondo)                                                                                                                                                                                                                      |
+| Dockerfile   | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `Containerfile.*`, `*.dockerfile`, `*.containerfile` | [hadolint](https://github.com/hadolint/hadolint)                                                                                                                                                                                                                         |
+| Kotlin       | `.kt`, `.kts`                                                                                       | [ktlint](https://pinterest.github.io/ktlint/)                                                                                                                                                                                                                            |
+| Swift        | `.swift`                                                                                            | [swiftlint](https://github.com/realm/SwiftLint)                                                                                                                                                                                                                          |
+| SQL          | `.sql`                                                                                              | [sqlfluff](https://sqlfluff.com/)                                                                                                                                                                                                                                        |
+| Markdown     | `.md`, `.markdown`                                                                                  | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) and [proselint](https://github.com/amperser/proselint)                                                                                                                                              |
+| Nix          | `.nix`                                                                                              | [nix-instantiate](https://nixos.org/manual/nix/stable/) and [statix](https://github.com/oppiliappan/statix)                                                                                                                                                              |
+| XML          | `.xml`                                                                                              | [xmllint](https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home) and a built-in [quick-xml](https://crates.io/crates/quick-xml) parser                                                                                                                                     |
+| HTML         | `.html`, `.htm`                                                                                     | [tidy](https://www.html-tidy.org/)                                                                                                                                                                                                                                       |
+| JSON         | `.json`                                                                                             | [jq](https://jqlang.github.io/jq/) and a built-in [serde_json](https://crates.io/crates/serde_json) parser                                                                                                                                                               |
+| C/C++        | `.c`, `.cc`, `.cpp`, `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx`                                            | [cppcheck](https://cppcheck.sourceforge.io/)                                                                                                                                                                                                                             |
+| Protobuf     | `.proto`                                                                                            | [protolint](https://github.com/yoheimuta/protolint)                                                                                                                                                                                                                      |
+| Go           | `.go`                                                                                               | [staticcheck](https://staticcheck.dev/) and [go vet](https://pkg.go.dev/cmd/vet)                                                                                                                                                                                         |
+| Ruby         | `.rb`                                                                                               | [rubocop](https://docs.rubocop.org/)                                                                                                                                                                                                                                     |
+| CSS          | `.css`                                                                                              | [stylelint](https://stylelint.io/)                                                                                                                                                                                                                                       |
+| TeX          | `.tex`, `.sty`, `.cls`                                                                              | [chktex](https://www.nongnu.org/chktex/)                                                                                                                                                                                                                                 |
+| JavaScript   | `.js`                                                                                               | [oxlint](https://oxc.rs/) and [eslint](https://eslint.org/)                                                                                                                                                                                                              |
+| TypeScript   | `.ts`                                                                                               | [oxlint](https://oxc.rs/)                                                                                                                                                                                                                                                |
+| systemd      | `.service`, `.timer`, `.socket`, ...                                                                | [systemd-analyze verify](https://www.freedesktop.org/software/systemd/man/latest/systemd-analyze.html)                                                                                                                                                                   |
+| TOML         | `.toml`                                                                                             | built-in [toml](https://crates.io/crates/toml) parser                                                                                                                                                                                                                    |
 
 ## Installation
 
@@ -96,7 +96,10 @@ Add the flake input and use the package in your system configuration:
     nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        { environment.systemPackages = [ omnilint.packages.x86_64-linux.default ]; }
+        {
+          environment.systemPackages =
+            [ omnilint.packages.x86_64-linux.default ];
+        }
       ];
     };
   };

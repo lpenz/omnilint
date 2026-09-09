@@ -1,0 +1,8 @@
+{
+  "checks": {
+    "spelling.consistency": false,
+    "typography.symbols.curly_quotes": false,
+    "typography.symbols.ellipsis": false,
+    "typography.symbols.sentence_spacing": false
+  }
+}

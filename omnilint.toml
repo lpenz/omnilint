@@ -1,0 +1,4 @@
+# Skip the test fixtures so that `omnilint repository`
+# lints the sources only.
+[global]
+ignore = ["tests/fixtures"]
