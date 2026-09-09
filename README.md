@@ -12,6 +12,13 @@ Statically analyse any file with the appropriate tools
 
 - [Features](#features)
 - [Supported file types and linters](#supported-file-types-and-linters)
+- [Installation](#installation)
+  - [From crates.io](#from-cratesio)
+  - [From source](#from-source)
+  - [NixOS](#nixos)
+  - [home-manager](#home-manager)
+  - [Prebuilt packages](#prebuilt-packages)
+  - [Requirements](#requirements)
 - [Usage](#usage)
   - [`omnilint files <files...>`](#omnilint-files-files)
   - [`omnilint repository`](#omnilint-repository)
@@ -19,13 +26,6 @@ Statically analyse any file with the appropriate tools
   - [Output format](#output-format)
   - [Exit status](#exit-status)
   - [Configuration](#configuration)
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [From crates.io](#from-cratesio)
-  - [From source](#from-source)
-  - [NixOS](#nixos)
-  - [home-manager](#home-manager)
-  - [Prebuilt packages](#prebuilt-packages)
 - [GitHub Actions](#github-actions)
 - [Development](#development)
 - [License](#license)
@@ -44,11 +44,11 @@ Statically analyse any file with the appropriate tools
 |------------|-------------------------------|--------------------------------------|
 | Python     | `.py`, `#!/usr/bin/python3`, `#!/usr/bin/env python3`, ... | [flake8](https://flake8.pycqa.org/), [mypy](https://mypy-lang.org/), [py_compile](https://docs.python.org/3/library/py_compile.html), [pylint](https://pylint.readthedocs.io/), [pyright](https://microsoft.github.io/pyright/) and [ruff](https://docs.astral.sh/ruff/) |
 | YAML       | `.yaml`, `.yml`               | [yamllint](https://yamllint.readthedocs.io/) and [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows (`.github/workflows/`) |
-| Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/) |
-| Lua        | `.lua`                        | [luacheck](https://luacheck.readthedocs.io/) |
+| Shell      | `.sh`, `.bash`, `.dash`, `.ksh`, `.zsh`, `#!/bin/bash`, ... | [ShellCheck](https://www.shellcheck.net/), [bash](https://www.gnu.org/software/bash/) and [zsh](https://zsh.sourceforge.io/) |
+| Lua        | `.lua`, `.luau`               | [luacheck](https://luacheck.readthedocs.io/), [luac](https://www.lua.org/manual/5.4/luac.html) and [luau-analyze](https://github.com/luau-lang/luau) |
 | Perl       | `.pl`, `.pm`                 | [perlcritic](https://metacpan.org/pod/Perl::Critic) |
 | Clojure    | `.clj`, `.cljs`, `.cljc`, `.edn` | [clj-kondo](https://github.com/clj-kondo/clj-kondo) |
-| Dockerfile | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `*.dockerfile` | [hadolint](https://github.com/hadolint/hadolint) |
+| Dockerfile | `Dockerfile`, `Dockerfile.*`, `Containerfile`, `Containerfile.*`, `*.dockerfile`, `*.containerfile` | [hadolint](https://github.com/hadolint/hadolint) |
 | Kotlin     | `.kt`, `.kts`                  | [ktlint](https://pinterest.github.io/ktlint/) |
 | Swift      | `.swift`                       | [swiftlint](https://github.com/realm/SwiftLint) |
 | SQL        | `.sql`                         | [sqlfluff](https://sqlfluff.com/) |
@@ -67,6 +67,77 @@ Statically analyse any file with the appropriate tools
 | TypeScript | `.ts`                          | [oxlint](https://oxc.rs/) |
 | systemd    | `.service`, `.timer`, `.socket`, ... | [systemd-analyze verify](https://www.freedesktop.org/software/systemd/man/latest/systemd-analyze.html) |
 | TOML       | `.toml`                        | built-in [toml](https://crates.io/crates/toml) parser |
+
+## Installation
+
+### From crates.io
+
+```console
+$ cargo install omnilint
+```
+
+### From source
+
+```console
+$ git clone https://github.com/lpenz/omnilint
+$ cd omnilint
+$ cargo install --path .
+```
+
+### NixOS
+
+Add the flake input and use the package in your system configuration:
+
+```nix
+{
+  inputs.omnilint.url = "github:lpenz/omnilint";
+
+  outputs = { self, nixpkgs, omnilint, ... }: {
+    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        { environment.systemPackages = [ omnilint.packages.x86_64-linux.default ]; }
+      ];
+    };
+  };
+}
+```
+
+### home-manager
+
+Add the flake input and use the package in your home configuration:
+
+```nix
+{
+  inputs.omnilint.url = "github:lpenz/omnilint";
+
+  outputs = { self, nixpkgs, omnilint, ... }: {
+    homeConfigurations.myuser = {
+      system = "x86_64-linux";
+      modules = [
+        { home.packages = [ omnilint.packages.x86_64-linux.default ]; }
+      ];
+    };
+  };
+}
+```
+
+### Prebuilt packages
+
+- Debian/Ubuntu `.deb` packages are available on
+  [packagecloud](https://packagecloud.io/app/lpenz/debian/search?q=omnilint).
+- RPM packages are available on
+  [packagecloud](https://packagecloud.io/app/lpenz/rpm/search?q=omnilint).
+- Releases are also published on
+  [GitHub](https://github.com/lpenz/omnilint/releases) with prebuilt binaries.
+
+### Requirements
+
+The underlying linters must be installed for omnilint to analyse the
+corresponding file types. How missing linters are handled depends on the
+configurable [linter mode](#configuration). See the
+[supported file types and linters](#supported-file-types-and-linters) table
+for the complete list.
 
 ## Usage
 
@@ -99,7 +170,7 @@ $ omnilint inventory
 flake8               wanted     3.1.0
 ...
 nix-instantiate      wanted     not found
-toml                 wanted     built-in
+toml-parse           wanted     built-in
 ```
 
 ### Output format
@@ -222,77 +293,6 @@ handled:
 - `optional`: run the linter if available, silently skip it otherwise
 - `disabled`: never run the linter, even if the binary is available
 
-## Requirements
-
-The underlying linters must be installed for omnilint to analyse the
-corresponding file types. How missing linters are handled depends on the
-configurable [linter mode](#configuration). See the
-[supported file types and linters](#supported-file-types-and-linters) table
-for the complete list.
-
-## Installation
-
-### From crates.io
-
-```console
-$ cargo install omnilint
-```
-
-### From source
-
-```console
-$ git clone https://github.com/lpenz/omnilint
-$ cd omnilint
-$ cargo install --path .
-```
-
-### NixOS
-
-Add the flake input and use the package in your system configuration:
-
-```nix
-{
-  inputs.omnilint.url = "github:lpenz/omnilint";
-
-  outputs = { self, nixpkgs, omnilint, ... }: {
-    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        { environment.systemPackages = [ omnilint.packages.x86_64-linux.default ]; }
-      ];
-    };
-  };
-}
-```
-
-### home-manager
-
-Add the flake input and use the package in your home configuration:
-
-```nix
-{
-  inputs.omnilint.url = "github:lpenz/omnilint";
-
-  outputs = { self, nixpkgs, omnilint, ... }: {
-    homeConfigurations.myuser = {
-      system = "x86_64-linux";
-      modules = [
-        { home.packages = [ omnilint.packages.x86_64-linux.default ]; }
-      ];
-    };
-  };
-}
-```
-
-### Prebuilt packages
-
-- Debian/Ubuntu `.deb` packages are available on
-  [packagecloud](https://packagecloud.io/app/lpenz/debian/search?q=omnilint).
-- RPM packages are available on
-  [packagecloud](https://packagecloud.io/app/lpenz/rpm/search?q=omnilint).
-- Releases are also published on
-  [GitHub](https://github.com/lpenz/omnilint/releases) with prebuilt binaries.
-
 ## GitHub Actions
 
 omnilint can run in GitHub Actions through a reusable workflow or as a
@@ -320,7 +320,7 @@ Using the action directly in a job, checking out the repository first:
 ```yaml
 runs-on: ubuntu-latest
 steps:
-  - uses: actions/checkout@v7
+  - uses: actions/checkout@v7.0.1
   - uses: lpenz/omnilint@v0.9.0
     with:
       arguments: --config omnilint.toml
