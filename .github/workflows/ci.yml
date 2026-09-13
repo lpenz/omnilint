@@ -8,9 +8,20 @@ jobs:
   #   uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.9.0
   #   with:
   #     arguments: --config omnilint.toml
+  info:
+    runs-on: ubuntu-latest
+    outputs:
+      info_json: ${{ steps.info.outputs.info_json }}
+      version_docker_ci: ${{ steps.info.outputs.version_docker_ci }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - id: info
+        uses: docker://lpenz/ghaction-version-gen:0.21.0
   rust-test:
-    uses: lpenz/ghworkflow-rust/.github/workflows/rust-test.yml@v0.31.0
+    needs: [info]
+    uses: lpenz/ghworkflow-rust/.github/workflows/rust-test.yml@v0.32.0
     with:
+      info_json: ${{ needs.info.outputs.info_json }}
       enable_cargo-semver-checks: false
       test_features: '[""]'
       coveralls: true
@@ -45,9 +56,10 @@ jobs:
         with:
           branch: false
   rust-deploy:
-    needs: [rust-test, nix-flake, commit-check]
-    uses: lpenz/ghworkflow-rust/.github/workflows/rust-deploy.yml@v0.31.0
+    needs: [info, rust-test, nix-flake, commit-check]
+    uses: lpenz/ghworkflow-rust/.github/workflows/rust-deploy.yml@v0.32.0
     with:
+      info_json: ${{ needs.info.outputs.info_json }}
       deb: true
       rpm: true
       release_files: |
