@@ -28,7 +28,14 @@ jobs:
       deb: true
       rpm: true
   nix-flake:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - system: x86_64-linux
+            runs-on: ubuntu-latest
+          - system: aarch64-linux
+            runs-on: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runs-on }}
     env:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
     steps:
@@ -45,7 +52,7 @@ jobs:
           name: lpenz
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
       - name: Run the nix-flake test script
-        run: ./test-nix.sh
+        run: ./test-nix.sh ${{ matrix.system }}
   commit-check:
     runs-on: ubuntu-latest
     steps:

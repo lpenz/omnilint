@@ -2,12 +2,14 @@
 
 set -euo pipefail
 
+system="${1:-x86_64-linux}"
+
 nix flake check --no-build
 
-nix build ".#packages.x86_64-linux.default"
+nix build ".#packages.${system}.default"
 
 cfg=$(nix build --no-link --print-out-paths \
-    ".#packages.x86_64-linux.omnilint-config")
+    ".#packages.${system}.omnilint-config")
 OMNILINT_CONFIG=$cfg
 
 cat "$OMNILINT_CONFIG"
