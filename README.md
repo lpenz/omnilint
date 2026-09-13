@@ -17,6 +17,7 @@ Statically analyse any file with the appropriate tools
   - [From source](#from-source)
   - [NixOS](#nixos)
   - [home-manager](#home-manager)
+  - [Docker](#docker)
   - [Prebuilt packages](#prebuilt-packages)
   - [Requirements](#requirements)
 - [Usage](#usage)
@@ -124,6 +125,29 @@ Add the flake input and use the package in your home configuration:
   };
 }
 ```
+
+### Docker
+
+A multi-stage [Dockerfile](Dockerfile) builds a container image with omnilint
+and every supported linter, pinned by the nix flake of this repository:
+
+```console
+$ docker build -t omnilint .
+```
+
+The build uses nix to compile the flake package and copies the resulting
+`/nix/store` closure into a minimal Alpine runtime image. Since `omnilint` is
+the image entrypoint, the repository can be analysed by mounting it at
+`/workspace`:
+
+```console
+$ docker run --rm -v "$PWD":/workspace omnilint files foo.py
+$ docker run --rm -v "$PWD":/workspace omnilint repository
+```
+
+The nix CLI image and the Alpine runtime base are pinned to fixed versions in
+the Dockerfile, and the nixpkgs revision used to build omnilint and every
+linter is pinned by [flake.lock](flake.lock).
 
 ### Prebuilt packages
 
