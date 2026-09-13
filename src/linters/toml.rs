@@ -59,7 +59,7 @@ fn parse_file(filename: &Path) -> VecDeque<Entry> {
 /// the content is a valid TOML document.
 fn lint_content(filename: &Path, content: &str) -> VecDeque<Entry> {
     let mut entries = VecDeque::new();
-    if let Err(error) = content.parse::<toml::Value>() {
+    if let Err(error) = toml::from_str::<toml::Value>(content) {
         let msg = error
             .to_string()
             .lines()
@@ -122,7 +122,10 @@ mod tests {
     fn syntax_error() {
         let entries = lint_content(Path::new("foo.toml"), "a = 1\nb = [\n");
         let entry = entries.front().expect("one entry");
-        assert_eq!(entry.to_string(), "foo.toml:3: [toml-parse] expected `]`");
+        assert_eq!(
+            entry.to_string(),
+            "foo.toml:2: [toml-parse] unclosed array, expected `]`"
+        );
     }
 
     #[test]
@@ -131,7 +134,7 @@ mod tests {
         let entry = entries.front().expect("one entry");
         assert_eq!(
             entry.to_string(),
-            "foo.toml:1: [toml-parse] invalid basic string"
+            "foo.toml:1: [toml-parse] invalid basic string, expected `\"`"
         );
     }
 }

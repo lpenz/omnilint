@@ -126,7 +126,7 @@ fn all_tracked_files() {
          swift-dirty.swift:3: [swiftlint] Identifier Name Violation: Variable name 'x' should be between 3 and 40 characters long (identifier_name)\n\
          systemd-dirty.service:5: [systemd-analyze] Unknown key 'Foo' in section [Service], ignoring.\n\
          tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
-         toml-dirty.toml:6: [toml-parse] duplicate key `server` in document root\n\
+         toml-dirty.toml:6: [toml-parse] duplicate key\n\
          ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          xml-dirty.xml: [xml-parse] ill-formed document: expected `</child>`, but `</b>` was found\n\
          xml-dirty.xml:2: [xmllint] Opening and ending tag mismatch: child line 2 and b\n\

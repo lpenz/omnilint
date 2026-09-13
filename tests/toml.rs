@@ -20,6 +20,6 @@ fn dirty() {
     assert_eq!(
         common::run(&["toml-dirty.toml"]),
         "Error: lint findings were emitted\n\
-         toml-dirty.toml:6: [toml-parse] duplicate key `server` in document root\n"
+         toml-dirty.toml:6: [toml-parse] duplicate key\n"
     );
 }
