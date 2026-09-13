@@ -38,6 +38,7 @@
             { key = "protolint"; path = "${pkgs.protolint}/bin/protolint"; }
             { key = "proselint"; path = "${pkgs.proselint}/bin/proselint"; }
             { key = "py_compile"; path = "${pkgs.python3}/bin/python3"; }
+            { key = "python3"; path = "${pkgs.python3}/bin/python3"; }
             { key = "pylint"; path = "${pyPkgs}/bin/pylint"; }
             { key = "pyright"; path = "${pkgs.pyright}/bin/pyright"; }
             { key = "ruff"; path = "${pkgs.ruff}/bin/ruff"; }
@@ -46,6 +47,7 @@
             { key = "sqlfluff"; path = "${pkgs.sqlfluff}/bin/sqlfluff"; }
             { key = "statix"; path = "${pkgs.statix}/bin/statix"; }
             { key = "staticcheck"; path = "${pkgs.go-tools}/bin/staticcheck"; }
+            { key = "systemd-analyze"; path = "${pkgs.systemd}/bin/systemd-analyze"; }
             { key = "stylelint"; path = "${pkgs.stylelint}/bin/stylelint"; }
             { key = "swiftlint"; path = "${pkgs.swiftlint}/bin/swiftlint"; }
             { key = "tidy"; path = "${pkgs.html-tidy}/bin/tidy"; }
@@ -74,6 +76,7 @@
           inherit omnilint omnilint-config;
           default = pkgs.writeShellScriptBin "omnilint" ''
             export OMNILINT_CONFIG="${omnilint-config}"
+            export PATH="${pkgs.git}/bin:$PATH"
             exec "${omnilint}/bin/omnilint" "$@"
           '';
         });
@@ -109,6 +112,7 @@
               eslint
               pyright
               nix
+              git
               protolint
               proselint
               systemd
