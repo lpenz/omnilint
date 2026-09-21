@@ -54,7 +54,7 @@ jobs:
             read -r -a args <<< "${ARGS}"
           fi
           nix --extra-experimental-features "nix-command flakes" shell \
-            "github:lpenz/omnilint@${REF}#packages.x86_64-linux.default" \
+            "github:lpenz/omnilint/${REF}#packages.x86_64-linux.default" \
             --command omnilint \
             --format github-workflow \
             repository "${args[@]}"

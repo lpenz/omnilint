@@ -70,7 +70,7 @@ runs:
           read -r -a args <<< "${ARGS}"
         fi
         nix --extra-experimental-features "nix-command flakes" shell \
-          "github:lpenz/omnilint@${REF}#packages.${SYSTEM}.default" \
+          "github:lpenz/omnilint/${REF}#packages.${SYSTEM}.default" \
           --command omnilint \
           --format github-workflow \
           repository "${args[@]}"
