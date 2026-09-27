@@ -63,6 +63,9 @@ fn all_tracked_files() {
          clj-dirty.clj:2: [clj-kondo] Unresolved symbol: y\n\
          clj-dirty.clj:2: [clj-kondo] unused binding unused\n\
          css-dirty.css:1: [stylelint] Empty block (block-no-empty) [error]\n\
+         css-dirty.less:1: [stylelint] Empty block (block-no-empty) [error]\n\
+         css-dirty.sass:1: [stylelint] Empty block (block-no-empty) [error]\n\
+         css-dirty.scss:1: [stylelint] Empty block (block-no-empty) [error]\n\
          docker-dirty.dockerfile:1: [hadolint] Using latest is prone to errors if the image will ever update. Pin the version explicitly to a release tag\n\
          docker-dirty.dockerfile:2: [hadolint] Delete the apt lists (/var/lib/apt/lists) after installing something\n\
          docker-dirty.dockerfile:3: [hadolint] Avoid additional packages by specifying `--no-install-recommends`\n\
@@ -72,8 +75,13 @@ fn all_tracked_files() {
          go-dirty.go:6: [go-vet] fmt.Printf format %s reads arg #1, but call has 0 args\n\
          go-dirty.go:6: [staticcheck] Printf format %s reads arg #1, but call has only 0 args (SA5009)\n\
          html-dirty.html:1: [tidy] missing <!DOCTYPE> declaration\n\
+         js-dirty.cjs:1: [eslint] Parsing error: Unexpected keyword 'debugger'\n\
+         js-dirty.cjs:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          js-dirty.js:1: [eslint] Parsing error: Unexpected keyword 'debugger'\n\
          js-dirty.js:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
+         js-dirty.jsx:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
+         js-dirty.mjs:1: [eslint] Parsing error: Unexpected keyword 'debugger'\n\
+         js-dirty.mjs:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          json-dirty.json:1: [jq] Unmatched '}'\n\
          json-dirty.json:1: [json-parse] expected value at line 1 column 15\n\
          lua-dirty.lua:1: [luacheck] unused variable 'unused'\n\
@@ -127,7 +135,10 @@ fn all_tracked_files() {
          systemd-dirty.service:5: [systemd-analyze] Unknown key 'Foo' in section [Service], ignoring.\n\
          tex-dirty.tex:3: [chktex] Use ' to end quotation, not `.\n\
          toml-dirty.toml:6: [toml-parse] duplicate key\n\
+         ts-dirty.cts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
+         ts-dirty.mts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          ts-dirty.ts:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
+         ts-dirty.tsx:1: [oxlint] Identifier expected. 'debugger' is a reserved word that cannot be used here. [Error]\n\
          xml-dirty.xml: [xml-parse] ill-formed document: expected `</child>`, but `</b>` was found\n\
          xml-dirty.xml:2: [xmllint] Opening and ending tag mismatch: child line 2 and b\n\
          yaml-dirty.yaml:1: [yamllint] missing document start \"---\"\n\

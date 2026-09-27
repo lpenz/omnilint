@@ -57,10 +57,10 @@ impl Filetype {
             Some("c" | "cc" | "cpp" | "cxx" | "h" | "hh" | "hpp" | "hxx") => Filetype::C,
             Some("go") => Filetype::Go,
             Some("rb") => Filetype::Ruby,
-            Some("css") => Filetype::Css,
+            Some("css" | "scss" | "sass" | "less") => Filetype::Css,
             Some("tex" | "sty" | "cls") => Filetype::TeX,
-            Some("js") => Filetype::Javascript,
-            Some("ts") => Filetype::Typescript,
+            Some("js" | "jsx" | "mjs" | "cjs") => Filetype::Javascript,
+            Some("ts" | "tsx" | "mts" | "cts") => Filetype::Typescript,
             Some("proto") => Filetype::Proto,
             Some("nix") => Filetype::Nix,
             Some("toml") => Filetype::Toml,
@@ -121,6 +121,7 @@ fn is_known_extension(ext: &str) -> bool {
             | "htm"
             | "java"
             | "js"
+            | "jsx"
             | "json"
             | "kt"
             | "kts"
@@ -150,6 +151,7 @@ fn is_known_extension(ext: &str) -> bool {
             | "swift"
             | "toml"
             | "ts"
+            | "tsx"
             | "txt"
             | "xml"
             | "yaml"
@@ -240,6 +242,14 @@ mod tests {
             Filetype::detect(Path::new("containerfile.rs")),
             Filetype::Unknown
         );
+        assert_eq!(
+            Filetype::detect(Path::new("dockerfile.jsx")),
+            Filetype::Javascript
+        );
+        assert_eq!(
+            Filetype::detect(Path::new("containerfile.tsx")),
+            Filetype::Typescript
+        );
     }
 
     #[test]
@@ -282,6 +292,30 @@ mod tests {
         assert_eq!(Filetype::detect(Path::new("foo.cxx")), Filetype::C);
         assert_eq!(Filetype::detect(Path::new("foo.h")), Filetype::C);
         assert_eq!(Filetype::detect(Path::new("foo.hpp")), Filetype::C);
+    }
+
+    #[test]
+    fn detect_css() {
+        assert_eq!(Filetype::detect(Path::new("foo.css")), Filetype::Css);
+        assert_eq!(Filetype::detect(Path::new("foo.scss")), Filetype::Css);
+        assert_eq!(Filetype::detect(Path::new("foo.sass")), Filetype::Css);
+        assert_eq!(Filetype::detect(Path::new("foo.less")), Filetype::Css);
+    }
+
+    #[test]
+    fn detect_javascript() {
+        assert_eq!(Filetype::detect(Path::new("foo.js")), Filetype::Javascript);
+        assert_eq!(Filetype::detect(Path::new("foo.jsx")), Filetype::Javascript);
+        assert_eq!(Filetype::detect(Path::new("foo.mjs")), Filetype::Javascript);
+        assert_eq!(Filetype::detect(Path::new("foo.cjs")), Filetype::Javascript);
+    }
+
+    #[test]
+    fn detect_typescript() {
+        assert_eq!(Filetype::detect(Path::new("foo.ts")), Filetype::Typescript);
+        assert_eq!(Filetype::detect(Path::new("foo.tsx")), Filetype::Typescript);
+        assert_eq!(Filetype::detect(Path::new("foo.mts")), Filetype::Typescript);
+        assert_eq!(Filetype::detect(Path::new("foo.cts")), Filetype::Typescript);
     }
 
     #[test]

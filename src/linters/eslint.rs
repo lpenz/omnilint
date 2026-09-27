@@ -8,8 +8,9 @@
 //! problems and coding style issues. It is run with `--format=json` and
 //! its output is parsed into [`Entry`] values.
 //!
-//! Note that eslint only runs on `.js` files: without a TypeScript parser
-//! configured in the project, core ESLint cannot handle TypeScript syntax.
+//! Note that eslint only runs on the JavaScript filetype (`.js`, `.jsx`,
+//! `.mjs`, `.cjs`): without a TypeScript parser configured in the project,
+//! core ESLint cannot handle TypeScript syntax.
 //!
 //! ## Output format
 //!
