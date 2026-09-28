@@ -149,6 +149,38 @@ pub fn run_github_workflow(files: &[&str]) -> String {
     )
 }
 
+/// Runs `omnilint files` with `--format json` on the given files with a
+/// `PATH` that contains no linter tools.
+///
+/// Asserts that omnilint exits with status 1, since missing linters count as
+/// issues.
+pub fn run_json(files: &[&str]) -> String {
+    run_command_no_config(
+        "files",
+        files,
+        &[("PATH", "/nonexistent")],
+        1,
+        &["--format", "json"],
+    )
+}
+
+/// Runs `omnilint files` with `--format json` and
+/// `--default-linter-mode required` on the given files with a `PATH` that
+/// contains no linter tools, so that the run fails on the first missing
+/// linter.
+///
+/// Asserts that omnilint exits with status 1, since the required linters
+/// cannot be found.
+pub fn run_json_required(files: &[&str]) -> String {
+    run_command_no_config(
+        "files",
+        files,
+        &[("PATH", "/nonexistent")],
+        1,
+        &["--format", "json", "--default-linter-mode", "required"],
+    )
+}
+
 /// Runs `omnilint files` on the given files from a temporary directory that
 /// contains an `omnilint.toml` with the given contents and a `PATH` that has
 /// no linter tools.

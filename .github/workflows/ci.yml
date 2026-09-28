@@ -4,8 +4,6 @@ on: [workflow_dispatch, push, pull_request]  # yamllint disable-line rule:truthy
 jobs:
   omnilint:
     uses: lpenz/omnilint/.github/workflows/omnilint.yml@v0.10.3
-    with:
-      arguments: --config omnilint.toml
   info:
     runs-on: ubuntu-latest
     outputs:

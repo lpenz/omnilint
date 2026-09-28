@@ -76,6 +76,12 @@ pub enum OutputFormat {
 
     /// GitHub Actions workflow commands: `::warning file=...,line=...,...::message`
     GithubWorkflow,
+
+    /// [JSON Lines](https://jsonlines.org/): one JSON object per finding, for
+    /// consumption by other tools. Each object has a `file` and a `linter`
+    /// and `message` key, and a `line` and `col` key when the linter reports
+    /// them.
+    Json,
 }
 
 #[derive(Subcommand, Debug)]
@@ -152,6 +158,12 @@ mod tests {
         let cli =
             Cli::try_parse_from(["", "files", "--format", "github-workflow", "foo.py"]).unwrap();
         assert_eq!(cli.format, OutputFormat::GithubWorkflow);
+    }
+
+    #[test]
+    fn format_json() {
+        let cli = Cli::try_parse_from(["", "files", "--format", "json", "foo.py"]).unwrap();
+        assert_eq!(cli.format, OutputFormat::Json);
     }
 
     #[test]
