@@ -35,15 +35,46 @@ use tokio_stream::{Stream, StreamExt, StreamMap};
 ///
 /// Exits with status 1 if any finding was emitted (including a linter that
 /// was not found, or a missing required linter in the inventory), printing
-/// the reason to stderr, and with status 0 otherwise.
+/// the reason to stderr, and with status 0 otherwise. For
+/// [`OutputFormat::Json`], the reason is printed as a JSON object instead, so
+/// that the stream on stderr only ever contains JSON objects.
 #[tokio::main(flavor = "current_thread")]
 pub async fn main() -> Result<(), Box<dyn Error>> {
+    let args = cli::Cli::parse();
+    let format = args.format;
+    let Err(error) = run(args).await else {
+        return Ok(());
+    };
+    let reason = error.downcast_ref::<OmnilintError>();
+    if format == OutputFormat::Json {
+        // The findings are already reported as JSON objects, and the exit
+        // status already carries the reason, so the stream on stderr stays
+        // machine-readable.
+        if !matches!(reason, Some(OmnilintError::Findings)) {
+            eprintln!("{}", entry::json_error(&error.to_string()));
+        }
+        std::process::exit(1);
+    }
+    // The reason of a failed run is reported in a single line, while any other
+    // error is left for the error report of the `main` return value.
+    if reason.is_some() {
+        eprintln!("Error: {error}");
+        std::process::exit(1);
+    }
+    Err(error)
+}
+
+/// Runs the command given in `args`, reporting the findings to stderr in the
+/// requested output format.
+///
+/// Returns the reason why the run failed: an [`OmnilintError`] for a run that
+/// found issues, or the error that prevented the run itself.
+async fn run(args: cli::Cli) -> Result<(), Box<dyn Error>> {
     color_eyre::install()?;
     tracing_subscriber::fmt()
         .with_span_events(tracing_subscriber::fmt::format::FmtSpan::ACTIVE)
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
-    let args = cli::Cli::parse();
     let mut linters = Linters::new();
     let config = config::Config::load(args.config.as_deref())?;
     let default_mode = if args.default_linter_mode != LinterMode::default() {
@@ -81,11 +112,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
         }
         cli::Commands::Inventory => run_inventory(&linters).await,
     };
-    if let Err(error) = run_result {
-        eprintln!("Error: {error}");
-        std::process::exit(1);
-    }
-    Ok(())
+    run_result.map_err(|error| Box::new(error) as Box<dyn Error>)
 }
 
 /// Shows the status of all supported linters: their mode and version

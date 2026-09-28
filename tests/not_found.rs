@@ -103,3 +103,25 @@ fn github_workflow_format() {
          Error: lint findings were emitted\n"
     );
 }
+
+#[test]
+fn json_format() {
+    assert_eq!(
+        common::run_json(&["python-clean.py", "yaml-clean.yaml"]),
+        "{\"kind\":\"finding\",\"file\":\"python-clean.py\",\"linter\":\"flake8\",\"message\":\"linter not found\"}\n\
+         {\"kind\":\"finding\",\"file\":\"python-clean.py\",\"linter\":\"mypy\",\"message\":\"linter not found\"}\n\
+         {\"kind\":\"finding\",\"file\":\"python-clean.py\",\"linter\":\"py_compile\",\"message\":\"linter not found\"}\n\
+         {\"kind\":\"finding\",\"file\":\"python-clean.py\",\"linter\":\"pylint\",\"message\":\"linter not found\"}\n\
+         {\"kind\":\"finding\",\"file\":\"python-clean.py\",\"linter\":\"pyright\",\"message\":\"linter not found\"}\n\
+         {\"kind\":\"finding\",\"file\":\"python-clean.py\",\"linter\":\"ruff\",\"message\":\"linter not found\"}\n\
+         {\"kind\":\"finding\",\"file\":\"yaml-clean.yaml\",\"linter\":\"yamllint\",\"message\":\"linter not found\"}\n"
+    );
+}
+
+#[test]
+fn json_format_reports_the_error() {
+    assert_eq!(
+        common::run_json_required(&["python-clean.py"]),
+        "{\"kind\":\"error\",\"message\":\"required linter 'flake8' not found\"}\n"
+    );
+}

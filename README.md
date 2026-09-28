@@ -226,6 +226,32 @@ so that findings show up directly in the pull request and commit annotations:
 ::warning file=<filename>,line=<line>,col=<col>::[<linter>] <message>
 ```
 
+Finally, `--format json` emits [JSON Lines](https://jsonlines.org/), one JSON
+object per line, for editors, scripts and other tools to consume. Findings are
+emitted as they are discovered, and every object has a `kind` key, which is
+`finding` for the findings themselves:
+
+```text
+{"kind":"finding","file":<filename>,"line":<line>,"col":<col>,"linter":<linter>,"message":<message>}
+```
+
+The `line` and `col` keys are omitted when the linter does not report them.
+When a run fails instead of reporting findings, such as when a required
+linter is not on the `PATH` or the configuration cannot be read, the reason
+is the last object of the stream, with the `kind` key set to `error`:
+
+```text
+{"kind":"error","message":<reason>}
+```
+
+Nothing else is written to the stream for this format, so that it can be
+piped straight into another tool (the findings go to stderr, as usual):
+
+```console
+$ omnilint --format json files test.py 2>&1 | jq -r '"\(.line): \(.message)"'
+1: F401 'os' imported but unused
+```
+
 ### Exit status
 
 omnilint exits with status `0` when no issues were found, and with status `1`
